@@ -130,7 +130,80 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             border-color: #00ff00;
         }
 
-        /* Floating Owncast Stream */
+        /* TikTok Control Buttons */
+        .tiktok-controls {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .control-btn {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+            transform: scale(1.05);
+        }
+
+        .hey-btn {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+        }
+
+        .hey-btn:hover {
+            background: rgba(0, 255, 0, 0.4);
+        }
+
+        .nah-btn {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+        }
+
+        .nah-btn:hover {
+            background: rgba(255, 0, 0, 0.4);
+        }
+
+        .mute-btn {
+            background: rgba(255, 165, 0, 0.2);
+            border-color: #ffa500;
+        }
+
+        .mute-btn:hover {
+            background: rgba(255, 165, 0, 0.4);
+        }
+
+        .mute-btn.muted {
+            background: rgba(255, 0, 0, 0.4);
+            border-color: #ff0000;
+        }
+
+        .block-btn {
+            background: rgba(255, 0, 0, 0.3);
+            border-color: #ff0000;
+        }
+
+        .block-btn:hover {
+            background: rgba(255, 0, 0, 0.5);
+        }
+
+        /* Floating Owncast Stream - User Resizable */
         .owncast-stream {
             position: absolute;
             top: 80px;
@@ -148,6 +221,43 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             z-index: 100;
             cursor: move;
             box-shadow: 0 4px 20px rgba(0, 255, 0, 0.3);
+            resize: both;
+            overflow: auto;
+            min-width: 80px;
+            min-height: 50px;
+            max-width: 300px;
+            max-height: 200px;
+        }
+
+        /* Resize Handle Styling */
+        .owncast-stream::-webkit-resizer {
+            background: #00ff00;
+            border-radius: 0 0 8px 0;
+        }
+
+        /* Owncast Controls */
+        .owncast-controls {
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 2px;
+        }
+
+        .owncast-btn {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .owncast-btn:hover {
+            background: rgba(0, 255, 0, 0.4);
         }
 
         .owncast-title {
@@ -160,23 +270,31 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             font-size: 0.7rem;
         }
 
-        /* HOMEBASE - Single Horizontal Line */
+        /* HOMEBASE - Multiple Rows */
         .homebase {
             background: #000000;
             border-top: 2px solid #333;
-            padding: 10px 5px;
+            padding: 5px;
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Money Row */
+        .money-row {
+            display: flex;
+            justify-content: center;
             gap: 5px;
-            overflow-x: auto;
-            min-height: 60px;
+            padding: 5px;
+            border-bottom: 1px solid #333;
         }
 
         /* Money Buttons */
         .money-section {
             display: flex;
-            gap: 3px;
-            flex-shrink: 0;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .money-btn {
@@ -206,12 +324,6 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             transform: scale(0.9);
         }
 
-        /* Reaction Buttons */
-        .reaction-section {
-            display: flex;
-            gap: 3px;
-            flex-shrink: 0;
-        }
 
         .reaction-btn {
             width: 35px;
@@ -280,6 +392,70 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
         }
 
+        /* Reaction Row */
+        .reaction-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            padding: 5px;
+            border-bottom: 1px solid #333;
+        }
+
+        /* Reaction Section */
+        .reaction-section {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Chat Row */
+        .chat-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+        }
+
+        /* Grid Buttons (Plus Signs) */
+        .grid-buttons {
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+
+        .grid-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 10px;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .grid-btn:hover {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+            transform: scale(1.1);
+        }
+
+        /* Chat Input Section */
+        .chat-input-section {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            flex: 1;
+            margin-left: 10px;
+        }
+
         /* Chat Section */
         .chat-section {
             flex: 1;
@@ -327,30 +503,6 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             transform: scale(1.05);
         }
 
-        /* Grid Buttons */
-        .grid-buttons {
-            display: flex;
-            gap: 3px;
-            flex-shrink: 0;
-        }
-
-        .grid-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #333;
-            color: #fff;
-            padding: 6px 8px;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            min-width: 30px;
-        }
-
-        .grid-btn:hover {
-            border-color: #00ff00;
-            background: rgba(0, 255, 0, 0.1);
-        }
 
         /* Floating Reactions Container */
         .reactions-container {
@@ -479,6 +631,15 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
                 <button class="upload-btn">📤</button>
             </div>
 
+            <!-- TikTok Control Buttons -->
+            <div class="tiktok-controls">
+                <button class="control-btn hey-btn" id="heyBtn">HEY</button>
+                <button class="control-btn nah-btn" id="nahBtn">NAH</button>
+                <button class="control-btn mute-btn" id="muteLiveBtn">🔇 Live</button>
+                <button class="control-btn mute-btn" id="muteVideoBtn">🔇 Video</button>
+                <button class="control-btn block-btn" id="blockBtn">🚫 Block</button>
+            </div>
+
             <!-- TikTok Placeholder -->
             <div class="tiktok-placeholder">
                 TIKTOK VIDEO<br>
@@ -490,43 +651,54 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         <div class="owncast-stream" id="owncastStream">
             <div class="owncast-title">OWNCAST</div>
             <div class="owncast-status">LIVE</div>
+            <div class="owncast-controls">
+                <button class="owncast-btn" id="prevVideo">◀</button>
+                <button class="owncast-btn" id="nextVideo">▶</button>
+            </div>
         </div>
 
-        <!-- HOMEBASE - Single Horizontal Line -->
+        <!-- HOMEBASE - Multiple Rows -->
         <div class="homebase">
-            <!-- Money Section -->
-            <div class="money-section">
-                <button class="money-btn" data-amount="1">$1</button>
-                <button class="money-btn" data-amount="5">$5</button>
-                <button class="money-btn" data-amount="10">$10</button>
-                <button class="money-btn" data-amount="20">$20</button>
-                <button class="money-btn" data-amount="50">$50</button>
-                <button class="money-btn" data-amount="100">$100</button>
+            <!-- Money Row -->
+            <div class="money-row">
+                <div class="money-section">
+                    <button class="money-btn" data-amount="1">$1</button>
+                    <button class="money-btn" data-amount="5">$5</button>
+                    <button class="money-btn" data-amount="10">$10</button>
+                    <button class="money-btn" data-amount="20">$20</button>
+                    <button class="money-btn" data-amount="50">$50</button>
+                    <button class="money-btn" data-amount="100">$100</button>
+                </div>
             </div>
 
-            <!-- Reaction Section -->
-            <div class="reaction-section">
-                <button class="reaction-btn" data-emoji="🔥" data-effect="sparkle">🔥</button>
-                <button class="reaction-btn" data-emoji="🎧" data-effect="bounce">🎧</button>
-                <button class="reaction-btn" data-emoji="❤️" data-effect="float">❤️</button>
-                <button class="reaction-btn sf-btn" data-emoji="SF" data-effect="spiral">SF</button>
-                <button class="reaction-btn jp-btn" data-emoji="JP" data-effect="sparkle">JP</button>
-                <button class="reaction-btn" data-emoji="👠" data-effect="bounce">👠</button>
-                <button class="reaction-btn" data-emoji="🏳️‍🌈" data-effect="spiral">🏳️‍🌈</button>
-                <button class="reaction-btn" data-emoji="💃" data-effect="float">💃</button>
+            <!-- Reaction Row -->
+            <div class="reaction-row">
+                <div class="reaction-section">
+                    <button class="reaction-btn" data-emoji="🔥" data-effect="sparkle">🔥</button>
+                    <button class="reaction-btn" data-emoji="🎧" data-effect="bounce">🎧</button>
+                    <button class="reaction-btn" data-emoji="❤️" data-effect="float">❤️</button>
+                    <button class="reaction-btn sf-btn" data-emoji="SF" data-effect="spiral">SF</button>
+                    <button class="reaction-btn jp-btn" data-emoji="JP" data-effect="sparkle">JP</button>
+                    <button class="reaction-btn" data-emoji="👠" data-effect="bounce">👠</button>
+                    <button class="reaction-btn" data-emoji="🏳️‍🌈" data-effect="spiral">🏳️‍🌈</button>
+                    <button class="reaction-btn" data-emoji="💃" data-effect="float">💃</button>
+                </div>
             </div>
 
-            <!-- Chat Section -->
-            <div class="chat-section">
-                <input type="text" class="chat-input" placeholder="Type message..." id="chatInput">
-                <button class="send-btn" id="sendBtn">Send</button>
-            </div>
-
-            <!-- Grid Buttons -->
-            <div class="grid-buttons">
-                <button class="grid-btn" id="grid1">G1</button>
-                <button class="grid-btn" id="grid2">G2</button>
-                <button class="grid-btn" id="grid3">G3</button>
+            <!-- Chat Row -->
+            <div class="chat-row">
+                <!-- Grid Buttons (Plus Signs) -->
+                <div class="grid-buttons">
+                    <button class="grid-btn" id="grid1">+</button>
+                    <button class="grid-btn" id="grid2">+</button>
+                    <button class="grid-btn" id="grid3">+</button>
+                </div>
+                
+                <!-- Chat Input Section -->
+                <div class="chat-input-section">
+                    <input type="text" class="chat-input" placeholder="Type your message..." id="chatInput">
+                    <button class="send-btn" id="sendBtn">Send</button>
+                </div>
             </div>
         </div>
     </div>
