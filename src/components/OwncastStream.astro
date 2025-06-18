@@ -1,0 +1,370 @@
+---
+// Owncast Stream Component - Isolated and Clean
+export interface Props {
+  streamUrl?: string;
+  rtmpUrl?: string;
+  editable?: boolean;
+}
+
+const { 
+  streamUrl = "https://live.soundfactorynyc.com/hls/stream.m3u8",
+  rtmpUrl = "rtmp://stream.soundfactorynyc.com/live",
+  editable = false 
+} = Astro.props;
+---
+
+<div class="owncast-container" data-editable={editable}>
+  <!-- Floating Owncast Stream -->
+  <div class="owncast-stream" id="owncastStream">
+    <div class="owncast-title">OWNCAST + OBS</div>
+    <div class="owncast-status">LIVE</div>
+    <div class="rtmp-info">RTMP: {rtmpUrl}</div>
+    <div class="stream-player">
+      <video id="owncastVideo" autoplay muted playsinline>
+        <source src={streamUrl} type="application/x-mpegURL">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <div class="owncast-controls">
+      <button class="owncast-btn" id="prevVideo">◀</button>
+      <button class="owncast-btn" id="obsBtn">OBS</button>
+      <button class="owncast-btn" id="rtmpBtn">RTMP</button>
+      <button class="owncast-btn" id="nextVideo">▶</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .owncast-container {
+    position: relative;
+    z-index: 100;
+  }
+
+  /* Floating Owncast Stream */
+  .owncast-stream {
+    position: fixed;
+    top: 4rem;
+    left: 0.5rem;
+    width: 4rem;
+    height: 3rem;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #00ff00;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    z-index: 100;
+    cursor: move;
+    box-shadow: 0 4px 20px rgba(0, 255, 0, 0.3);
+    resize: both;
+    overflow: auto;
+    min-width: 3rem;
+    min-height: 2rem;
+    max-width: 15rem;
+    max-height: 10rem;
+    transition: all 0.3s ease;
+  }
+
+  .owncast-stream:hover {
+    box-shadow: 0 6px 25px rgba(0, 255, 0, 0.5);
+    border-color: #00ff88;
+  }
+
+  /* Resize Handle Styling */
+  .owncast-stream::-webkit-resizer {
+    background: #00ff00;
+    border-radius: 0 0 0.5rem 0;
+  }
+
+  /* Owncast Controls */
+  .owncast-controls {
+    position: absolute;
+    bottom: 0.1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.1rem;
+  }
+
+  .owncast-btn {
+    background: rgba(0, 255, 0, 0.2);
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.2rem;
+    font-size: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .owncast-btn:hover {
+    background: rgba(0, 255, 0, 0.4);
+    transform: scale(1.1);
+  }
+
+  .owncast-btn:active {
+    transform: scale(0.9);
+  }
+
+  .owncast-title {
+    font-weight: bold;
+    margin-bottom: 0.2rem;
+    color: #00ff00;
+    text-align: center;
+  }
+
+  .owncast-status {
+    color: #00ff00;
+    font-size: 0.5rem;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .rtmp-info {
+    color: #ffa500;
+    font-size: 0.4rem;
+    margin: 0.1rem 0;
+    text-align: center;
+    word-break: break-all;
+    padding: 0 0.1rem;
+  }
+
+  .stream-player {
+    width: 100%;
+    height: 60%;
+    margin: 0.1rem 0;
+    border-radius: 0.2rem;
+    overflow: hidden;
+    background: #111;
+    position: relative;
+  }
+
+  .stream-player video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.2rem;
+  }
+
+  /* Error state styling */
+  .stream-player::after {
+    content: "Stream Offline";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #666;
+    font-size: 0.4rem;
+    text-align: center;
+    display: none;
+  }
+
+  .stream-player.error::after {
+    display: block;
+  }
+
+  .stream-player.error video {
+    display: none;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .owncast-stream {
+      width: 5rem;
+      height: 3rem;
+      font-size: 0.5rem;
+      top: 3rem;
+    }
+
+    .owncast-btn {
+      font-size: 0.4rem;
+      padding: 0.05rem 0.1rem;
+    }
+
+    .rtmp-info {
+      font-size: 0.35rem;
+    }
+  }
+
+  /* Dragging state */
+  .owncast-stream.dragging {
+    cursor: grabbing;
+    transform: scale(1.05);
+    box-shadow: 0 8px 30px rgba(0, 255, 0, 0.6);
+  }
+</style>
+
+<script>
+  class OwncastController {
+    constructor() {
+      this.isDragging = false;
+      this.startX = 0;
+      this.startY = 0;
+      this.initialX = 0;
+      this.initialY = 0;
+      this.init();
+    }
+
+    init() {
+      this.setupDragging();
+      this.setupControls();
+      this.setupVideoErrorHandling();
+    }
+
+    setupDragging() {
+      const owncast = document.getElementById('owncastStream');
+      if (!owncast) return;
+      
+      // Mouse events
+      owncast.addEventListener('mousedown', (e) => {
+        this.startDrag(e.clientX, e.clientY, owncast);
+      });
+      
+      // Touch events for mobile
+      owncast.addEventListener('touchstart', (e) => {
+        const touch = e.touches[0];
+        this.startDrag(touch.clientX, touch.clientY, owncast);
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (this.isDragging) {
+          this.updatePosition(e.clientX, e.clientY);
+        }
+      });
+      
+      document.addEventListener('touchmove', (e) => {
+        if (this.isDragging) {
+          const touch = e.touches[0];
+          this.updatePosition(touch.clientX, touch.clientY);
+          e.preventDefault();
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        this.endDrag();
+      });
+      
+      document.addEventListener('touchend', () => {
+        this.endDrag();
+      });
+    }
+
+    startDrag(clientX, clientY, owncast) {
+      this.isDragging = true;
+      this.startX = clientX;
+      this.startY = clientY;
+      this.initialX = owncast.offsetLeft;
+      this.initialY = owncast.offsetTop;
+      owncast.classList.add('dragging');
+    }
+
+    updatePosition(clientX, clientY) {
+      if (!this.isDragging) return;
+      
+      const owncast = document.getElementById('owncastStream');
+      if (!owncast) return;
+      
+      const deltaX = clientX - this.startX;
+      const deltaY = clientY - this.startY;
+      
+      let newX = this.initialX + deltaX;
+      let newY = this.initialY + deltaY;
+      
+      // Keep within bounds
+      const maxX = window.innerWidth - owncast.offsetWidth;
+      const maxY = window.innerHeight - owncast.offsetHeight - 100;
+      
+      newX = Math.max(0, Math.min(newX, maxX));
+      newY = Math.max(60, Math.min(newY, maxY));
+      
+      owncast.style.left = newX + 'px';
+      owncast.style.top = newY + 'px';
+    }
+
+    endDrag() {
+      this.isDragging = false;
+      const owncast = document.getElementById('owncastStream');
+      if (owncast) {
+        owncast.classList.remove('dragging');
+      }
+    }
+
+    setupControls() {
+      const prevBtn = document.getElementById('prevVideo');
+      const nextBtn = document.getElementById('nextVideo');
+      const obsBtn = document.getElementById('obsBtn');
+      const rtmpBtn = document.getElementById('rtmpBtn');
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          console.log('Previous video clicked');
+          this.showFeedback(prevBtn);
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          console.log('Next video clicked');
+          this.showFeedback(nextBtn);
+        });
+      }
+
+      if (obsBtn) {
+        obsBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          console.log('OBS button clicked');
+          this.showFeedback(obsBtn);
+        });
+      }
+
+      if (rtmpBtn) {
+        rtmpBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          console.log('RTMP button clicked');
+          this.showFeedback(rtmpBtn);
+        });
+      }
+    }
+
+    showFeedback(button) {
+      const originalBg = button.style.background;
+      button.style.background = 'rgba(0, 255, 0, 0.8)';
+      setTimeout(() => {
+        button.style.background = originalBg;
+      }, 200);
+    }
+
+    setupVideoErrorHandling() {
+      const video = document.getElementById('owncastVideo');
+      const player = document.querySelector('.stream-player');
+      
+      if (video && player) {
+        video.addEventListener('error', () => {
+          console.log('Video stream error');
+          player.classList.add('error');
+        });
+
+        video.addEventListener('loadstart', () => {
+          player.classList.remove('error');
+        });
+
+        video.addEventListener('canplay', () => {
+          console.log('Video stream loaded successfully');
+          player.classList.remove('error');
+        });
+      }
+    }
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new OwncastController());
+  } else {
+    new OwncastController();
+  }
+</script>

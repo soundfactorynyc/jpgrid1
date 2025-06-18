@@ -1,0 +1,116 @@
+---
+// Test page to verify basic functionality
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page</title>
+</head>
+<body style="margin: 0; padding: 20px; background: black; color: white; font-family: Arial;">
+    <h1 style="color: lime; font-size: 48px;">🎛️ SOUND FACTORY TEST PAGE 🎛️</h1>
+    
+    <div style="background: red; color: white; padding: 20px; margin: 20px 0; font-size: 24px;">
+        ❌ This is a RED TEST BOX ❌
+    </div>
+    
+    <button id="mainTestBtn" style="background: lime; color: black; padding: 20px; font-size: 24px; border: none; cursor: pointer; position: relative; z-index: 9999; display: block; margin: 20px 0;">
+        🚀 CLICK ME TO TEST 🚀
+    </button>
+    
+    <!-- Multiple test buttons -->
+    <div style="display: flex; gap: 20px; margin: 20px 0;">
+        <button id="test1Btn" style="background: yellow; color: black; padding: 15px; border: 2px solid red; cursor: pointer; z-index: 9999; position: relative;">
+            TEST 1
+        </button>
+        <button id="test2Btn" style="background: cyan; color: black; padding: 15px; border: 2px solid blue; cursor: pointer; z-index: 9999; position: relative;">
+            TEST 2
+        </button>
+        <button id="backBtn" style="background: orange; color: black; padding: 15px; border: 2px solid purple; cursor: pointer; z-index: 9999; position: relative;">
+            GO BACK TO MAIN
+        </button>
+    </div>
+    
+    <div style="background: blue; color: white; padding: 20px; margin: 20px 0; font-size: 18px;">
+        If you can see this page, then Astro is working correctly.
+        The issue is with the complex layout, not the basic setup.
+    </div>
+    
+    <script>
+        console.log('Test page loaded successfully!');
+        
+        // Add click detection to entire document
+        document.addEventListener('click', function(e) {
+            console.log('Click detected at:', e.clientX, e.clientY);
+            if (e.target && e.target instanceof HTMLElement) {
+                console.log('Clicked element:', e.target.outerHTML);
+            }
+        });
+        
+        // Wait for DOM to be ready, then add event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded - setting up button event listeners');
+            
+            // Test button 1
+            const mainTestBtn = document.getElementById('mainTestBtn');
+            if (mainTestBtn) {
+                mainTestBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    alert('🚀 MAIN TEST BUTTON WORKS! Event listener fired successfully! 🚀');
+                    console.log('Main test button clicked via addEventListener');
+                });
+                console.log('Main test button event listener added');
+            }
+            
+            // Test button 1
+            const test1Btn = document.getElementById('test1Btn');
+            if (test1Btn) {
+                test1Btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    alert('✅ TEST 1 BUTTON WORKS! ✅');
+                    console.log('Test 1 button clicked via addEventListener');
+                });
+                console.log('Test 1 button event listener added');
+            }
+            
+            // Test button 2
+            const test2Btn = document.getElementById('test2Btn');
+            if (test2Btn) {
+                test2Btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    alert('✅ TEST 2 BUTTON WORKS! ✅');
+                    console.log('Test 2 button clicked via addEventListener');
+                });
+                console.log('Test 2 button event listener added');
+            }
+            
+            // Navigation button
+            const backBtn = document.getElementById('backBtn');
+            if (backBtn) {
+                backBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Navigation button clicked - redirecting to main page');
+                    alert('Going back to main page...');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 500);
+                });
+                console.log('Back button event listener added');
+            }
+            
+            console.log('All event listeners set up successfully!');
+        });
+        
+        // Auto alert to test if JavaScript is working
+        setTimeout(() => {
+            console.log('Auto-alert triggered');
+        }, 1000);
+    </script>
+</body>
+</html>

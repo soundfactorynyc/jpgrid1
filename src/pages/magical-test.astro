@@ -1,0 +1,315 @@
+---
+import MagicalReactionSystem from '../components/MagicalReactionSystem.astro';
+import Homebase from '../components/Homebase.astro';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magical Reaction System Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .test-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(255, 0, 110, 0.1) 0%, transparent 70%);
+        }
+
+        .demo-info {
+            text-align: center;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid #333;
+            backdrop-filter: blur(10px);
+            max-width: 600px;
+            margin: 2rem;
+        }
+
+        .demo-info h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #ff006e, #8338ec);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .demo-info p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: #ccc;
+        }
+
+        .feature-list {
+            list-style: none;
+            text-align: left;
+            margin: 1.5rem 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        .feature-list li::before {
+            content: "✨ ";
+            margin-right: 0.5rem;
+        }
+
+        .homebase-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .editor-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #ff006e, #8338ec);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 2001;
+            transition: all 0.3s ease;
+        }
+
+        .editor-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 0, 110, 0.4);
+        }
+
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            z-index: 2001;
+        }
+
+        /* Animation keyframes for fallback animations */
+        @keyframes explosiveReaction {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-200px) translateX(var(--drift, 0px)) scale(1.5);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-400px) translateX(var(--drift, 0px)) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes hyperBounce {
+            0% {
+                transform: translateY(0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            25% {
+                transform: translateY(-150px) scale(1.3) rotate(90deg);
+                opacity: 0.9;
+            }
+            50% {
+                transform: translateY(-300px) scale(1.1) rotate(180deg);
+                opacity: 0.7;
+            }
+            75% {
+                transform: translateY(-200px) scale(1.4) rotate(270deg);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-500px) scale(0.3) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes crazySpiral {
+            0% {
+                transform: translateY(0) translateX(0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-600px) translateX(var(--drift, 0px)) scale(0.2) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes megaBlast {
+            0% {
+                transform: translateY(0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            20% {
+                transform: translateY(-100px) scale(2) rotate(72deg);
+                opacity: 1;
+            }
+            40% {
+                transform: translateY(-250px) scale(1.5) rotate(144deg);
+                opacity: 0.8;
+            }
+            60% {
+                transform: translateY(-400px) scale(2.2) rotate(216deg);
+                opacity: 0.6;
+            }
+            80% {
+                transform: translateY(-550px) scale(1.8) rotate(288deg);
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-700px) scale(0.1) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes moneyShoot {
+            0% {
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-300px) translateX(var(--drift-x, 0px)) scale(1.2);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-600px) translateX(var(--drift-x, 0px)) scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        .floating-reaction {
+            position: fixed;
+            font-size: 2rem;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 1000;
+            text-shadow: 0 0 10px currentColor;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <!-- Editor Toggle Button -->
+        <button class="editor-toggle" id="editorToggle">🎨 Toggle Editor</button>
+        
+        <!-- Status Indicator -->
+        <div class="status-indicator">
+            ✅ Magical Reactions Active
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="demo-info">
+                <h1>🎭 Magical Reaction System</h1>
+                <p>Experience the next-level interactive reaction system with canvas-based animations, holographic effects, and magical particle systems!</p>
+                
+                <ul class="feature-list">
+                    <li>Canvas-Based Particle Engine</li>
+                    <li>Holographic Username Reveals</li>
+                    <li>Value-Based Effect Scaling</li>
+                    <li>Screen Shake & Flash Effects</li>
+                    <li>Fully Editable Interface</li>
+                    <li>Mobile Optimized</li>
+                </ul>
+                
+                <p><strong>Try the buttons below!</strong> Money buttons ($10+) trigger hologram effects, and higher values create more spectacular animations.</p>
+            </div>
+        </div>
+
+        <!-- Magical Reaction System Overlay -->
+        <MagicalReactionSystem editable={true} />
+
+        <!-- Homebase Controls -->
+        <div class="homebase-container">
+            <Homebase editable={true} />
+        </div>
+    </div>
+
+    <script>
+        // Editor toggle functionality
+        const editorToggle = document.getElementById('editorToggle');
+        let editorMode = false;
+
+        editorToggle.addEventListener('click', () => {
+            editorMode = !editorMode;
+            document.body.classList.toggle('edit-mode', editorMode);
+            
+            editorToggle.textContent = editorMode ? '🔧 Exit Editor' : '🎨 Toggle Editor';
+            editorToggle.style.background = editorMode 
+                ? 'linear-gradient(45deg, #00ff00, #32cd32)' 
+                : 'linear-gradient(45deg, #ff006e, #8338ec)';
+        });
+
+        // Demo functionality
+        function triggerDemoReactions() {
+            const reactions = [
+                { content: '🔥', type: 'fire', value: 0 },
+                { content: '$20', type: 'money', value: 20 },
+                { content: '❤️', type: 'love', value: 0 },
+                { content: '$50', type: 'money', value: 50 }
+            ];
+
+            reactions.forEach((reaction, index) => {
+                setTimeout(() => {
+                    if ((window as any).shootMagicalReaction) {
+                        (window as any).shootMagicalReaction(reaction.content, reaction.type, reaction.value);
+                    }
+                }, index * 1000);
+            });
+        }
+
+        // Auto-demo every 10 seconds
+        setInterval(triggerDemoReactions, 10000);
+
+        // Initial demo after 2 seconds
+        setTimeout(triggerDemoReactions, 2000);
+
+        console.log('🎭 Magical Reaction System Test Page Loaded!');
+        console.log('🎯 Click the buttons in the Homebase to see magical reactions!');
+        console.log('⚙️ Toggle editor mode to customize the interface!');
+    </script>
+</body>
+</html>

@@ -1,0 +1,1655 @@
+---
+// Magical Reaction System Component
+export interface Props {
+  editable?: boolean;
+  config?: any;
+}
+
+const { editable = false, config = {} } = Astro.props;
+---
+
+<div class="magical-reaction-container" data-editable={editable}>
+  <!-- Reaction Canvas for animations -->
+  <canvas id="reactionCanvas" class="reaction-canvas"></canvas>
+  
+  <!-- Hologram Canvas for name effects -->
+  <canvas id="hologramCanvas" class="hologram-canvas"></canvas>
+  
+  <!-- Editor Panel (only shown when editable) -->
+  {editable && (
+    <div class="reaction-editor-panel">
+      <div class="editor-header">
+        <h3>🎨 Reaction Editor</h3>
+        <button class="editor-toggle" id="editorToggle">⚙️</button>
+      </div>
+      
+      <div class="editor-content" id="editorContent">
+        <!-- Button Configuration -->
+        <div class="editor-section">
+          <h4>Button Configuration</h4>
+          <div class="button-grid-editor" id="buttonGridEditor">
+            <!-- Dynamic button editor will be populated here -->
+          </div>
+        </div>
+        
+        <!-- Effect Settings -->
+        <div class="editor-section">
+          <h4>Effect Settings</h4>
+          <div class="effect-controls">
+            <label>
+              Particle Intensity
+              <input type="range" id="particleIntensity" min="0.1" max="3" step="0.1" value="1">
+              <span class="value-display">1.0</span>
+            </label>
+            
+            <label>
+              Screen Shake
+              <input type="range" id="screenShake" min="0" max="50" step="1" value="20">
+              <span class="value-display">20</span>
+            </label>
+            
+            <label>
+              Animation Speed
+              <input type="range" id="animationSpeed" min="0.5" max="2" step="0.1" value="1">
+              <span class="value-display">1.0</span>
+            </label>
+          </div>
+        </div>
+        
+        <!-- Color Themes -->
+        <div class="editor-section">
+          <h4>Color Themes</h4>
+          <div class="theme-selector">
+            <button class="theme-btn active" data-theme="default">Default</button>
+            <button class="theme-btn" data-theme="neon">Neon</button>
+            <button class="theme-btn" data-theme="retro">Retro</button>
+            <button class="theme-btn" data-theme="minimal">Minimal</button>
+          </div>
+        </div>
+        
+        <!-- Preview Controls -->
+        <div class="editor-section">
+          <h4>Preview</h4>
+          <div class="preview-controls">
+            <button class="preview-btn" data-test="love">Test 💜</button>
+            <button class="preview-btn" data-test="money-5">Test $5</button>
+            <button class="preview-btn" data-test="money-20">Test $20</button>
+            <button class="preview-btn" data-test="money-50">Test $50</button>
+          </div>
+        </div>
+        
+        <!-- Export/Import -->
+        <div class="editor-section">
+          <h4>Configuration</h4>
+          <div class="config-controls">
+            <button class="config-btn" id="exportConfig">📤 Export</button>
+            <button class="config-btn" id="importConfig">📥 Import</button>
+            <button class="config-btn" id="resetConfig">🔄 Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .magical-reaction-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* Canvases */
+  .reaction-canvas, .hologram-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .hologram-canvas {
+    z-index: 10000;
+  }
+
+  /* Editor Panel */
+  .reaction-editor-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 320px;
+    max-height: 80vh;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid #333;
+    border-radius: 12px;
+    z-index: 15000;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    pointer-events: auto;
+  }
+
+  .reaction-editor-panel.collapsed {
+    transform: translateX(280px);
+  }
+
+  .editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #ff006e, #8338ec);
+    color: white;
+    font-weight: bold;
+  }
+
+  .editor-header h3 {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .editor-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+
+  .editor-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .editor-content {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .editor-section {
+    margin-bottom: 20px;
+  }
+
+  .editor-section h4 {
+    color: #fff;
+    font-size: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Button Grid Editor */
+  .button-grid-editor {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .button-editor-item {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .button-editor-item:hover {
+    background: #2a2a2a;
+    border-color: #555;
+  }
+
+  .button-editor-item.selected {
+    border-color: #ff006e;
+    background: rgba(255, 0, 110, 0.1);
+  }
+
+  .button-editor-item .emoji {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .button-editor-item .label {
+    font-size: 10px;
+    color: #ccc;
+  }
+
+  /* Effect Controls */
+  .effect-controls label {
+    display: block;
+    color: #ccc;
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+
+  .effect-controls input[type="range"] {
+    width: 100%;
+    margin: 4px 0;
+  }
+
+  .value-display {
+    float: right;
+    color: #ff006e;
+    font-weight: bold;
+  }
+
+  /* Theme Selector */
+  .theme-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .theme-btn {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #ccc;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: all 0.2s;
+  }
+
+  .theme-btn:hover {
+    background: #2a2a2a;
+    border-color: #555;
+  }
+
+  .theme-btn.active {
+    background: #ff006e;
+    border-color: #ff006e;
+    color: white;
+  }
+
+  /* Preview Controls */
+  .preview-controls {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .preview-btn {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+    transition: transform 0.2s;
+  }
+
+  .preview-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .preview-btn:active {
+    transform: scale(0.95);
+  }
+
+  /* Config Controls */
+  .config-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .config-btn {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #ccc;
+    padding: 8px 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 10px;
+    transition: all 0.2s;
+  }
+
+  .config-btn:hover {
+    background: #2a2a2a;
+    border-color: #555;
+  }
+
+  /* Scrollbar Styling */
+  .editor-content::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .editor-content::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+
+  .editor-content::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 3px;
+  }
+
+  .editor-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .reaction-editor-panel {
+      width: 280px;
+      right: 10px;
+      top: 10px;
+    }
+
+    .reaction-editor-panel.collapsed {
+      transform: translateX(240px);
+    }
+  }
+</style>
+
+<script>
+  // Magical Reaction Engine
+  class ReactionEngine {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.reactions = [];
+      this.particles = [];
+      this.nameReveals = [];
+      this.animationId = null;
+      this.magicParticles = [];
+      this.explosions = [];
+      this.config = {
+        particleIntensity: 1,
+        screenShake: 20,
+        animationSpeed: 1,
+        theme: 'default'
+      };
+      
+      // Performance monitoring
+      this.frameCount = 0;
+      this.lastFpsCheck = Date.now();
+      this.currentFps = 60;
+      this.performanceMode = 'normal'; // normal, reduced, minimal
+      
+      // Memory management limits
+      this.maxParticles = 500;
+      this.maxMagicParticles = 200;
+      this.maxReactions = 20;
+      
+      // Health monitoring
+      this.lastHealthCheck = Date.now();
+      this.consecutiveErrors = 0;
+      this.isHealthy = true;
+    }
+
+    updateConfig(newConfig) {
+      this.config = { ...this.config, ...newConfig };
+    }
+
+    addReaction(config) {
+      const reaction = {
+        id: Date.now() + Math.random(),
+        x: config.x,
+        y: config.y,
+        vx: (Math.random() - 0.5) * 6,
+        vy: -35 - Math.random() * 20 - (config.value * 1.2),
+        content: config.content,
+        type: config.type,
+        value: config.value || 0,
+        size: this.calculateSize(config),
+        rotation: 0,
+        rotationSpeed: (Math.random() - 0.5) * 0.3 * (1 + config.value / 20),
+        opacity: 1,
+        bounces: 0,
+        maxBounces: 2 + Math.floor(config.value / 10),
+        trail: [],
+        color: config.color,
+        intensity: (1 + (config.value / 15)) * this.config.particleIntensity,
+        username: config.username,
+        image: config.image,
+        phase: 'rising',
+        sparkles: [],
+        glow: config.value >= 10 ? 20 + config.value : 0
+      };
+
+      this.reactions.push(reaction);
+      this.createLaunchEffects(reaction);
+      
+      if (reaction.value >= 10) {
+        this.createMagicalAura(reaction);
+      }
+      
+      return reaction.id;
+    }
+
+    calculateSize(config) {
+      if (config.type === 'money') {
+        return 45 + (config.value * 0.6);
+      } else if (config.type === 'image') {
+        return 70;
+      }
+      return 35 + (config.value * 0.3);
+    }
+
+    createMagicalAura(reaction) {
+      for (let i = 0; i < 12 * this.config.particleIntensity; i++) {
+        this.magicParticles.push({
+          x: reaction.x + (Math.random() - 0.5) * 30,
+          y: reaction.y + (Math.random() - 0.5) * 30,
+          vx: (Math.random() - 0.5) * 1.5,
+          vy: -3 - Math.random() * 6,
+          size: Math.random() * 2 + 1,
+          color: reaction.color,
+          life: 1,
+          decay: 0.008 / this.config.animationSpeed,
+          sparkle: true
+        });
+      }
+    }
+
+    createLaunchEffects(reaction) {
+      this.createMagicBurst(reaction.x, reaction.y, reaction.color, reaction.intensity);
+
+      if (reaction.value >= 50) {
+        this.createMegaLaunch(reaction.x, reaction.y);
+        this.triggerScreenShake(30 * (this.config.screenShake / 20));
+        this.triggerScreenFlash('#FFD700', 0.8);
+        this.createRainbowExplosion(reaction.x, reaction.y);
+      } else if (reaction.value >= 20) {
+        this.createPowerLaunch(reaction.x, reaction.y);
+        this.triggerScreenShake(20 * (this.config.screenShake / 20));
+        this.triggerScreenFlash(reaction.color, 0.6);
+      } else if (reaction.value >= 10) {
+        this.createSpecialLaunch(reaction.x, reaction.y);
+        this.triggerScreenShake(12 * (this.config.screenShake / 20));
+      }
+    }
+
+    createMagicBurst(x, y, color, intensity = 1) {
+      for (let i = 0; i < 5 * intensity; i++) {
+        this.particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 4 * intensity,
+          vy: (Math.random() - 0.5) * 4 * intensity,
+          size: Math.random() * 1.5 + 0.5,
+          color: color,
+          life: 1,
+          decay: 0.008 / this.config.animationSpeed,
+          sparkle: true,
+          glow: 8
+        });
+      }
+    }
+
+    createRainbowExplosion(x, y) {
+      const colors = ['#ff006e', '#8338ec', '#3a86ff', '#06ffa5', '#ffbe0b', '#ff006e'];
+      for (let ring = 0; ring < 6; ring++) {
+        setTimeout(() => {
+          for (let i = 0; i < 50 * this.config.particleIntensity; i++) {
+            const angle = (Math.PI * 2 * i) / 50;
+            this.particles.push({
+              x: x,
+              y: y,
+              vx: Math.cos(angle) * (15 + ring * 4),
+              vy: Math.sin(angle) * (15 + ring * 4) - 15,
+              size: 6,
+              color: colors[ring % colors.length],
+              life: 1,
+              decay: 0.008 / this.config.animationSpeed,
+              gravity: 0.1,
+              sparkle: true,
+              glow: 25
+            });
+          }
+        }, ring * 80 / this.config.animationSpeed);
+      }
+    }
+
+    createMegaLaunch(x, y) {
+      for (let ring = 0; ring < 8; ring++) {
+        setTimeout(() => {
+          for (let i = 0; i < 40 * this.config.particleIntensity; i++) {
+            const angle = (Math.PI * 2 * i) / 40;
+            this.particles.push({
+              x: x,
+              y: y,
+              vx: Math.cos(angle) * (12 + ring * 3),
+              vy: Math.sin(angle) * (12 + ring * 3) - 12,
+              size: 5 + ring * 0.5,
+              color: ring % 2 === 0 ? '#FFD700' : '#FF1493',
+              life: 1,
+              decay: 0.008 / this.config.animationSpeed,
+              gravity: 0.1,
+              sparkle: true,
+              glow: 20
+            });
+          }
+        }, ring * 60 / this.config.animationSpeed);
+      }
+    }
+
+    createPowerLaunch(x, y) {
+      for (let i = 0; i < 80 * this.config.particleIntensity; i++) {
+        const angle = (Math.PI * 2 * i) / 15;
+        const radius = i * 0.4;
+        this.particles.push({
+          x: x + Math.cos(angle) * radius,
+          y: y + Math.sin(angle) * radius,
+          vx: Math.cos(angle) * 8,
+          vy: -18 - Math.random() * 12,
+          size: 5,
+          color: i % 3 === 0 ? '#FFD700' : '#FFA500',
+          life: 1,
+          decay: 0.012 / this.config.animationSpeed,
+          gravity: 0.15,
+          sparkle: true,
+          glow: 15
+        });
+      }
+    }
+
+    createSpecialLaunch(x, y) {
+      for (let i = 0; i < 50 * this.config.particleIntensity; i++) {
+        this.particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 14,
+          vy: -25 - Math.random() * 18,
+          size: 4,
+          color: '#32CD32',
+          life: 1,
+          decay: 0.015 / this.config.animationSpeed,
+          gravity: 0.3,
+          sparkle: true,
+          glow: 12
+        });
+      }
+    }
+
+    updateReaction(reaction, index) {
+      reaction.trail.push({ 
+        x: reaction.x, 
+        y: reaction.y, 
+        life: 1, 
+        size: reaction.size * 0.3,
+        glow: reaction.glow 
+      });
+      if (reaction.trail.length > 20 * reaction.intensity) reaction.trail.shift();
+      
+      reaction.trail.forEach((point, i) => {
+        point.life -= 0.03 / (reaction.intensity * this.config.animationSpeed);
+        if (point.life <= 0) reaction.trail.splice(i, 1);
+      });
+
+      if (reaction.value >= 20 && Math.random() < 0.4) {
+        this.createMagicBurst(reaction.x, reaction.y, reaction.color, 0.6);
+      }
+
+      reaction.vy += 0.4 * this.config.animationSpeed;
+      reaction.x += reaction.vx * this.config.animationSpeed;
+      reaction.y += reaction.vy * this.config.animationSpeed;
+      reaction.rotation += reaction.rotationSpeed * this.config.animationSpeed;
+
+      if (reaction.y <= 60 && reaction.phase === 'rising') {
+        reaction.y = 60;
+        reaction.vy = Math.abs(reaction.vy) * 0.5;
+        reaction.bounces++;
+        reaction.phase = 'falling';
+        this.onMagicalCeilingHit(reaction);
+      }
+
+      if (reaction.x <= 20 || reaction.x >= this.canvas.width - 20) {
+        reaction.vx = -reaction.vx * 0.8;
+        reaction.x = reaction.x <= 20 ? 20 : this.canvas.width - 20;
+        this.createMagicBurst(reaction.x, reaction.y, reaction.color, reaction.intensity);
+      }
+
+      if (reaction.y > this.canvas.height || reaction.bounces > reaction.maxBounces) {
+        if (reaction.value > 0) {
+          this.createFinalExplosion(reaction.x, reaction.y, reaction.color, reaction.intensity);
+        }
+        this.reactions.splice(index, 1);
+      }
+    }
+
+    onMagicalCeilingHit(reaction) {
+      if (reaction.value >= 50) {
+        this.createMegaCeilingExplosion(reaction.x, reaction.y);
+        this.triggerScreenShake(40 * (this.config.screenShake / 20));
+        this.triggerScreenFlash('#FFD700', 1.0);
+        if (reaction.username) {
+          this.createHologramName(reaction.username, reaction.x, reaction.y);
+        }
+      } else if (reaction.value >= 20) {
+        this.createPowerCeilingExplosion(reaction.x, reaction.y, reaction.color);
+        this.triggerScreenShake(25 * (this.config.screenShake / 20));
+        this.triggerScreenFlash(reaction.color, 0.7);
+        if (reaction.username) {
+          this.createHologramName(reaction.username, reaction.x, reaction.y);
+        }
+      } else if (reaction.value >= 10) {
+        this.createSpecialCeilingExplosion(reaction.x, reaction.y, reaction.color);
+        this.triggerScreenShake(15 * (this.config.screenShake / 20));
+        if (reaction.username) {
+          this.createHologramName(reaction.username, reaction.x, reaction.y);
+        }
+      } else {
+        this.createBasicCeilingExplosion(reaction.x, reaction.y, reaction.color);
+      }
+    }
+
+    createMegaCeilingExplosion(x, y) {
+      for (let wave = 0; wave < 2; wave++) {
+        setTimeout(() => {
+          for (let i = 0; i < 30 * this.config.particleIntensity; i++) {
+            const angle = (Math.PI * 2 * i) / 30;
+            const speed = 4 + Math.random() * 4;
+            this.particles.push({
+              x: x,
+              y: y,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed,
+              size: 2 + Math.random() * 2,
+              color: wave % 2 === 0 ? '#FFD700' : '#FF69B4',
+              life: 1,
+              decay: 0.006 / this.config.animationSpeed,
+              gravity: 0.12,
+              sparkle: true,
+              glow: 15
+            });
+          }
+        }, wave * 150 / this.config.animationSpeed);
+      }
+    }
+
+    createPowerCeilingExplosion(x, y, color) {
+      for (let i = 0; i < 40 * this.config.particleIntensity; i++) {
+        const angle = (Math.PI * 2 * i) / 15;
+        const speed = 3 + Math.random() * 5;
+        this.particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 2 + Math.random() * 1.5,
+          color: color,
+          life: 1,
+          decay: 0.009 / this.config.animationSpeed,
+          gravity: 0.15,
+          sparkle: true,
+          glow: 12
+        });
+      }
+    }
+
+    createSpecialCeilingExplosion(x, y, color) {
+      for (let i = 0; i < 25 * this.config.particleIntensity; i++) {
+        const angle = (Math.PI * 2 * i) / 10;
+        const speed = 2 + Math.random() * 4;
+        this.particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 1.5 + Math.random() * 1,
+          color: color,
+          life: 1,
+          decay: 0.01 / this.config.animationSpeed,
+          gravity: 0.16,
+          sparkle: true,
+          glow: 10
+        });
+      }
+    }
+
+    createBasicCeilingExplosion(x, y, color) {
+      for (let i = 0; i < 20 * this.config.particleIntensity; i++) {
+        const angle = (Math.PI * 2 * i) / 8;
+        const speed = 1.5 + Math.random() * 3;
+        this.particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 1 + Math.random() * 1,
+          color: color,
+          life: 1,
+          decay: 0.012 / this.config.animationSpeed,
+          gravity: 0.18,
+          sparkle: true,
+          glow: 8
+        });
+      }
+    }
+
+    createFinalExplosion(x, y, color, intensity) {
+      for (let i = 0; i < 60 * intensity; i++) {
+        this.particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 20 * intensity,
+          vy: (Math.random() - 0.5) * 20 * intensity,
+          size: Math.random() * 5 + 2,
+          color: color,
+          life: 1,
+          decay: 0.012 / this.config.animationSpeed,
+          gravity: 0.2,
+          sparkle: true,
+          glow: 18
+        });
+      }
+    }
+
+    createHologramName(username, x, y) {
+      if (this.onCreateHologram) {
+        this.onCreateHologram(username, x, y);
+      }
+    }
+
+    draw() {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.drawMagicParticles();
+      this.drawParticles();
+      this.drawReactions();
+    }
+
+    drawMagicParticles() {
+      this.magicParticles.forEach((particle, index) => {
+        if (particle.life <= 0) {
+          this.magicParticles.splice(index, 1);
+          return;
+        }
+        
+        this.ctx.save();
+        this.ctx.globalAlpha = particle.life;
+        this.ctx.fillStyle = particle.color;
+        this.ctx.shadowBlur = 15;
+        this.ctx.shadowColor = particle.color;
+        
+        this.ctx.beginPath();
+        this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.restore();
+        
+        particle.x += particle.vx * this.config.animationSpeed;
+        particle.y += particle.vy * this.config.animationSpeed;
+        particle.life -= particle.decay;
+      });
+    }
+
+    drawParticles() {
+      this.particles.forEach((particle, index) => {
+        if (particle.life <= 0) {
+          this.particles.splice(index, 1);
+          return;
+        }
+        
+        this.ctx.save();
+        this.ctx.globalAlpha = particle.life;
+        this.ctx.fillStyle = particle.color;
+        
+        if (particle.sparkle) {
+          this.ctx.shadowBlur = particle.glow || 20;
+          this.ctx.shadowColor = particle.color;
+        }
+        
+        this.ctx.beginPath();
+        this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.restore();
+        
+        particle.x += particle.vx * this.config.animationSpeed;
+        particle.y += particle.vy * this.config.animationSpeed;
+        particle.life -= particle.decay;
+        
+        if (particle.gravity) {
+          particle.vy += particle.gravity * this.config.animationSpeed;
+        }
+      });
+    }
+
+    drawReactions() {
+      this.reactions.forEach((reaction, index) => {
+        reaction.trail.forEach((point, i) => {
+          this.ctx.save();
+          this.ctx.globalAlpha = point.life * 0.4;
+          this.ctx.fillStyle = reaction.color;
+          if (point.glow) {
+            this.ctx.shadowBlur = point.glow;
+            this.ctx.shadowColor = reaction.color;
+          }
+          this.ctx.beginPath();
+          this.ctx.arc(point.x, point.y, point.size || 3, 0, Math.PI * 2);
+          this.ctx.fill();
+          this.ctx.restore();
+        });
+        
+        this.ctx.save();
+        this.ctx.translate(reaction.x, reaction.y);
+        this.ctx.rotate(reaction.rotation);
+        this.ctx.globalAlpha = reaction.opacity;
+        
+        if (reaction.glow) {
+          this.ctx.shadowBlur = reaction.glow;
+          this.ctx.shadowColor = reaction.color;
+        }
+        
+        if (reaction.type === 'money') {
+          this.drawMoneyBill(reaction);
+        } else if (reaction.type === 'image') {
+          this.drawImage(reaction);
+        } else {
+          this.ctx.font = `bold ${reaction.size}px Arial`;
+          this.ctx.textAlign = 'center';
+          this.ctx.textBaseline = 'middle';
+          this.ctx.fillStyle = reaction.color;
+          this.ctx.fillText(reaction.content, 0, 0);
+        }
+        
+        this.ctx.restore();
+        
+        this.updateReaction(reaction, index);
+      });
+    }
+
+    drawMoneyBill(reaction) {
+      const width = reaction.size * 1.8;
+      const height = reaction.size * 0.9;
+      
+      let billColor, textColor;
+      if (reaction.value === 1) {
+        billColor = '#C7D2C7';
+        textColor = '#2F5233';
+      } else if (reaction.value <= 10) {
+        billColor = '#228B22';
+        textColor = '#FFFFFF';
+      } else {
+        billColor = '#DAA520';
+        textColor = '#000000';
+      }
+      
+      this.ctx.fillStyle = billColor;
+      this.ctx.fillRect(-width/2, -height/2, width, height);
+      this.ctx.strokeStyle = textColor;
+      this.ctx.lineWidth = 1;
+      this.ctx.strokeRect(-width/2, -height/2, width, height);
+      
+      this.ctx.fillStyle = textColor;
+      this.ctx.font = `bold ${reaction.size * 0.35}px Arial`;
+      this.ctx.textAlign = 'center';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillText(`$${reaction.value}`, 0, 0);
+    }
+
+    drawImage(reaction) {
+      if (reaction.image) {
+        this.ctx.drawImage(reaction.image, -reaction.size/2, -reaction.size/2, reaction.size, reaction.size);
+      }
+    }
+
+    triggerScreenShake(intensity) {
+      if (this.onScreenShake) {
+        this.onScreenShake(intensity);
+      }
+    }
+
+    triggerScreenFlash(color, opacity) {
+      if (this.onScreenFlash) {
+        this.onScreenFlash(color, opacity);
+      }
+    }
+
+    // Memory management methods
+    enforceMemoryLimits() {
+      // Limit particles
+      if (this.particles.length > this.maxParticles) {
+        const excess = this.particles.length - this.maxParticles;
+        this.particles.splice(0, excess);
+        console.log(`🧹 Cleaned up ${excess} excess particles`);
+      }
+      
+      // Limit magic particles
+      if (this.magicParticles.length > this.maxMagicParticles) {
+        const excess = this.magicParticles.length - this.maxMagicParticles;
+        this.magicParticles.splice(0, excess);
+        console.log(`✨ Cleaned up ${excess} excess magic particles`);
+      }
+      
+      // Limit reactions
+      if (this.reactions.length > this.maxReactions) {
+        const excess = this.reactions.length - this.maxReactions;
+        this.reactions.splice(0, excess);
+        console.log(`🎭 Cleaned up ${excess} excess reactions`);
+      }
+    }
+
+    // Performance monitoring
+    updatePerformanceMetrics() {
+      this.frameCount++;
+      const now = Date.now();
+      
+      if (now - this.lastFpsCheck >= 1000) {
+        this.currentFps = this.frameCount;
+        this.frameCount = 0;
+        this.lastFpsCheck = now;
+        
+        // Adjust performance mode based on FPS
+        if (this.currentFps < 30 && this.performanceMode === 'normal') {
+          this.performanceMode = 'reduced';
+          this.maxParticles = 250;
+          this.maxMagicParticles = 100;
+          console.log('⚡ Switched to reduced performance mode (FPS: ' + this.currentFps + ')');
+        } else if (this.currentFps < 15 && this.performanceMode === 'reduced') {
+          this.performanceMode = 'minimal';
+          this.maxParticles = 100;
+          this.maxMagicParticles = 50;
+          console.log('🐌 Switched to minimal performance mode (FPS: ' + this.currentFps + ')');
+        } else if (this.currentFps > 45 && this.performanceMode !== 'normal') {
+          this.performanceMode = 'normal';
+          this.maxParticles = 500;
+          this.maxMagicParticles = 200;
+          console.log('🚀 Switched to normal performance mode (FPS: ' + this.currentFps + ')');
+        }
+      }
+    }
+
+    // Enhanced health monitoring
+    performHealthCheck() {
+      const now = Date.now();
+      
+      // Only check health every 2 seconds to avoid interference
+      if (now - this.lastHealthCheck < 2000) return;
+      
+      this.lastHealthCheck = now;
+      
+      // Check if we have too many objects
+      const totalObjects = this.particles.length + this.magicParticles.length + this.reactions.length;
+      
+      if (totalObjects > 1000) {
+        console.log('⚠️ High object count detected, cleaning up...');
+        this.enforceMemoryLimits();
+      }
+      
+      // Check FPS health
+      if (this.currentFps < 10) {
+        console.log('⚠️ Very low FPS detected, emergency cleanup...');
+        this.particles = this.particles.slice(-50); // Keep only last 50 particles
+        this.magicParticles = this.magicParticles.slice(-25); // Keep only last 25 magic particles
+        this.reactions = this.reactions.slice(-5); // Keep only last 5 reactions
+      }
+      
+      this.isHealthy = this.currentFps > 15 && totalObjects < 800;
+    }
+
+    start() {
+      if (this.animationId) {
+        this.stop(); // Stop existing animation before starting new one
+      }
+      
+      const animate = () => {
+        try {
+          // Performance monitoring
+          this.updatePerformanceMetrics();
+          
+          // Health check
+          this.performHealthCheck();
+          
+          // Memory management
+          if (this.frameCount % 60 === 0) { // Every 60 frames (~1 second)
+            this.enforceMemoryLimits();
+          }
+          
+          // Main draw
+          this.draw();
+          
+          // Reset error counter on successful frame
+          this.consecutiveErrors = 0;
+          
+          this.animationId = requestAnimationFrame(animate);
+        } catch (error) {
+          this.consecutiveErrors++;
+          console.error(`Animation error #${this.consecutiveErrors}:`, error);
+          
+          // If too many consecutive errors, do emergency cleanup
+          if (this.consecutiveErrors >= 3) {
+            console.log('🚨 Emergency cleanup due to consecutive errors');
+            this.particles = [];
+            this.magicParticles = [];
+            this.reactions = [];
+            this.consecutiveErrors = 0;
+          }
+          
+          // Exponential backoff for restart delay
+          const delay = Math.min(100 * Math.pow(2, this.consecutiveErrors - 1), 2000);
+          setTimeout(() => {
+            if (this.consecutiveErrors < 5) { // Don't restart if too many errors
+              this.start();
+            } else {
+              console.error('🛑 Too many consecutive errors, stopping animation');
+            }
+          }, delay);
+        }
+      };
+      animate();
+      console.log('🎬 Animation loop started');
+    }
+
+    stop() {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = null;
+        console.log('🛑 Animation loop stopped');
+      }
+    }
+
+    // Add method to check if animation is running
+    isRunning() {
+      return this.animationId !== null;
+    }
+
+    // Add method to restart animation if it stops
+    ensureRunning() {
+      if (!this.isRunning() && this.consecutiveErrors < 5) {
+        console.log('🔄 Restarting stopped animation');
+        this.start();
+      }
+    }
+
+    // Get performance stats
+    getPerformanceStats() {
+      return {
+        fps: this.currentFps,
+        particles: this.particles.length,
+        magicParticles: this.magicParticles.length,
+        reactions: this.reactions.length,
+        mode: this.performanceMode,
+        healthy: this.isHealthy,
+        errors: this.consecutiveErrors
+      };
+    }
+  }
+
+  // Hologram Engine
+  class HologramEngine {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.holograms = [];
+      this.animationId = null;
+    }
+
+    createHologram(username, x, y) {
+      const hologram = {
+        id: Date.now() + Math.random(),
+        username: username,
+        x: x,
+        y: y,
+        opacity: 0,
+        phase: 'materializing',
+        scanLines: [],
+        particles: [],
+        life: 1,
+        size: 0,
+        targetSize: 20,
+        rotation: 0,
+        glitchOffset: 0
+      };
+
+      for (let i = 0; i < 10; i++) {
+        hologram.scanLines.push({
+          y: y + (Math.random() - 0.5) * 100,
+          speed: Math.random() * 2 + 1,
+          opacity: Math.random()
+        });
+      }
+
+      for (let i = 0; i < 30; i++) {
+        hologram.particles.push({
+          x: x + (Math.random() - 0.5) * 80,
+          y: y + (Math.random() - 0.5) * 80,
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2,
+          life: 1,
+          decay: 0.01
+        });
+      }
+
+      this.holograms.push(hologram);
+    }
+
+    updateHolograms() {
+      this.holograms.forEach((hologram, index) => {
+        switch (hologram.phase) {
+          case 'materializing':
+            hologram.opacity += 0.05;
+            hologram.size += 1;
+            hologram.glitchOffset = Math.sin(Date.now() * 0.01) * 5;
+            
+            if (hologram.opacity >= 1) {
+              hologram.phase = 'stable';
+            }
+            break;
+            
+          case 'stable':
+            hologram.rotation += 0.02;
+            hologram.glitchOffset = Math.sin(Date.now() * 0.02) * 2;
+            
+            setTimeout(() => {
+              if (hologram.phase === 'stable') {
+                hologram.phase = 'fading';
+              }
+            }, 3000);
+            break;
+            
+          case 'fading':
+            hologram.opacity -= 0.03;
+            hologram.size -= 0.5;
+            
+            if (hologram.opacity <= 0) {
+              this.holograms.splice(index, 1);
+            }
+            break;
+        }
+
+        hologram.scanLines.forEach(line => {
+          line.y += line.speed;
+          if (line.y > hologram.y + 50) {
+            line.y = hologram.y - 50;
+          }
+        });
+
+        hologram.particles.forEach((particle, pIndex) => {
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+          particle.life -= particle.decay;
+          
+          if (particle.life <= 0) {
+            hologram.particles.splice(pIndex, 1);
+          }
+        });
+      });
+    }
+
+    drawHolograms() {
+      this.holograms.forEach(hologram => {
+        this.ctx.save();
+        this.ctx.globalAlpha = hologram.opacity;
+        
+        hologram.particles.forEach(particle => {
+          this.ctx.save();
+          this.ctx.globalAlpha = particle.life * hologram.opacity;
+          this.ctx.fillStyle = '#00ffff';
+          this.ctx.shadowBlur = 10;
+          this.ctx.shadowColor = '#00ffff';
+          this.ctx.beginPath();
+          this.ctx.arc(particle.x, particle.y, 1, 0, Math.PI * 2);
+          this.ctx.fill();
+          this.ctx.restore();
+        });
+
+        hologram.scanLines.forEach(line => {
+          this.ctx.save();
+          this.ctx.globalAlpha = line.opacity * hologram.opacity;
+          this.ctx.strokeStyle = '#00ffff';
+          this.ctx.lineWidth = 1;
+          this.ctx.shadowBlur = 5;
+          this.ctx.shadowColor = '#00ffff';
+          this.ctx.beginPath();
+          this.ctx.moveTo(hologram.x - 100, line.y);
+          this.ctx.lineTo(hologram.x + 100, line.y);
+          this.ctx.stroke();
+          this.ctx.restore();
+        });
+
+        this.ctx.save();
+        this.ctx.translate(hologram.x + hologram.glitchOffset, hologram.y);
+        this.ctx.rotate(hologram.rotation);
+        this.ctx.font = `bold ${hologram.size}px Arial`;
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillStyle = '#00ffff';
+        this.ctx.strokeStyle = '#ffffff';
+        this.ctx.lineWidth = 1;
+        this.ctx.shadowBlur = 20;
+        this.ctx.shadowColor = '#00ffff';
+        this.ctx.fillText(hologram.username, 0, 0);
+        this.ctx.strokeText(hologram.username, 0, 0);
+        this.ctx.restore();
+        
+        this.ctx.restore();
+      });
+    }
+
+    draw() {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.updateHolograms();
+      this.drawHolograms();
+    }
+
+    start() {
+      const animate = () => {
+        this.draw();
+        this.animationId = requestAnimationFrame(animate);
+      };
+      animate();
+    }
+
+    stop() {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = null;
+      }
+    }
+  }
+
+  // Magical Reaction Controller
+  class MagicalReactionController {
+    constructor() {
+      this.usernames = ['DJ_Lover', 'ClubKing', 'RaveQueen', 'SF_Regular', 'NightOwl', 'BassDrop'];
+      this.isEditable = false;
+      this.config = {
+        particleIntensity: 1,
+        screenShake: 20,
+        animationSpeed: 1,
+        theme: 'default'
+      };
+      this.init();
+    }
+
+    init() {
+      const container = document.querySelector('.magical-reaction-container');
+      if (!container) return;
+
+      this.isEditable = container.dataset.editable === 'true';
+      
+      const reactionCanvas = document.getElementById('reactionCanvas');
+      const hologramCanvas = document.getElementById('hologramCanvas');
+      
+      if (!reactionCanvas || !hologramCanvas) return;
+
+      // Set canvas dimensions
+      this.resizeCanvases();
+      window.addEventListener('resize', () => this.resizeCanvases());
+
+      this.engine = new ReactionEngine(reactionCanvas);
+      this.hologramEngine = new HologramEngine(hologramCanvas);
+      
+      this.engine.onScreenShake = (intensity) => this.screenShake(intensity);
+      this.engine.onScreenFlash = (color, opacity) => this.screenFlash(color, opacity);
+      this.engine.onCreateHologram = (username, x, y) => this.hologramEngine.createHologram(username, x, y);
+
+      this.engine.start();
+      this.hologramEngine.start();
+
+      if (this.isEditable) {
+        this.setupEditor();
+      }
+
+      // Global API - properly typed
+      (window as any).shootMagicalReaction = (content: string, type: string, value: number = 0) => {
+        this.sendReaction(content, type, value);
+      };
+
+      // Set up periodic health check to ensure animation keeps running
+      this.setupHealthCheck();
+
+      console.log('Magical Reaction System initialized!');
+    }
+
+    setupHealthCheck() {
+      // Smart health check - only restart if actually needed
+      setInterval(() => {
+        if (this.engine) {
+          const stats = this.engine.getPerformanceStats();
+          
+          // Only restart if animation is actually stopped AND healthy
+          if (!this.engine.isRunning() && stats.errors < 3) {
+            console.log('⚠️ Animation stopped, restarting...');
+            this.engine.start();
+          }
+          
+          // Log performance stats every 30 seconds for debugging
+          if (Date.now() % 30000 < 5000) {
+            console.log('📊 Performance Stats:', stats);
+          }
+        }
+        
+        if (this.hologramEngine && !this.hologramEngine.animationId) {
+          console.log('⚠️ Hologram animation stopped, restarting...');
+          this.hologramEngine.start();
+        }
+      }, 10000); // Increased to 10 seconds to be less intrusive
+
+      // Gentle check on button clicks - don't force restart
+      document.addEventListener('click', () => {
+        if (this.engine && !this.engine.isRunning() && this.engine.consecutiveErrors < 3) {
+          console.log('🔄 Button click detected, ensuring animation is running...');
+          this.engine.ensureRunning();
+        }
+      });
+
+      // Performance monitoring - log warnings for debugging
+      setInterval(() => {
+        if (this.engine) {
+          const stats = this.engine.getPerformanceStats();
+          
+          if (!stats.healthy) {
+            console.log('⚠️ System health warning:', {
+              fps: stats.fps,
+              particles: stats.particles,
+              mode: stats.mode,
+              errors: stats.errors
+            });
+          }
+        }
+      }, 15000); // Check health every 15 seconds
+    }
+
+    resizeCanvases() {
+      const container = document.querySelector('.magical-reaction-container');
+      if (!container) {
+        console.log('Container not found for canvas resize');
+        return;
+      }
+
+      // Use window dimensions for full-screen coverage
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      
+      const reactionCanvas = document.getElementById('reactionCanvas');
+      const hologramCanvas = document.getElementById('hologramCanvas');
+
+      if (reactionCanvas && hologramCanvas) {
+        // Set actual canvas dimensions
+        reactionCanvas.width = width;
+        reactionCanvas.height = height;
+        hologramCanvas.width = width;
+        hologramCanvas.height = height;
+        
+        // Also set CSS dimensions to ensure proper scaling
+        reactionCanvas.style.width = width + 'px';
+        reactionCanvas.style.height = height + 'px';
+        hologramCanvas.style.width = width + 'px';
+        hologramCanvas.style.height = height + 'px';
+        
+        console.log(`Canvas resized to: ${width}x${height}`);
+      } else {
+        console.log('Canvas elements not found');
+      }
+    }
+
+    setupEditor() {
+      const editorToggle = document.getElementById('editorToggle');
+      const editorPanel = document.querySelector('.reaction-editor-panel');
+      
+      if (editorToggle && editorPanel) {
+        editorToggle.addEventListener('click', () => {
+          editorPanel.classList.toggle('collapsed');
+        });
+      }
+
+      // Effect controls
+      this.setupEffectControls();
+      
+      // Theme selector
+      this.setupThemeSelector();
+      
+      // Preview controls
+      this.setupPreviewControls();
+      
+      // Config controls
+      this.setupConfigControls();
+    }
+
+    setupEffectControls() {
+      const particleIntensity = document.getElementById('particleIntensity');
+      const screenShake = document.getElementById('screenShake');
+      const animationSpeed = document.getElementById('animationSpeed');
+
+      if (particleIntensity) {
+        particleIntensity.addEventListener('input', (e) => {
+          this.config.particleIntensity = parseFloat(e.target.value);
+          this.engine.updateConfig(this.config);
+          e.target.nextElementSibling.textContent = e.target.value;
+        });
+      }
+
+      if (screenShake) {
+        screenShake.addEventListener('input', (e) => {
+          this.config.screenShake = parseInt(e.target.value);
+          this.engine.updateConfig(this.config);
+          e.target.nextElementSibling.textContent = e.target.value;
+        });
+      }
+
+      if (animationSpeed) {
+        animationSpeed.addEventListener('input', (e) => {
+          this.config.animationSpeed = parseFloat(e.target.value);
+          this.engine.updateConfig(this.config);
+          e.target.nextElementSibling.textContent = e.target.value;
+        });
+      }
+    }
+
+    setupThemeSelector() {
+      const themeButtons = document.querySelectorAll('.theme-btn');
+      themeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          themeButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          this.config.theme = btn.dataset.theme;
+          this.engine.updateConfig(this.config);
+        });
+      });
+    }
+
+    setupPreviewControls() {
+      const previewButtons = document.querySelectorAll('.preview-btn');
+      previewButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const test = btn.dataset.test;
+          if (test === 'love') {
+            this.sendReaction('💜', 'love', 0);
+          } else if (test.startsWith('money-')) {
+            const value = parseInt(test.split('-')[1]);
+            this.sendReaction(`$${value}`, 'money', value);
+          }
+        });
+      });
+    }
+
+    setupConfigControls() {
+      const exportBtn = document.getElementById('exportConfig');
+      const importBtn = document.getElementById('importConfig');
+      const resetBtn = document.getElementById('resetConfig');
+
+      if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+          const configJson = JSON.stringify(this.config, null, 2);
+          const blob = new Blob([configJson], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'magical-reaction-config.json';
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+      }
+
+      if (importBtn) {
+        importBtn.addEventListener('click', () => {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = '.json';
+          input.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                try {
+                  const newConfig = JSON.parse(e.target.result);
+                  this.config = { ...this.config, ...newConfig };
+                  this.engine.updateConfig(this.config);
+                  this.updateEditorUI();
+                } catch (error) {
+                  alert('Invalid config file');
+                }
+              };
+              reader.readAsText(file);
+            }
+          };
+          input.click();
+        });
+      }
+
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          this.config = {
+            particleIntensity: 1,
+            screenShake: 20,
+            animationSpeed: 1,
+            theme: 'default'
+          };
+          this.engine.updateConfig(this.config);
+          this.updateEditorUI();
+        });
+      }
+    }
+
+    updateEditorUI() {
+      const particleIntensity = document.getElementById('particleIntensity');
+      const screenShake = document.getElementById('screenShake');
+      const animationSpeed = document.getElementById('animationSpeed');
+
+      if (particleIntensity) {
+        particleIntensity.value = this.config.particleIntensity;
+        particleIntensity.nextElementSibling.textContent = this.config.particleIntensity;
+      }
+
+      if (screenShake) {
+        screenShake.value = this.config.screenShake;
+        screenShake.nextElementSibling.textContent = this.config.screenShake;
+      }
+
+      if (animationSpeed) {
+        animationSpeed.value = this.config.animationSpeed;
+        animationSpeed.nextElementSibling.textContent = this.config.animationSpeed;
+      }
+    }
+
+    sendReaction(content, type, value) {
+      console.log(`🎭 Sending magical reaction: ${content} (${type}) value: ${value}`);
+      
+      const container = document.querySelector('.magical-reaction-container');
+      if (!container) {
+        console.log('❌ Container not found!');
+        return;
+      }
+
+      // Use window dimensions for proper positioning
+      const startX = window.innerWidth / 2 + (Math.random() - 0.5) * 200;
+      const startY = window.innerHeight - 100; // Start from bottom of screen
+
+      const config = {
+        x: startX,
+        y: startY,
+        content: content,
+        type: type,
+        value: value,
+        color: this.getReactionColor(type),
+        username: value >= 10 ? this.getRandomUsername() : null
+      };
+
+      console.log(`🚀 Launching reaction at (${startX}, ${startY}) with color ${config.color}`);
+      
+      if (this.engine) {
+        const reactionId = this.engine.addReaction(config);
+        console.log(`✅ Reaction added with ID: ${reactionId}`);
+      } else {
+        console.log('❌ Engine not available!');
+      }
+    }
+
+    getRandomUsername() {
+      return this.usernames[Math.floor(Math.random() * this.usernames.length)];
+    }
+
+    getReactionColor(type) {
+      const colors = {
+        love: '#ff006e',
+        fire: '#ff6b35',
+        laugh: '#ffbe0b',
+        skull: '#9370DB',
+        bell: '#FF4500',
+        sparkle: '#00CED1',
+        slay: '#ff1493',
+        nyc: '#1E90FF',
+        yes: '#32CD32',
+        money: '#ffd700',
+        image: '#ff006e'
+      };
+      return colors[type] || '#ffffff';
+    }
+
+    screenShake(intensity) {
+      const container = document.querySelector('.magical-reaction-container');
+      if (!container) return;
+
+      let shakeTime = 0;
+      const maxShakes = Math.min(intensity, 15);
+      
+      const shake = () => {
+        if (shakeTime < maxShakes) {
+          const x = (Math.random() - 0.5) * intensity * 0.5;
+          const y = (Math.random() - 0.5) * intensity * 0.5;
+          container.style.transform = `translate(${x}px, ${y}px)`;
+          shakeTime++;
+          requestAnimationFrame(shake);
+        } else {
+          container.style.transform = 'translate(0, 0)';
+        }
+      };
+      shake();
+    }
+
+    screenFlash(color, opacity) {
+      const container = document.querySelector('.magical-reaction-container');
+      if (!container) return;
+
+      const flash = document.createElement('div');
+      flash.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: ${color};
+        opacity: ${opacity};
+        pointer-events: none;
+        z-index: 999;
+      `;
+      container.appendChild(flash);
+      
+      setTimeout(() => {
+        flash.style.transition = 'opacity 0.5s';
+        flash.style.opacity = '0';
+        setTimeout(() => flash.remove(), 500);
+      }, 100);
+    }
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new MagicalReactionController());
+  } else {
+    new MagicalReactionController();
+  }

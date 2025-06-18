@@ -11,8 +11,6 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
 ---
 
 <MainLayout title="Sound Factory - Homebase">
-    <!-- Import Component Editor -->
-    <script src="../components/componentEditor.js"></script>
     <style>
         * {
             margin: 0;
@@ -78,11 +76,32 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
+            z-index: 200; /* Ensure it's above other elements */
         }
 
         .platform-corner:hover {
             background: rgba(0, 255, 0, 0.2);
             border-color: #00ff00;
+        }
+
+        /* Edit toggle specific styling - Make it very visible */
+        #editToggle {
+            background: rgba(0, 255, 0, 0.8) !important;
+            border: 3px solid #00ff00 !important;
+            font-size: 1.2rem !important;
+            color: #000 !important;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.6) !important;
+            animation: editPulse 2s infinite;
+        }
+
+        @keyframes editPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        #editToggle:hover {
+            background: rgba(0, 255, 0, 1) !important;
+            transform: scale(1.2) !important;
         }
 
         .corner-tl { top: 0.5rem; left: 0.5rem; }
@@ -1550,6 +1569,11 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         }
     </style>
 
+    <!-- MEGA TEST - This should be VERY visible -->
+    <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100px; background: magenta; color: white; z-index: 99999; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold;">
+        🚨 ASTRO PAGE IS LOADING! 🚨
+    </div>
+
     <div class="mobile-container">
         <!-- TikTok Video Area - Full Screen -->
         <div class="tiktok-area">
@@ -1600,15 +1624,15 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         </div>
 
         <!-- Harmony Grid System - Three Black Buttons on Left -->
-        <button class="main-button button-top" onclick="toggleGrid('top')">
+        <button class="main-button button-top" id="toggleTopGrid">
             <span class="icon">+</span>
         </button>
         
-        <button class="main-button button-middle" onclick="toggleGrid('middle')">
+        <button class="main-button button-middle" id="toggleMiddleGrid">
             <span class="icon">+</span>
         </button>
         
-        <button class="main-button button-bottom" onclick="toggleGrid('bottom')">
+        <button class="main-button button-bottom" id="toggleBottomGrid">
             <span class="icon">+</span>
         </button>
 
@@ -1618,17 +1642,17 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
 
     <!-- Harmony Grid Overlays -->
     <div class="grid-overlay" id="grid-top">
-        <button class="close-button" onclick="closeGrid('top')">×</button>
+        <button class="close-button" id="closeTopGrid">×</button>
         <div class="grid-container" id="grid-container-top"></div>
     </div>
 
     <div class="grid-overlay" id="grid-middle">
-        <button class="close-button" onclick="closeGrid('middle')">×</button>
+        <button class="close-button" id="closeMiddleGrid">×</button>
         <div class="grid-container" id="grid-container-middle"></div>
     </div>
 
     <div class="grid-overlay" id="grid-bottom">
-        <button class="close-button" onclick="closeGrid('bottom')">×</button>
+        <button class="close-button" id="closeBottomGrid">×</button>
         <div class="grid-container" id="grid-container-bottom"></div>
     </div>
 
@@ -1665,6 +1689,13 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             <button class="toolbar-btn" onclick="window.open('/editor', '_blank')">🔧 Full Editor</button>
             <button class="toolbar-btn danger" onclick="window.toggleEditMode()">👁️ Exit Edit Mode</button>
         </div>
+    </div>
+
+    <!-- DEBUG: Temporary visible edit button -->
+    <div style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; background: red; color: white; padding: 10px; border: 2px solid white;">
+        <button id="debugEditButton" style="background: lime; color: black; padding: 10px; font-size: 16px; border: none; cursor: pointer;">
+            🔧 TOGGLE EDIT MODE (DEBUG)
+        </button>
     </div>
 
     <!-- Edit Status Indicator -->
@@ -1729,13 +1760,126 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             if (button) button.classList.remove('active');
         }
 
-        // Edit Mode Toggle - Delegate to componentEditor
+        // Edit Mode Toggle - Simplified version that works immediately
         window.toggleEditMode = function() {
-            if (window.componentEditor) {
-                window.componentEditor.toggleEditMode();
+            console.log('Edit mode toggle clicked!');
+            const body = document.body;
+            const editToggle = document.getElementById('editToggle');
+            const isEditMode = body.classList.contains('edit-mode');
+            
+            if (isEditMode) {
+                // Exit edit mode
+                body.classList.remove('edit-mode');
+                editToggle.textContent = '✏️';
+                editToggle.title = 'Toggle Edit Mode';
+                console.log('Edit mode: OFF');
+                hideEditIndicators();
             } else {
-                console.warn('Component editor not loaded yet');
+                // Enter edit mode
+                body.classList.add('edit-mode');
+                editToggle.textContent = '👁️';
+                editToggle.title = 'Exit Edit Mode';
+                console.log('Edit mode: ON');
+                showEditIndicators();
             }
+        }
+
+        // Show edit indicators
+        function showEditIndicators() {
+            const editableElements = document.querySelectorAll('.editable-component');
+            editableElements.forEach(element => {
+                if (!element.querySelector('.edit-indicator')) {
+                    const indicator = document.createElement('div');
+                    indicator.className = 'edit-indicator';
+                    indicator.innerHTML = `
+                        <span class="edit-icon">✏️</span>
+                        <span class="edit-label">EDIT</span>
+                    `;
+                    indicator.onclick = (e) => {
+                        e.stopPropagation();
+                        openSimpleEditor(element);
+                    };
+                    element.appendChild(indicator);
+                    element.style.position = 'relative';
+                }
+            });
+        }
+
+        // Hide edit indicators
+        function hideEditIndicators() {
+            const indicators = document.querySelectorAll('.edit-indicator');
+            indicators.forEach(indicator => indicator.remove());
+        }
+
+        // Simple editor modal
+        function openSimpleEditor(element) {
+            const componentType = element.dataset.componentType || 'component';
+            
+            const modal = document.createElement('div');
+            modal.className = 'component-editor-overlay';
+            modal.innerHTML = `
+                <div class="component-editor-modal">
+                    <div class="component-editor-header">
+                        <h3>Edit ${componentType}</h3>
+                        <button onclick="closeSimpleEditor()" class="close-btn">×</button>
+                    </div>
+                    <div class="component-editor-content">
+                        <div class="property-group">
+                            <label>Background Color:</label>
+                            <input type="color" value="#000000" onchange="updateElementStyle('backgroundColor', this.value)">
+                        </div>
+                        <div class="property-group">
+                            <label>Text Color:</label>
+                            <input type="color" value="#ffffff" onchange="updateElementStyle('color', this.value)">
+                        </div>
+                        <div class="property-group">
+                            <label>Border Radius:</label>
+                            <input type="range" min="0" max="50" value="10" onchange="updateElementStyle('borderRadius', this.value + 'px')">
+                            <span class="range-value">10px</span>
+                        </div>
+                        <div class="property-group">
+                            <label>Padding:</label>
+                            <input type="text" value="20px" onchange="updateElementStyle('padding', this.value)">
+                        </div>
+                    </div>
+                    <div class="component-editor-footer">
+                        <button onclick="saveSimpleChanges()" class="save-btn">Save Changes</button>
+                        <button onclick="window.open('/editor', '_blank')" class="full-editor-btn">Open Full Editor</button>
+                        <button onclick="closeSimpleEditor()" class="cancel-btn">Cancel</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            window.currentEditingElement = element;
+        }
+
+        // Update element style
+        window.updateElementStyle = function(property, value) {
+            if (window.currentEditingElement) {
+                window.currentEditingElement.style[property] = value;
+                
+                // Update range value display
+                const rangeValue = event.target.parentElement.querySelector('.range-value');
+                if (rangeValue && property === 'borderRadius') {
+                    rangeValue.textContent = value;
+                }
+            }
+        }
+
+        // Close simple editor
+        window.closeSimpleEditor = function() {
+            const modal = document.querySelector('.component-editor-overlay');
+            if (modal) {
+                modal.remove();
+            }
+            window.currentEditingElement = null;
+        }
+
+        // Save simple changes
+        window.saveSimpleChanges = function() {
+            console.log('Changes saved!');
+            closeSimpleEditor();
         }
 
         // Show edit indicators for editable components
@@ -2329,10 +2473,82 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             const homebase = new SoundFactoryHomebase();
             initializeHarmonySystem();
             
-            // Initialize edit mode toggle
+            // Setup main button event listeners
+            const toggleTopBtn = document.getElementById('toggleTopGrid');
+            const toggleMiddleBtn = document.getElementById('toggleMiddleGrid');
+            const toggleBottomBtn = document.getElementById('toggleBottomGrid');
+            
+            if (toggleTopBtn) {
+                toggleTopBtn.addEventListener('click', () => {
+                    console.log('Top grid button clicked');
+                    (window as any).toggleGrid('top');
+                });
+            }
+            
+            if (toggleMiddleBtn) {
+                toggleMiddleBtn.addEventListener('click', () => {
+                    console.log('Middle grid button clicked');
+                    (window as any).toggleGrid('middle');
+                });
+            }
+            
+            if (toggleBottomBtn) {
+                toggleBottomBtn.addEventListener('click', () => {
+                    console.log('Bottom grid button clicked');
+                    (window as any).toggleGrid('bottom');
+                });
+            }
+            
+            // Setup close button event listeners
+            const closeTopBtn = document.getElementById('closeTopGrid');
+            const closeMiddleBtn = document.getElementById('closeMiddleGrid');
+            const closeBottomBtn = document.getElementById('closeBottomGrid');
+            
+            if (closeTopBtn) {
+                closeTopBtn.addEventListener('click', () => {
+                    console.log('Close top grid button clicked');
+                    (window as any).closeGrid('top');
+                });
+            }
+            
+            if (closeMiddleBtn) {
+                closeMiddleBtn.addEventListener('click', () => {
+                    console.log('Close middle grid button clicked');
+                    (window as any).closeGrid('middle');
+                });
+            }
+            
+            if (closeBottomBtn) {
+                closeBottomBtn.addEventListener('click', () => {
+                    console.log('Close bottom grid button clicked');
+                    (window as any).closeGrid('bottom');
+                });
+            }
+            
+            // Setup debug edit button
+            const debugEditBtn = document.getElementById('debugEditButton');
+            if (debugEditBtn) {
+                debugEditBtn.addEventListener('click', () => {
+                    console.log('Debug edit button clicked!');
+                    alert('Debug edit button works! 🎉');
+                    (window as any).toggleEditMode();
+                });
+                console.log('Debug edit button event listener added');
+            }
+            
+            // Debug: Check if edit toggle exists
+            console.log('Looking for edit toggle button...');
             const editToggle = document.getElementById('editToggle');
             if (editToggle) {
-                editToggle.addEventListener('click', () => (window as any).toggleEditMode());
+                console.log('Edit toggle button found!', editToggle);
+                editToggle.addEventListener('click', (window as any).toggleEditMode);
+                console.log('Edit toggle button initialized!');
+                
+                // Make it flash to show it's there
+                editToggle.style.animation = 'editPulse 1s infinite';
+            } else {
+                console.error('Edit toggle button not found!');
+                console.log('Available elements with IDs:', document.querySelectorAll('[id]'));
             }
         });
     </script>

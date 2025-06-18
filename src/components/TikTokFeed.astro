@@ -1,0 +1,233 @@
+---
+// TikTok Feed Component - Isolated and Clean
+export interface Props {
+  editable?: boolean;
+}
+
+const { editable = false } = Astro.props;
+---
+
+<div class="tiktok-feed" data-editable={editable}>
+  <!-- TikTok Video Area -->
+  <div class="tiktok-area">
+    <!-- Platform Switcher Corner -->
+    <div class="platform-corner corner-tr">SF</div>
+
+    <!-- Social Media Buttons - Right Side -->
+    <div class="social-buttons-right">
+      <button class="social-btn">IG</button>
+      <button class="social-btn">TT</button>
+      <button class="social-btn">FB</button>
+      <button class="social-btn gift-btn" id="giftBtn">🎁</button>
+    </div>
+
+    <!-- Upload/Camera Controls -->
+    <div class="upload-controls">
+      <button class="upload-btn">📤</button>
+      <button class="upload-btn">📷</button>
+    </div>
+
+    <!-- TikTok Video Content -->
+    <div class="tiktok-placeholder">
+      TIKTOK VIDEO<br>
+      <small style="font-size: 0.8rem; color: #888;">(Full Screen)</small>
+    </div>
+  </div>
+</div>
+
+<style>
+  .tiktok-feed {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: #000000;
+  }
+
+  /* TikTok Video Area */
+  .tiktok-area {
+    width: 100%;
+    height: 100%;
+    background: #000000;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #333;
+  }
+
+  .tiktok-placeholder {
+    color: #666;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  /* Platform Switcher Corner */
+  .platform-corner {
+    position: absolute;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #333;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 200;
+  }
+
+  .platform-corner:hover {
+    background: rgba(0, 255, 0, 0.2);
+    border-color: #00ff00;
+  }
+
+  .corner-tr { 
+    top: 0.5rem; 
+    right: 0.5rem; 
+  }
+
+  /* Social Media Buttons - Right Side */
+  .social-buttons-right {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 150;
+  }
+
+  .social-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #333;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .social-btn:hover {
+    background: rgba(0, 255, 0, 0.2);
+    border-color: #00ff00;
+    transform: scale(1.1);
+  }
+
+  /* Upload/Camera Controls */
+  .upload-controls {
+    position: absolute;
+    bottom: 0.8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .upload-btn {
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #333;
+    color: #fff;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.8rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .upload-btn:hover {
+    background: rgba(0, 255, 0, 0.2);
+    border-color: #00ff00;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .tiktok-placeholder {
+      font-size: 1rem;
+    }
+
+    .platform-corner {
+      width: 2rem;
+      height: 2rem;
+      font-size: 0.5rem;
+    }
+
+    .social-btn {
+      width: 2rem;
+      height: 2rem;
+      font-size: 0.5rem;
+    }
+
+    .upload-btn {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.4rem;
+    }
+  }
+</style>
+
+<script>
+  class TikTokFeedController {
+    constructor() {
+      this.init();
+    }
+
+    init() {
+      this.setupSocialButtons();
+      this.setupUploadButtons();
+      this.setupPlatformSwitcher();
+    }
+
+    setupSocialButtons() {
+      const socialButtons = document.querySelectorAll('.social-btn');
+      socialButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const platform = button.textContent;
+          console.log(`Social platform clicked: ${platform}`);
+          
+          // Visual feedback
+          button.style.background = 'rgba(0, 255, 0, 0.5)';
+          setTimeout(() => button.style.background = 'rgba(0, 0, 0, 0.7)', 300);
+        });
+      });
+    }
+
+    setupUploadButtons() {
+      const uploadButtons = document.querySelectorAll('.upload-btn');
+      uploadButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          console.log('Upload/Camera clicked');
+          button.style.background = 'rgba(0, 255, 0, 0.5)';
+          setTimeout(() => button.style.background = 'rgba(0, 0, 0, 0.7)', 300);
+        });
+      });
+    }
+
+    setupPlatformSwitcher() {
+      const platformCorner = document.querySelector('.platform-corner');
+      if (platformCorner) {
+        platformCorner.addEventListener('click', () => {
+          console.log('Platform switcher clicked');
+          platformCorner.style.background = 'rgba(0, 255, 0, 0.5)';
+          setTimeout(() => platformCorner.style.background = 'rgba(0, 0, 0, 0.7)', 300);
+        });
+      }
+    }
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new TikTokFeedController());
+  } else {
+    new TikTokFeedController();
+  }
+</script>
