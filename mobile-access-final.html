@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory - Mobile Access</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            background: #111;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            max-width: 500px;
+        }
+        h1 {
+            color: #00ff00;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        .url-box {
+            background: #222;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid #333;
+        }
+        .url {
+            color: #00ff00;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        .qr-code {
+            margin: 20px 0;
+        }
+        .instructions {
+            color: #aaa;
+            text-align: left;
+            margin: 20px 0;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: #1a1a1a;
+            border-radius: 5px;
+            border-left: 3px solid #00ff00;
+        }
+        .success {
+            background: #0a3a0a;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 SOUND FACTORY 🎵</h1>
+        <p style="color: #00ff00; font-size: 1.3rem; font-weight: bold;">✅ MOBILE ACCESS READY!</p>
+        
+        <div class="success">
+            🚀 Server is now running with --host flag!<br>
+            Your phone can now connect to these URLs:
+        </div>
+
+        <div class="url-box">
+            <p style="color: #ccc;">🎯 Primary URL (scan this first):</p>
+            <div class="url">http://192.168.1.235:4321/</div>
+            <div class="qr-code">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://192.168.1.235:4321/" alt="QR Code 1" style="background: white; padding: 10px; border-radius: 10px;">
+            </div>
+        </div>
+
+        <div class="url-box">
+            <p style="color: #ccc;">🔄 Alternative URL:</p>
+            <div class="url">http://192.168.1.250:4321/</div>
+            <div class="qr-code">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://192.168.1.250:4321/" alt="QR Code 2" style="background: white; padding: 10px; border-radius: 10px;">
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <div class="step">
+                <strong>📱 Step 1:</strong> Make sure your phone is on the same WiFi network as this computer
+            </div>
+            <div class="step">
+                <strong>📷 Step 2:</strong> Scan the QR code with your phone camera OR type the URL in your phone browser
+            </div>
+            <div class="step">
+                <strong>🎮 Step 3:</strong> Test all the amazing Sound Factory features:
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>💰 Money buttons ($1-$100) with shooting effects</li>
+                    <li>🔥 Reactions (🔥🎧❤️SF JP👠🏳️‍🌈💃) with floating animations</li>
+                    <li>📱 Grid buttons (+ + +) positioned on the left</li>
+                    <li>💬 Group chat with send functionality</li>
+                    <li>🎮 Control buttons (HEY/NAH/Mute/Block)</li>
+                    <li>📺 Resizable and draggable Owncast stream</li>
+                </ul>
+            </div>
+            <div class="step">
+                <strong>🎵 Step 4:</strong> Enjoy the ultimate mobile DJ experience!
+            </div>
+        </div>
+
+        <div style="background: #1a1a1a; padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid #333;">
+            <p style="color: #ccc; font-size: 0.9rem;">
+                <strong>💡 Troubleshooting:</strong><br>
+                • Make sure both devices are on the same WiFi<br>
+                • Try the alternative URL if the first doesn't work<br>
+                • Check that your firewall isn't blocking the connection
+            </p>
+        </div>
+    </div>
+</body>
+</html>
