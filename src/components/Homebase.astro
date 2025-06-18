@@ -382,6 +382,9 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         <!-- Grid Button 3 -->
         <button class="grid-btn" id="grid3">+</button>
         
+        <!-- Gift Button -->
+        <button class="gift-btn" id="giftBtn">🎁 Gift</button>
+        
         <!-- Chat Input Section -->
         <div class="chat-input-section">
             <input type="text" class="chat-input" placeholder="Type your message..." id="chatInput">
@@ -452,9 +455,15 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             reaction.style.left = startX + 'px';
             reaction.style.bottom = (window.innerHeight - startY) + 'px';
             
-            // Random drift
-            reaction.style.setProperty('--drift', (Math.random() - 0.5) * 60 + 'px');
-            reaction.style.animation = 'elegantFloat 3s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+            // Random drift and HYPE animation selection
+            reaction.style.setProperty('--drift', (Math.random() - 0.5) * 100 + 'px');
+            
+            // Choose random HYPE animation
+            const hypeAnimations = ['explosiveReaction', 'hyperBounce', 'crazySpiral', 'megaBlast'];
+            const randomAnimation = hypeAnimations[Math.floor(Math.random() * hypeAnimations.length)];
+            const duration = randomAnimation === 'megaBlast' ? '4s' : '3.5s';
+            
+            reaction.style.animation = `${randomAnimation} ${duration} cubic-bezier(0.4, 0, 0.2, 1) forwards`;
             
             document.getElementById('reactions-container').appendChild(reaction);
             

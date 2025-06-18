@@ -88,6 +88,40 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         .corner-bl { bottom: 0.5rem; left: 0.5rem; }
         .corner-br { bottom: 0.5rem; right: 0.5rem; }
 
+        /* Social Media Buttons - Right Side */
+        .social-buttons-right {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 150;
+        }
+
+        .social-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+            transform: scale(1.1);
+        }
+
         /* Upload/Camera Buttons - Smaller */
         .upload-controls {
             position: absolute;
@@ -245,13 +279,13 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             background: rgba(255, 0, 0, 0.5);
         }
 
-        /* Floating Owncast Stream - Bigger and resizable */
+        /* Floating Owncast Stream - Smaller than typing box */
         .owncast-stream {
             position: absolute;
             top: 4rem;
             left: 0.5rem;
-            width: 10rem; /* Increased from 6rem */
-            height: 7rem; /* Increased from 4rem */
+            width: 4rem; /* Smaller than chat input */
+            height: 3rem; /* Smaller than chat input */
             background: rgba(0, 0, 0, 0.9);
             border: 2px solid #00ff00;
             border-radius: 0.5rem;
@@ -259,16 +293,16 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem; /* Increased from 0.6rem */
+            font-size: 0.5rem; /* Smaller text */
             z-index: 100;
             cursor: move;
             box-shadow: 0 4px 20px rgba(0, 255, 0, 0.3);
             resize: both;
             overflow: auto;
-            min-width: 6rem; /* Increased from 4rem */
-            min-height: 4rem; /* Increased from 2.5rem */
-            max-width: 20rem; /* Increased from 15rem */
-            max-height: 15rem; /* Increased from 10rem */
+            min-width: 3rem;
+            min-height: 2rem;
+            max-width: 15rem;
+            max-height: 10rem;
         }
 
         /* Resize Handle Styling */
@@ -606,14 +640,14 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
                 inset 0 1px 1px rgba(255, 255, 255, 0.3);
         }
 
-        /* Grid Overlay - 64 Button Grid - Smaller */
+        /* Grid Overlay - 64 Button Grid - Pure Black Background */
         .grid-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: #000000;
             display: none;
             align-items: center;
             justify-content: center;
@@ -758,26 +792,164 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             margin: 0 auto;
         }
 
-        /* Animations */
-        @keyframes elegantFloat {
+        /* HYPE REACTION ANIMATIONS */
+        @keyframes explosiveReaction {
             0% {
                 transform: translateY(0) scale(0) rotate(0deg);
                 opacity: 0;
+                filter: blur(0px) brightness(1) hue-rotate(0deg);
             }
-            5% {
-                transform: translateY(-10px) scale(0.5) rotate(5deg);
-                opacity: 0.8;
-            }
-            15% {
-                transform: translateY(-50px) scale(1) rotate(10deg);
+            10% {
+                transform: translateY(-20px) scale(1.5) rotate(180deg);
                 opacity: 1;
+                filter: blur(2px) brightness(2) hue-rotate(90deg);
             }
-            85% {
-                opacity: 0.8;
+            20% {
+                transform: translateY(-60px) scale(2) rotate(360deg);
+                opacity: 1;
+                filter: blur(0px) brightness(3) hue-rotate(180deg);
+            }
+            40% {
+                transform: translateY(-120px) scale(1.8) rotate(540deg);
+                opacity: 0.9;
+                filter: blur(1px) brightness(2.5) hue-rotate(270deg);
+            }
+            70% {
+                transform: translateY(-250px) scale(1.2) rotate(720deg);
+                opacity: 0.7;
+                filter: blur(3px) brightness(1.5) hue-rotate(360deg);
             }
             100% {
-                transform: translateY(-400px) translateX(var(--drift)) scale(0.8) rotate(180deg);
+                transform: translateY(-400px) translateX(var(--drift)) scale(0.5) rotate(1080deg);
                 opacity: 0;
+                filter: blur(5px) brightness(0.5) hue-rotate(450deg);
+            }
+        }
+
+        @keyframes hyperBounce {
+            0% {
+                transform: translateY(0) scale(0) rotate(0deg);
+                opacity: 0;
+                filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0));
+            }
+            15% {
+                transform: translateY(-30px) scale(1.8) rotate(90deg);
+                opacity: 1;
+                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1));
+            }
+            25% {
+                transform: translateY(-10px) scale(1.2) rotate(180deg);
+                opacity: 1;
+                filter: drop-shadow(0 0 30px rgba(0, 255, 255, 1));
+            }
+            35% {
+                transform: translateY(-50px) scale(2.2) rotate(270deg);
+                opacity: 1;
+                filter: drop-shadow(0 0 40px rgba(255, 0, 255, 1));
+            }
+            45% {
+                transform: translateY(-20px) scale(1.5) rotate(360deg);
+                opacity: 1;
+                filter: drop-shadow(0 0 25px rgba(255, 255, 0, 1));
+            }
+            60% {
+                transform: translateY(-80px) scale(1.8) rotate(450deg);
+                opacity: 0.8;
+                filter: drop-shadow(0 0 35px rgba(255, 128, 0, 1));
+            }
+            80% {
+                transform: translateY(-200px) scale(1.2) rotate(630deg);
+                opacity: 0.5;
+                filter: drop-shadow(0 0 15px rgba(128, 255, 128, 0.8));
+            }
+            100% {
+                transform: translateY(-350px) translateX(var(--drift)) scale(0.3) rotate(720deg);
+                opacity: 0;
+                filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+            }
+        }
+
+        @keyframes crazySpiral {
+            0% {
+                transform: translateY(0) translateX(0) scale(0) rotate(0deg);
+                opacity: 0;
+                filter: hue-rotate(0deg) saturate(1) brightness(1);
+            }
+            20% {
+                transform: translateY(-40px) translateX(20px) scale(1.5) rotate(180deg);
+                opacity: 1;
+                filter: hue-rotate(120deg) saturate(2) brightness(2);
+            }
+            40% {
+                transform: translateY(-80px) translateX(-30px) scale(2) rotate(360deg);
+                opacity: 1;
+                filter: hue-rotate(240deg) saturate(3) brightness(1.5);
+            }
+            60% {
+                transform: translateY(-140px) translateX(40px) scale(1.8) rotate(540deg);
+                opacity: 0.8;
+                filter: hue-rotate(360deg) saturate(2.5) brightness(2.2);
+            }
+            80% {
+                transform: translateY(-220px) translateX(-20px) scale(1.3) rotate(720deg);
+                opacity: 0.6;
+                filter: hue-rotate(480deg) saturate(1.5) brightness(1.8);
+            }
+            100% {
+                transform: translateY(-350px) translateX(var(--drift)) scale(0.4) rotate(900deg);
+                opacity: 0;
+                filter: hue-rotate(600deg) saturate(1) brightness(1);
+            }
+        }
+
+        @keyframes megaBlast {
+            0% {
+                transform: translateY(0) scale(0) rotate(0deg);
+                opacity: 0;
+                filter: blur(0px) brightness(1) contrast(1) saturate(1);
+                text-shadow: 0 0 0px rgba(255, 255, 255, 0);
+            }
+            5% {
+                transform: translateY(-15px) scale(2.5) rotate(45deg);
+                opacity: 1;
+                filter: blur(1px) brightness(3) contrast(2) saturate(3);
+                text-shadow: 0 0 20px rgba(255, 255, 255, 1);
+            }
+            15% {
+                transform: translateY(-45px) scale(3) rotate(135deg);
+                opacity: 1;
+                filter: blur(2px) brightness(4) contrast(3) saturate(4);
+                text-shadow: 0 0 40px rgba(0, 255, 255, 1);
+            }
+            30% {
+                transform: translateY(-90px) scale(2.5) rotate(270deg);
+                opacity: 1;
+                filter: blur(1px) brightness(3.5) contrast(2.5) saturate(3.5);
+                text-shadow: 0 0 60px rgba(255, 0, 255, 1);
+            }
+            50% {
+                transform: translateY(-150px) scale(2) rotate(450deg);
+                opacity: 0.9;
+                filter: blur(3px) brightness(2.5) contrast(2) saturate(2.5);
+                text-shadow: 0 0 50px rgba(255, 255, 0, 1);
+            }
+            70% {
+                transform: translateY(-220px) scale(1.5) rotate(630deg);
+                opacity: 0.7;
+                filter: blur(4px) brightness(2) contrast(1.5) saturate(2);
+                text-shadow: 0 0 30px rgba(255, 128, 0, 0.8);
+            }
+            90% {
+                transform: translateY(-300px) scale(1) rotate(810deg);
+                opacity: 0.3;
+                filter: blur(5px) brightness(1.5) contrast(1.2) saturate(1.5);
+                text-shadow: 0 0 15px rgba(128, 255, 128, 0.5);
+            }
+            100% {
+                transform: translateY(-400px) translateX(var(--drift)) scale(0.2) rotate(1080deg);
+                opacity: 0;
+                filter: blur(6px) brightness(1) contrast(1) saturate(1);
+                text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
             }
         }
 
@@ -1031,11 +1203,15 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
     <div class="mobile-container">
         <!-- TikTok Video Area - Full Screen -->
         <div class="tiktok-area">
-            <!-- Platform Switcher Corners -->
-            <div class="platform-corner corner-tl">IG</div>
+            <!-- Platform Switcher Corner - Only SF in corner -->
             <div class="platform-corner corner-tr">SF</div>
-            <div class="platform-corner corner-bl">TT</div>
-            <div class="platform-corner corner-br">FB</div>
+
+            <!-- Social Media Buttons - Right Side -->
+            <div class="social-buttons-right">
+                <button class="social-btn">IG</button>
+                <button class="social-btn">TT</button>
+                <button class="social-btn">FB</button>
+            </div>
 
             <!-- Upload/Camera Controls - Smaller -->
             <div class="upload-controls">
@@ -1105,11 +1281,8 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
     <div id="money-container" class="money-container"></div>
 
     <script>
-        // Global Harmony Grid System Functions (must be global for onclick handlers)
-        // These MUST be declared first to be accessible from inline onclick handlers
-        
-        // Toggle grid visibility
-        function toggleGrid(position) {
+        // Global functions - MUST be declared at top level for onclick handlers
+        window.toggleGrid = function(position) {
             const grid = document.getElementById(`grid-${position}`);
             const button = document.querySelector(`.button-${position}`);
             
@@ -1132,7 +1305,7 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         }
 
         // Close grid
-        function closeGrid(position) {
+        window.closeGrid = function(position) {
             const grid = document.getElementById(`grid-${position}`);
             const button = document.querySelector(`.button-${position}`);
             if (grid) grid.classList.remove('active');
@@ -1210,110 +1383,17 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         // Initialize LED grid
         function initializeLED() {
             const ledGrid = document.getElementById('ledGrid');
-            // Create 20,000 LED pixels (200x100)
-            for(let i = 0; i < 20000; i++) {
-                const pixel = document.createElement('div');
-                pixel.className = 'led-pixel';
-                pixel.id = `led-${i}`;
-                ledGrid.appendChild(pixel);
-            }
-        }
-
-        // Toggle grid visibility
-        function toggleGrid(position) {
-            const grid = document.getElementById(`grid-${position}`);
-            const button = document.querySelector(`.button-${position}`);
-            
-            // Check if this grid is already active
-            const isActive = grid.classList.contains('active');
-            
-            // Close all grids first
-            ['top', 'middle', 'bottom'].forEach(pos => {
-                document.getElementById(`grid-${pos}`).classList.remove('active');
-                document.querySelector(`.button-${pos}`).classList.remove('active');
-            });
-            
-            // If it wasn't active, open it
-            if (!isActive) {
-                grid.classList.add('active');
-                button.classList.add('active');
-            }
-        }
-
-        // Close grid
-        function closeGrid(position) {
-            const grid = document.getElementById(`grid-${position}`);
-            const button = document.querySelector(`.button-${position}`);
-            grid.classList.remove('active');
-            button.classList.remove('active');
-        }
-
-        // Handle button clicks
-        function handleButton(grid, number) {
-            console.log(`Grid: ${grid}, Button: ${number}`);
-            
-            // Example actions based on grid and button
-            if (grid === 'top') {
-                // LED control - example: light up section
-                lightUpSection(number);
-            } else if (grid === 'middle') {
-                // Effects - example: run effect
-                runEffect(number);
-            } else if (grid === 'bottom') {
-                // Presets - example: load preset
-                loadPreset(number);
-            }
-        }
-
-        // Example: Light up LED section
-        function lightUpSection(section) {
-            // Show LED display
-            document.getElementById('ledDisplay').classList.add('active');
-            
-            // Light up a section of LEDs
-            const colors = ['red', 'green', 'blue', 'yellow', 'purple', 'white', 'orange', 'pink'];
-            const color = colors[section % colors.length];
-            
-            // Clear all LEDs
-            document.querySelectorAll('.led-pixel').forEach(pixel => {
-                pixel.className = 'led-pixel';
-            });
-            
-            // Light up section
-            const sectionSize = 312; // ~20000/64
-            const start = (section - 1) * sectionSize;
-            const end = start + sectionSize;
-            
-            for(let i = start; i < end && i < 20000; i++) {
-                document.getElementById(`led-${i}`).classList.add(color);
-            }
-        }
-
-        // Example: Run effect
-        function runEffect(effectNumber) {
-            document.getElementById('ledDisplay').classList.add('active');
-            
-            // Simple wave effect
-            let offset = 0;
-            const interval = setInterval(() => {
-                document.querySelectorAll('.led-pixel').forEach((pixel, index) => {
+            if (ledGrid) {
+                // Create 20,000 LED pixels (200x100)
+                for(let i = 0; i < 20000; i++) {
+                    const pixel = document.createElement('div');
                     pixel.className = 'led-pixel';
-                    if ((index + offset) % 100 < 50) {
-                        pixel.classList.add('blue');
-                    }
-                });
-                offset += 5;
-                
-                if (offset > 100) clearInterval(interval);
-            }, 50);
+                    pixel.id = `led-${i}`;
+                    ledGrid.appendChild(pixel);
+                }
+            }
         }
-
-        // Example: Load preset
-        function loadPreset(presetNumber) {
-            console.log(`Loading preset ${presetNumber}`);
-            // Would load saved configuration
-        }
-
+        
         // Initialize Harmony System
         function initializeHarmonySystem() {
             // Initialize LED grid
@@ -1398,9 +1478,15 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
                 reaction.style.left = startX + 'px';
                 reaction.style.bottom = (window.innerHeight - startY) + 'px';
                 
-                // Random drift
-                reaction.style.setProperty('--drift', (Math.random() - 0.5) * 60 + 'px');
-                reaction.style.animation = 'elegantFloat 3s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+                // Random drift and HYPE animation selection
+                reaction.style.setProperty('--drift', (Math.random() - 0.5) * 100 + 'px');
+                
+                // Choose random HYPE animation
+                const hypeAnimations = ['explosiveReaction', 'hyperBounce', 'crazySpiral', 'megaBlast'];
+                const randomAnimation = hypeAnimations[Math.floor(Math.random() * hypeAnimations.length)];
+                const duration = randomAnimation === 'megaBlast' ? '4s' : '3.5s';
+                
+                reaction.style.animation = `${randomAnimation} ${duration} cubic-bezier(0.4, 0, 0.2, 1) forwards`;
                 
                 document.getElementById('reactions-container').appendChild(reaction);
                 
