@@ -1,6 +1,9 @@
 ---
 // Sound Factory - Simple Homebase Layout
 import MainLayout from '../components/layout/MainLayout.astro';
+import Homebase from '../components/Homebase.astro';
+import SoundFactoryGrid from '../components/SoundFactoryGrid.astro';
+import ChatSection from '../components/ChatSection.astro';
 
 export interface Props {
   wsUrl?: string;
@@ -41,6 +44,7 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             position: relative;
         }
 
+<<<<<<< HEAD
         /* Header - Minimal */
         .header {
             padding: 10px 20px;
@@ -49,6 +53,8 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             z-index: 200;
             min-height: 40px;
         }
+=======
+>>>>>>> 50793b9dbf0e7d3987698dd171a6ac62edd91d6d
 
         /* TikTok Video Area */
         .tiktok-area {
@@ -95,23 +101,23 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         .corner-bl { bottom: 10px; left: 10px; }
         .corner-br { bottom: 10px; right: 10px; }
 
-        /* Upload/Camera Buttons */
+        /* Upload/Camera Buttons - Smaller */
         .upload-controls {
             position: absolute;
-            bottom: 20px;
+            bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .upload-btn {
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid #333;
             color: #fff;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 1.2rem;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -121,7 +127,138 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             border-color: #00ff00;
         }
 
-        /* Floating Owncast Stream */
+        /* Grid Buttons - Positioned Around Screen */
+        .grid-btn-top {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 10px;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 150;
+        }
+
+        .grid-btn-middle {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 10px;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 150;
+        }
+
+        .grid-btn-top:hover, .grid-btn-middle:hover {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+            transform: scale(1.1);
+        }
+
+        .grid-btn-middle:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Control Buttons Row */
+        .control-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            padding: 5px;
+            border-bottom: 1px solid #333;
+        }
+
+        .control-section {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .control-btn {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+            transform: scale(1.05);
+        }
+
+        .hey-btn {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+        }
+
+        .hey-btn:hover {
+            background: rgba(0, 255, 0, 0.4);
+        }
+
+        .nah-btn {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+        }
+
+        .nah-btn:hover {
+            background: rgba(255, 0, 0, 0.4);
+        }
+
+        .mute-btn {
+            background: rgba(255, 165, 0, 0.2);
+            border-color: #ffa500;
+        }
+
+        .mute-btn:hover {
+            background: rgba(255, 165, 0, 0.4);
+        }
+
+        .mute-btn.muted {
+            background: rgba(255, 0, 0, 0.4);
+            border-color: #ff0000;
+        }
+
+        .block-btn {
+            background: rgba(255, 0, 0, 0.3);
+            border-color: #ff0000;
+        }
+
+        .block-btn:hover {
+            background: rgba(255, 0, 0, 0.5);
+        }
+
+        /* Floating Owncast Stream - User Resizable */
         .owncast-stream {
             position: absolute;
             top: 80px;
@@ -139,6 +276,43 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             z-index: 100;
             cursor: move;
             box-shadow: 0 4px 20px rgba(0, 255, 0, 0.3);
+            resize: both;
+            overflow: auto;
+            min-width: 80px;
+            min-height: 50px;
+            max-width: 300px;
+            max-height: 200px;
+        }
+
+        /* Resize Handle Styling */
+        .owncast-stream::-webkit-resizer {
+            background: #00ff00;
+            border-radius: 0 0 8px 0;
+        }
+
+        /* Owncast Controls */
+        .owncast-controls {
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 2px;
+        }
+
+        .owncast-btn {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .owncast-btn:hover {
+            background: rgba(0, 255, 0, 0.4);
         }
 
         .owncast-title {
@@ -151,6 +325,7 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             font-size: 0.7rem;
         }
 
+<<<<<<< HEAD
         /* HOMEBASE - Multi-Row Layout */
         .homebase {
             background: #000000;
@@ -163,18 +338,38 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         }
 
         .homebase-row {
+=======
+        /* HOMEBASE - Multiple Rows */
+        .homebase {
+            background: #000000;
+            border-top: 2px solid #333;
+            padding: 5px;
+>>>>>>> 50793b9dbf0e7d3987698dd171a6ac62edd91d6d
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Money Row */
+        .money-row {
+            display: flex;
+            justify-content: center;
             gap: 5px;
+<<<<<<< HEAD
             overflow-x: auto;
             min-height: 35px;
+=======
+            padding: 5px;
+            border-bottom: 1px solid #333;
+>>>>>>> 50793b9dbf0e7d3987698dd171a6ac62edd91d6d
         }
 
         /* Money Buttons */
         .money-section {
             display: flex;
-            gap: 3px;
-            flex-shrink: 0;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .money-btn {
@@ -204,12 +399,6 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             transform: scale(0.9);
         }
 
-        /* Reaction Buttons */
-        .reaction-section {
-            display: flex;
-            gap: 3px;
-            flex-shrink: 0;
-        }
 
         .reaction-btn {
             width: 35px;
@@ -278,6 +467,69 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
         }
 
+        /* Reaction Row */
+        .reaction-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            padding: 5px;
+            border-bottom: 1px solid #333;
+        }
+
+        /* Reaction Section */
+        .reaction-section {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Chat Row */
+        .chat-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+        }
+
+        /* Grid Buttons (Plus Signs) */
+        .grid-buttons {
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+
+        .grid-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 10px;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .grid-btn:hover {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+            transform: scale(1.1);
+        }
+
+        /* Chat Input Section */
+        .chat-input-section {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            flex: 1;
+        }
+
         /* Chat Section */
         .chat-section {
             flex: 1;
@@ -325,6 +577,7 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             transform: scale(1.05);
         }
 
+<<<<<<< HEAD
         /* Left Side Grid Buttons */
         .left-grid-buttons {
             position: fixed;
@@ -498,6 +751,8 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             transform: scale(1.05);
             box-shadow: 0 4px 15px rgba(0, 255, 0, 0.4);
         }
+=======
+>>>>>>> 50793b9dbf0e7d3987698dd171a6ac62edd91d6d
 
         /* Floating Reactions Container */
         .reactions-container {
@@ -607,11 +862,15 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
     </style>
 
     <div class="mobile-container">
+<<<<<<< HEAD
         <!-- Header -->
         <div class="header">
         </div>
 
         <!-- TikTok Video Area -->
+=======
+        <!-- TikTok Video Area - Full Screen -->
+>>>>>>> 50793b9dbf0e7d3987698dd171a6ac62edd91d6d
         <div class="tiktok-area">
             <!-- Platform Switcher Corners -->
             <div class="platform-corner corner-tl">IG</div>
@@ -619,10 +878,10 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             <div class="platform-corner corner-bl">TT</div>
             <div class="platform-corner corner-br">FB</div>
 
-            <!-- Upload/Camera Controls -->
+            <!-- Upload/Camera Controls - Smaller -->
             <div class="upload-controls">
-                <button class="upload-btn">📹</button>
                 <button class="upload-btn">📤</button>
+                <button class="upload-btn">📷</button>
             </div>
 
             <!-- TikTok Placeholder -->
@@ -632,10 +891,14 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             </div>
         </div>
 
+        <!-- Sound Factory Grid Component -->
+        <SoundFactoryGrid />
+
         <!-- Floating Owncast Stream -->
         <div class="owncast-stream" id="owncastStream">
             <div class="owncast-title">OWNCAST</div>
             <div class="owncast-status">LIVE</div>
+<<<<<<< HEAD
         </div>
 
         <!-- Left Side Grid Buttons -->
@@ -679,8 +942,19 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
                     <button class="send-btn" id="sendBtn">Send</button>
                 </div>
                 <button class="grid-btn" id="grid3">G3</button>
+=======
+            <div class="owncast-controls">
+                <button class="owncast-btn" id="prevVideo">◀</button>
+                <button class="owncast-btn" id="nextVideo">▶</button>
+>>>>>>> 50793b9dbf0e7d3987698dd171a6ac62edd91d6d
             </div>
         </div>
+
+        <!-- Homebase Component -->
+        <Homebase wsUrl={wsUrl} />
+
+        <!-- Chat Section Component -->
+        <ChatSection wsUrl={wsUrl} />
     </div>
 
     <!-- Grid Overlays -->

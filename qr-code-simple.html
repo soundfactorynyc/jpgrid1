@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory - QR Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            background: #111;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        h1 {
+            color: #00ff00;
+            margin-bottom: 20px;
+        }
+        .qr-code {
+            margin: 20px 0;
+        }
+        .url {
+            color: #ccc;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            word-break: break-all;
+            background: #222;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 SOUND FACTORY 🎵</h1>
+        <p style="color: #00ff00; font-size: 1.3rem; font-weight: bold;">Mobile QR Code</p>
+        
+        <div class="qr-code">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=http://localhost:4324/" alt="QR Code" style="background: white; padding: 10px; border-radius: 10px;">
+        </div>
+        
+        <div class="url">http://localhost:4324/</div>
+        
+        <div style="color: #aaa; max-width: 400px;">
+            <p><strong>📱 Scan with your phone to test:</strong></p>
+            <ul style="text-align: left;">
+                <li>💰 Money buttons ($1-$100)</li>
+                <li>🔥 Reactions (🔥🎧❤️SF JP👠🏳️‍🌈💃)</li>
+                <li>📱 Grid buttons (+ + +)</li>
+                <li>💬 Group chat</li>
+                <li>🎮 Controls (HEY/NAH/Mute/Block)</li>
+                <li>📺 Resizable Owncast</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

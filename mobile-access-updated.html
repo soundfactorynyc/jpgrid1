@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory - Mobile Access (Updated)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            background: #111;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            max-width: 500px;
+        }
+        h1 {
+            color: #00ff00;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        .url-box {
+            background: #222;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid #333;
+        }
+        .url {
+            color: #00ff00;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        .qr-code {
+            margin: 20px 0;
+        }
+        .instructions {
+            color: #aaa;
+            text-align: left;
+            margin: 20px 0;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: #1a1a1a;
+            border-radius: 5px;
+            border-left: 3px solid #00ff00;
+        }
+        .success {
+            background: #0a3a0a;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .cache-warning {
+            background: #3a1a0a;
+            border: 1px solid #ff6600;
+            color: #ff6600;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 SOUND FACTORY 🎵</h1>
+        <p style="color: #00ff00; font-size: 1.3rem; font-weight: bold;">✅ LATEST VERSION READY!</p>
+        
+        <div class="success">
+            🚀 Server running on port 4322 with latest updates!<br>
+            Grid buttons on LEFT, all features working!
+        </div>
+
+        <div class="cache-warning">
+            ⚠️ IMPORTANT: Clear your phone's browser cache first!<br>
+            Your phone may be showing an old cached version.
+        </div>
+
+        <div class="url-box">
+            <p style="color: #ccc;">🎯 UPDATED URLs (port 4322):</p>
+            <div class="url">http://192.168.1.235:4322/</div>
+            <div class="qr-code">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://192.168.1.235:4322/" alt="QR Code 1" style="background: white; padding: 10px; border-radius: 10px;">
+            </div>
+        </div>
+
+        <div class="url-box">
+            <p style="color: #ccc;">🔄 Alternative URL:</p>
+            <div class="url">http://192.168.1.250:4322/</div>
+            <div class="qr-code">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://192.168.1.250:4322/" alt="QR Code 2" style="background: white; padding: 10px; border-radius: 10px;">
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <div class="step">
+                <strong>🧹 Step 1: CLEAR CACHE FIRST!</strong><br>
+                • iPhone: Settings > Safari > Clear History and Website Data<br>
+                • Android: Chrome > Settings > Privacy > Clear browsing data<br>
+                • Or use Private/Incognito mode
+            </div>
+            <div class="step">
+                <strong>📱 Step 2:</strong> Make sure your phone is on the same WiFi network
+            </div>
+            <div class="step">
+                <strong>📷 Step 3:</strong> Scan the NEW QR code OR type the NEW URL (port 4322)
+            </div>
+            <div class="step">
+                <strong>🎮 Step 4:</strong> You should now see the LATEST version with:
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>✅ Grid buttons (+ + +) on the LEFT side</li>
+                    <li>✅ Group chat visible at bottom</li>
+                    <li>✅ All buttons working with effects</li>
+                    <li>✅ Control row: HEY/NAH/Live/Video/Block</li>
+                    <li>✅ Money buttons with shooting animations</li>
+                    <li>✅ Reaction buttons with floating effects</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="background: #1a1a1a; padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid #333;">
+            <p style="color: #ccc; font-size: 0.9rem;">
+                <strong>💡 If still showing old version:</strong><br>
+                • Force refresh: Hold refresh button and select "Hard Reload"<br>
+                • Try different browser on your phone<br>
+                • Add "?v=2" to the end of the URL<br>
+                • Make sure you're using port 4322 (not 4321)
+            </p>
+        </div>
+    </div>
+</body>
+</html>
