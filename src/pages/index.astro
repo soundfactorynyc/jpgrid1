@@ -1,9 +1,7 @@
 ---
-// Sound Factory - Simple Homebase Layout
+// Sound Factory - Mobile Optimized Layout with Harmony Grid System
 import MainLayout from '../components/layout/MainLayout.astro';
 import Homebase from '../components/Homebase.astro';
-import SoundFactoryGrid from '../components/SoundFactoryGrid.astro';
-import ChatSection from '../components/ChatSection.astro';
 
 export interface Props {
   wsUrl?: string;
@@ -28,14 +26,14 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             overflow: hidden;
             position: fixed;
             inset: 0;
-            max-width: 420px;
+            max-width: 100vw;
             margin: 0 auto;
         }
 
         /* Mobile Container */
         .mobile-container {
             width: 100%;
-            max-width: 420px;
+            max-width: 100vw;
             height: 100vh;
             margin: 0 auto;
             background: #000000;
@@ -44,19 +42,7 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             position: relative;
         }
 
-<<<<<<< HEAD
-        /* Header - Minimal */
-        .header {
-            padding: 10px 20px;
-            background: rgba(0, 0, 0, 0.9);
-            text-align: center;
-            z-index: 200;
-            min-height: 40px;
-        }
-=======
->>>>>>> 50793b9dbf0e7d3987698dd171a6ac62edd91d6d
-
-        /* TikTok Video Area */
+        /* TikTok Video Area - Reduced height for mobile */
         .tiktok-area {
             flex: 1;
             background: #000000;
@@ -65,27 +51,28 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             align-items: center;
             justify-content: center;
             border-bottom: 1px solid #333;
+            min-height: 40vh; /* Reduced from taking full space */
         }
 
         .tiktok-placeholder {
             color: #666;
-            font-size: 2rem;
+            font-size: 1.2rem; /* Reduced from 2rem */
             text-align: center;
         }
 
-        /* Platform Switcher Corners */
+        /* Platform Switcher Corners - Smaller */
         .platform-corner {
             position: absolute;
-            width: 50px;
-            height: 50px;
+            width: 2.5rem; /* Reduced from 50px */
+            height: 2.5rem; /* Reduced from 50px */
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid #333;
-            border-radius: 8px;
+            border-radius: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-size: 0.8rem;
+            font-size: 0.6rem; /* Reduced from 0.8rem */
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -96,28 +83,28 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             border-color: #00ff00;
         }
 
-        .corner-tl { top: 10px; left: 10px; }
-        .corner-tr { top: 10px; right: 10px; }
-        .corner-bl { bottom: 10px; left: 10px; }
-        .corner-br { bottom: 10px; right: 10px; }
+        .corner-tl { top: 0.5rem; left: 0.5rem; }
+        .corner-tr { top: 0.5rem; right: 0.5rem; }
+        .corner-bl { bottom: 0.5rem; left: 0.5rem; }
+        .corner-br { bottom: 0.5rem; right: 0.5rem; }
 
         /* Upload/Camera Buttons - Smaller */
         .upload-controls {
             position: absolute;
-            bottom: 15px;
+            bottom: 0.8rem;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 8px;
+            gap: 0.4rem;
         }
 
         .upload-btn {
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid #333;
             color: #fff;
-            padding: 6px 10px;
-            border-radius: 15px;
-            font-size: 1rem;
+            padding: 0.3rem 0.5rem;
+            border-radius: 0.8rem;
+            font-size: 0.8rem; /* Reduced from 1rem */
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -127,22 +114,22 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             border-color: #00ff00;
         }
 
-        /* Grid Buttons - Positioned Around Screen */
+        /* Grid Buttons - Positioned Around Screen - Smaller */
         .grid-btn-top {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 0.5rem;
+            left: 0.5rem;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid #333;
             color: #fff;
-            padding: 8px 10px;
+            padding: 0.4rem 0.5rem;
             border-radius: 50%;
-            font-size: 1rem;
+            font-size: 0.7rem; /* Reduced from 1rem */
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
-            width: 35px;
-            height: 35px;
+            width: 2rem; /* Reduced from 35px */
+            height: 2rem; /* Reduced from 35px */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -152,19 +139,19 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         .grid-btn-middle {
             position: absolute;
             top: 50%;
-            left: 10px;
+            left: 0.5rem;
             transform: translateY(-50%);
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid #333;
             color: #fff;
-            padding: 8px 10px;
+            padding: 0.4rem 0.5rem;
             border-radius: 50%;
-            font-size: 1rem;
+            font-size: 0.7rem; /* Reduced from 1rem */
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
-            width: 35px;
-            height: 35px;
+            width: 2rem; /* Reduced from 35px */
+            height: 2rem; /* Reduced from 35px */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -181,18 +168,18 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             transform: translateY(-50%) scale(1.1);
         }
 
-        /* Control Buttons Row */
+        /* Control Buttons Row - Reduced spacing */
         .control-row {
             display: flex;
             justify-content: center;
-            gap: 5px;
-            padding: 5px;
+            gap: 0.2rem; /* Reduced from 5px */
+            padding: 0.2rem; /* Reduced from 5px */
             border-bottom: 1px solid #333;
         }
 
         .control-section {
             display: flex;
-            gap: 5px;
+            gap: 0.2rem; /* Reduced from 5px */
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -201,13 +188,13 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             background: rgba(0, 0, 0, 0.8);
             border: 1px solid #333;
             color: #fff;
-            padding: 6px 10px;
-            border-radius: 15px;
-            font-size: 0.7rem;
+            padding: 0.3rem 0.5rem; /* Reduced from 6px 10px */
+            border-radius: 0.8rem;
+            font-size: 0.6rem; /* Reduced from 0.7rem */
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            min-width: 50px;
+            min-width: 2.5rem; /* Reduced from 50px */
             text-align: center;
         }
 
@@ -258,55 +245,55 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             background: rgba(255, 0, 0, 0.5);
         }
 
-        /* Floating Owncast Stream - User Resizable */
+        /* Floating Owncast Stream - Bigger and resizable */
         .owncast-stream {
             position: absolute;
-            top: 80px;
-            left: 10px;
-            width: 120px;
-            height: 80px;
+            top: 4rem;
+            left: 0.5rem;
+            width: 10rem; /* Increased from 6rem */
+            height: 7rem; /* Increased from 4rem */
             background: rgba(0, 0, 0, 0.9);
             border: 2px solid #00ff00;
-            border-radius: 8px;
+            border-radius: 0.5rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
+            font-size: 0.8rem; /* Increased from 0.6rem */
             z-index: 100;
             cursor: move;
             box-shadow: 0 4px 20px rgba(0, 255, 0, 0.3);
             resize: both;
             overflow: auto;
-            min-width: 80px;
-            min-height: 50px;
-            max-width: 300px;
-            max-height: 200px;
+            min-width: 6rem; /* Increased from 4rem */
+            min-height: 4rem; /* Increased from 2.5rem */
+            max-width: 20rem; /* Increased from 15rem */
+            max-height: 15rem; /* Increased from 10rem */
         }
 
         /* Resize Handle Styling */
         .owncast-stream::-webkit-resizer {
             background: #00ff00;
-            border-radius: 0 0 8px 0;
+            border-radius: 0 0 0.5rem 0;
         }
 
-        /* Owncast Controls */
+        /* Owncast Controls - Smaller */
         .owncast-controls {
             position: absolute;
-            bottom: 2px;
+            bottom: 0.1rem;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 2px;
+            gap: 0.1rem;
         }
 
         .owncast-btn {
             background: rgba(0, 255, 0, 0.2);
             border: 1px solid #00ff00;
             color: #00ff00;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-size: 0.6rem;
+            padding: 0.1rem 0.2rem;
+            border-radius: 0.2rem;
+            font-size: 0.5rem; /* Reduced from 0.6rem */
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -317,57 +304,44 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
 
         .owncast-title {
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 0.2rem;
         }
 
         .owncast-status {
             color: #00ff00;
-            font-size: 0.7rem;
+            font-size: 0.5rem; /* Reduced from 0.7rem */
         }
 
-<<<<<<< HEAD
-        /* HOMEBASE - Multi-Row Layout */
+        /* HOMEBASE - Reduced spacing */
         .homebase {
             background: #000000;
             border-top: 2px solid #333;
-            padding: 8px 5px;
+            padding: 0.3rem; /* Reduced from 8px 5px */
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            min-height: 120px;
+            gap: 0.4rem; /* Reduced from 8px */
+            min-height: 8rem; /* Reduced from 120px */
         }
 
         .homebase-row {
-=======
-        /* HOMEBASE - Multiple Rows */
-        .homebase {
-            background: #000000;
-            border-top: 2px solid #333;
-            padding: 5px;
->>>>>>> 50793b9dbf0e7d3987698dd171a6ac62edd91d6d
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 0.4rem; /* Reduced spacing */
         }
 
-        /* Money Row */
+        /* Money Row - Reduced spacing */
         .money-row {
             display: flex;
             justify-content: center;
-            gap: 5px;
-<<<<<<< HEAD
-            overflow-x: auto;
-            min-height: 35px;
-=======
-            padding: 5px;
+            gap: 0.2rem; /* Reduced from 5px */
+            padding: 0.2rem; /* Reduced from 5px */
             border-bottom: 1px solid #333;
->>>>>>> 50793b9dbf0e7d3987698dd171a6ac62edd91d6d
         }
 
-        /* Money Buttons */
+        /* Money Buttons - Smaller */
         .money-section {
             display: flex;
-            gap: 5px;
+            gap: 0.2rem; /* Reduced from 5px */
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -376,13 +350,13 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             background: linear-gradient(45deg, #10b981, #34d399);
             color: #000;
             border: none;
-            padding: 8px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
+            padding: 0.4rem 0.6rem; /* Reduced from 8px 12px */
+            border-radius: 0.8rem;
+            font-size: 0.6rem; /* Reduced from 0.8rem */
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
-            min-width: 40px;
+            min-width: 2rem; /* Reduced from 40px */
         }
 
         .money-btn:nth-child(2) { background: linear-gradient(45deg, #3b82f6, #60a5fa); }
@@ -399,15 +373,15 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             transform: scale(0.9);
         }
 
-
+        /* Reaction Buttons - Smaller */
         .reaction-btn {
-            width: 35px;
-            height: 35px;
+            width: 2rem; /* Reduced from 35px */
+            height: 2rem; /* Reduced from 35px */
             border: none;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             border-radius: 50%;
-            font-size: 1rem;
+            font-size: 0.8rem; /* Reduced from 1rem */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -431,8 +405,8 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         }
 
         .reaction-btn:hover::before {
-            width: 60px;
-            height: 60px;
+            width: 3rem; /* Reduced from 60px */
+            height: 3rem; /* Reduced from 60px */
         }
 
         .reaction-btn:hover {
@@ -445,9 +419,9 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             transform: scale(0.9);
         }
 
-        /* Special SF/JP buttons */
+        /* Special SF/JP buttons - Smaller text */
         .sf-btn, .jp-btn {
-            font-size: 0.7rem;
+            font-size: 0.5rem; /* Reduced from 0.7rem */
             font-weight: 700;
             background: linear-gradient(135deg, rgba(255, 0, 128, 0.2), rgba(128, 0, 255, 0.2));
             color: #fff;
@@ -467,35 +441,35 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
         }
 
-        /* Reaction Row */
+        /* Reaction Row - Reduced spacing */
         .reaction-row {
             display: flex;
             justify-content: center;
-            gap: 5px;
-            padding: 5px;
+            gap: 0.2rem; /* Reduced from 5px */
+            padding: 0.2rem; /* Reduced from 5px */
             border-bottom: 1px solid #333;
         }
 
         /* Reaction Section */
         .reaction-section {
             display: flex;
-            gap: 5px;
+            gap: 0.2rem; /* Reduced from 5px */
             flex-wrap: wrap;
             justify-content: center;
         }
 
-        /* Chat Row */
+        /* Chat Row - Reduced spacing */
         .chat-row {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px;
+            gap: 0.4rem; /* Reduced from 8px */
+            padding: 0.4rem; /* Reduced from 8px */
         }
 
-        /* Grid Buttons (Plus Signs) */
+        /* Grid Buttons (Plus Signs) - Smaller */
         .grid-buttons {
             display: flex;
-            gap: 5px;
+            gap: 0.2rem; /* Reduced from 5px */
             flex-shrink: 0;
         }
 
@@ -503,14 +477,14 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid #333;
             color: #fff;
-            padding: 8px 10px;
+            padding: 0.4rem 0.5rem; /* Reduced from 8px 10px */
             border-radius: 50%;
-            font-size: 1rem;
+            font-size: 0.7rem; /* Reduced from 1rem */
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
-            width: 35px;
-            height: 35px;
+            width: 2rem; /* Reduced from 35px */
+            height: 2rem; /* Reduced from 35px */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -525,7 +499,7 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         /* Chat Input Section */
         .chat-input-section {
             display: flex;
-            gap: 5px;
+            gap: 0.2rem; /* Reduced from 5px */
             align-items: center;
             flex: 1;
         }
@@ -534,7 +508,7 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         .chat-section {
             flex: 1;
             display: flex;
-            gap: 5px;
+            gap: 0.2rem; /* Reduced from 5px */
             align-items: center;
             min-width: 0;
         }
@@ -544,11 +518,11 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid #333;
             color: #fff;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 0.4rem 0.6rem; /* Reduced from 8px 12px */
+            border-radius: 1rem;
+            font-size: 0.6rem; /* Reduced from 0.8rem */
             outline: none;
-            min-width: 80px;
+            min-width: 4rem; /* Reduced from 80px */
         }
 
         .chat-input::placeholder {
@@ -564,9 +538,9 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             background: #00ff00;
             color: #000;
             border: none;
-            padding: 8px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
+            padding: 0.4rem 0.6rem; /* Reduced from 8px 12px */
+            border-radius: 0.8rem;
+            font-size: 0.6rem; /* Reduced from 0.8rem */
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -577,27 +551,26 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             transform: scale(1.05);
         }
 
-<<<<<<< HEAD
-        /* Left Side Grid Buttons */
+        /* Left Side Grid Buttons - Smaller */
         .left-grid-buttons {
             position: fixed;
-            left: 15px;
+            left: 0.8rem; /* Reduced from 15px */
             top: 50%;
             transform: translateY(-50%);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 0.8rem; /* Reduced from 15px */
             z-index: 150;
         }
 
-        .grid-btn {
+        .left-grid-buttons .grid-btn {
             background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
             border: 2px solid #333333;
             color: #ffffff;
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            font-size: 0.8rem;
+            width: 3rem; /* Reduced from 60px */
+            height: 3rem; /* Reduced from 60px */
+            border-radius: 0.6rem;
+            font-size: 0.6rem; /* Reduced from 0.8rem */
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -611,8 +584,8 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             -webkit-tap-highlight-color: transparent;
         }
 
-        .grid-btn:hover {
-            transform: translateX(5px);
+        .left-grid-buttons .grid-btn:hover {
+            transform: translateX(0.3rem);
             border-color: #00ff00;
             background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
             box-shadow: 
@@ -620,12 +593,12 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
                 inset 0 1px 1px rgba(255, 255, 255, 0.2);
         }
 
-        .grid-btn:active {
-            transform: translateX(2px) scale(0.95);
+        .left-grid-buttons .grid-btn:active {
+            transform: translateX(0.1rem) scale(0.95);
             background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
         }
 
-        .grid-btn.active {
+        .left-grid-buttons .grid-btn.active {
             background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
             border-color: #0088ff;
             box-shadow: 
@@ -633,7 +606,7 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
                 inset 0 1px 1px rgba(255, 255, 255, 0.3);
         }
 
-        /* Grid Overlay - 64 Button Grid */
+        /* Grid Overlay - 64 Button Grid - Smaller */
         .grid-overlay {
             position: fixed;
             top: 0;
@@ -645,7 +618,7 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             align-items: center;
             justify-content: center;
             z-index: 300;
-            max-width: 420px;
+            max-width: 100vw;
             margin: 0 auto;
         }
 
@@ -657,26 +630,26 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             grid-template-rows: repeat(8, 1fr);
-            gap: 3px;
+            gap: 0.15rem; /* Reduced from 3px */
             width: 90%;
-            height: 80%;
-            max-width: 350px;
-            max-height: 350px;
+            height: 70%; /* Reduced from 80% */
+            max-width: 20rem; /* Reduced from 350px */
+            max-height: 20rem; /* Reduced from 350px */
         }
 
         .grid-cell {
             background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
             border: 1px solid #333;
             color: #fff;
-            border-radius: 6px;
-            font-size: 0.7rem;
+            border-radius: 0.3rem;
+            font-size: 0.5rem; /* Reduced from 0.7rem */
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 35px;
+            min-height: 2rem; /* Reduced from 35px */
         }
 
         .grid-cell:hover {
@@ -692,15 +665,15 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
 
         .grid-close {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 1rem;
+            right: 1rem;
             background: #ff4444;
             color: white;
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 2.5rem; /* Reduced from 40px */
+            height: 2.5rem; /* Reduced from 40px */
             border-radius: 50%;
-            font-size: 1.2rem;
+            font-size: 1rem; /* Reduced from 1.2rem */
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -710,14 +683,14 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             transform: scale(1.1);
         }
 
-        /* NAH Button */
+        /* NAH Button - Smaller */
         .nah-btn {
             background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
             color: #ffffff;
             border: 2px solid #ff6666;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem; /* Reduced from 8px 16px */
+            border-radius: 1rem;
+            font-size: 0.6rem; /* Reduced from 0.8rem */
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -731,14 +704,14 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             box-shadow: 0 4px 15px rgba(255, 68, 68, 0.4);
         }
 
-        /* YAY Button */
+        /* YAY Button - Smaller */
         .yay-btn {
             background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
             color: #000000;
             border: 2px solid #44ff44;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem; /* Reduced from 8px 16px */
+            border-radius: 1rem;
+            font-size: 0.6rem; /* Reduced from 0.8rem */
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -751,8 +724,6 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             transform: scale(1.05);
             box-shadow: 0 4px 15px rgba(0, 255, 0, 0.4);
         }
-=======
->>>>>>> 50793b9dbf0e7d3987698dd171a6ac62edd91d6d
 
         /* Floating Reactions Container */
         .reactions-container {
@@ -763,13 +734,13 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             height: 100vh;
             pointer-events: none;
             z-index: 35;
-            max-width: 420px;
+            max-width: 100vw;
             margin: 0 auto;
         }
 
         .floating-reaction {
             position: absolute;
-            font-size: 2rem;
+            font-size: 1.5rem; /* Reduced from 2rem */
             pointer-events: none;
             filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
         }
@@ -783,7 +754,7 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             height: 100vh;
             pointer-events: none;
             z-index: 35;
-            max-width: 420px;
+            max-width: 100vw;
             margin: 0 auto;
         }
 
@@ -825,52 +796,240 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             }
         }
 
-        /* Mobile optimizations */
-        @media (max-width: 420px) {
+        /* Harmony Grid System Styles */
+        .main-button {
+            position: fixed;
+            left: 15px;
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid #333333;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .main-button:active {
+            transform: scale(0.9);
+            background: #1a1a1a;
+        }
+
+        .main-button.active .icon {
+            transform: rotate(45deg);
+        }
+
+        /* Button Positions */
+        .button-top { top: 20px; }
+        .button-middle { top: 50%; transform: translateY(-50%); }
+        .button-bottom { bottom: 20px; }
+
+        /* Icon */
+        .icon {
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        /* Grid Overlays */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.98);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 90;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .grid-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 8x8 Grid Container */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 5px;
+            width: min(90vw, 90vh);
+            height: min(90vw, 90vh);
+            padding: 10px;
+        }
+
+        /* Grid Buttons (64 total) */
+        .grid-button {
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .grid-button:hover {
+            background: #1a1a1a;
+            transform: scale(1.05);
+        }
+
+        .grid-button:active {
+            transform: scale(0.95);
+            background: #2a2a2a;
+        }
+
+        /* Close button */
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid #333333;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            z-index: 101;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-button:active {
+            transform: scale(0.9) rotate(90deg);
+        }
+
+        /* LED Display Container - HIDDEN */
+        .led-display-container {
+            position: fixed;
+            inset: 0;
+            background: #000000;
+            display: none;
+            z-index: 80;
+            pointer-events: none;
+        }
+
+        .led-display-container.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* LED Grid */
+        .led-grid {
+            display: grid;
+            grid-template-columns: repeat(100, 1fr);
+            grid-template-rows: repeat(200, 1fr);
+            gap: 0;
+            width: min(100vw, 50vh);
+            height: min(200vw, 100vh);
+            background: #000000;
+        }
+
+        /* LED Pixels */
+        .led-pixel {
+            background: #000000;
+            aspect-ratio: 1/1;
+        }
+
+        .led-pixel.red { background: #ff0000; }
+        .led-pixel.green { background: #00ff00; }
+        .led-pixel.blue { background: #0099ff; }
+        .led-pixel.yellow { background: #ffff00; }
+        .led-pixel.purple { background: #9900ff; }
+        .led-pixel.white { background: #ffffff; }
+        .led-pixel.orange { background: #ff9900; }
+        .led-pixel.pink { background: #ff00ff; }
+        .led-pixel.cyan { background: #00ffff; }
+
+        /* Mobile optimizations for very small screens */
+        @media (max-width: 375px) {
             .money-btn {
-                padding: 6px 8px;
-                font-size: 0.7rem;
-                min-width: 35px;
+                padding: 0.3rem 0.4rem;
+                font-size: 0.5rem;
+                min-width: 1.8rem;
             }
             
             .reaction-btn {
-                width: 30px;
-                height: 30px;
-                font-size: 0.9rem;
+                width: 1.8rem;
+                height: 1.8rem;
+                font-size: 0.7rem;
             }
             
             .sf-btn, .jp-btn {
-                font-size: 0.6rem;
+                font-size: 0.4rem;
             }
             
             .chat-input {
-                font-size: 0.7rem;
-                padding: 6px 10px;
+                font-size: 0.5rem;
+                padding: 0.3rem 0.5rem;
             }
             
             .send-btn {
-                padding: 6px 10px;
-                font-size: 0.7rem;
+                padding: 0.3rem 0.5rem;
+                font-size: 0.5rem;
             }
             
             .grid-btn {
-                padding: 5px 6px;
-                font-size: 0.6rem;
-                min-width: 25px;
+                padding: 0.3rem 0.4rem;
+                font-size: 0.5rem;
+                min-width: 1.5rem;
+            }
+
+            .tiktok-placeholder {
+                font-size: 1rem;
+            }
+
+            .platform-corner {
+                width: 2rem;
+                height: 2rem;
+                font-size: 0.5rem;
+            }
+
+            .owncast-stream {
+                width: 5rem;
+                height: 3rem;
+                font-size: 0.5rem;
+            }
+
+            .homebase {
+                min-height: 6rem;
+                padding: 0.2rem;
+            }
+
+            .main-button {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+            
+            .grid-container {
+                gap: 3px;
+            }
+            
+            .grid-button {
+                font-size: 12px;
             }
         }
     </style>
 
     <div class="mobile-container">
-<<<<<<< HEAD
-        <!-- Header -->
-        <div class="header">
-        </div>
-
-        <!-- TikTok Video Area -->
-=======
         <!-- TikTok Video Area - Full Screen -->
->>>>>>> 50793b9dbf0e7d3987698dd171a6ac62edd91d6d
         <div class="tiktok-area">
             <!-- Platform Switcher Corners -->
             <div class="platform-corner corner-tl">IG</div>
@@ -887,90 +1046,56 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             <!-- TikTok Placeholder -->
             <div class="tiktok-placeholder">
                 TIKTOK VIDEO<br>
-                <small style="font-size: 1rem; color: #888;">(Full Screen)</small>
+                <small style="font-size: 0.8rem; color: #888;">(Full Screen)</small>
             </div>
         </div>
-
-        <!-- Sound Factory Grid Component -->
-        <SoundFactoryGrid />
 
         <!-- Floating Owncast Stream -->
         <div class="owncast-stream" id="owncastStream">
             <div class="owncast-title">OWNCAST</div>
             <div class="owncast-status">LIVE</div>
-<<<<<<< HEAD
-        </div>
-
-        <!-- Left Side Grid Buttons -->
-        <div class="left-grid-buttons">
-            <button class="grid-btn" id="grid1">G1</button>
-            <button class="grid-btn" id="grid2">G2</button>
-        </div>
-
-        <!-- HOMEBASE - Multi-Row Layout -->
-        <div class="homebase">
-            <!-- Row 1: Money Section -->
-            <div class="homebase-row">
-                <div class="money-section">
-                    <button class="money-btn" data-amount="1">$1</button>
-                    <button class="money-btn" data-amount="5">$5</button>
-                    <button class="money-btn" data-amount="10">$10</button>
-                    <button class="money-btn" data-amount="20">$20</button>
-                    <button class="money-btn" data-amount="50">$50</button>
-                    <button class="money-btn" data-amount="100">$100</button>
-                </div>
-            </div>
-
-            <!-- Row 2: Reaction Section -->
-            <div class="homebase-row">
-                <div class="reaction-section">
-                    <button class="reaction-btn" data-emoji="🔥" data-effect="sparkle">🔥</button>
-                    <button class="reaction-btn" data-emoji="🎧" data-effect="bounce">🎧</button>
-                    <button class="reaction-btn" data-emoji="❤️" data-effect="float">❤️</button>
-                    <button class="reaction-btn sf-btn" data-emoji="SF" data-effect="spiral">SF</button>
-                    <button class="reaction-btn jp-btn" data-emoji="JP" data-effect="sparkle">JP</button>
-                    <button class="reaction-btn" data-emoji="👠" data-effect="bounce">👠</button>
-                    <button class="reaction-btn" data-emoji="🏳️‍🌈" data-effect="spiral">🏳️‍🌈</button>
-                    <button class="reaction-btn" data-emoji="💃" data-effect="float">💃</button>
-                </div>
-            </div>
-
-            <!-- Row 3: Chat Section + G3 Button -->
-            <div class="homebase-row">
-                <div class="chat-section">
-                    <input type="text" class="chat-input" placeholder="Type message..." id="chatInput">
-                    <button class="send-btn" id="sendBtn">Send</button>
-                </div>
-                <button class="grid-btn" id="grid3">G3</button>
-=======
             <div class="owncast-controls">
                 <button class="owncast-btn" id="prevVideo">◀</button>
                 <button class="owncast-btn" id="nextVideo">▶</button>
->>>>>>> 50793b9dbf0e7d3987698dd171a6ac62edd91d6d
             </div>
         </div>
 
-        <!-- Homebase Component -->
+        <!-- Harmony Grid System - Three Black Buttons on Left -->
+        <button class="main-button button-top" onclick="toggleGrid('top')">
+            <span class="icon">+</span>
+        </button>
+        
+        <button class="main-button button-middle" onclick="toggleGrid('middle')">
+            <span class="icon">+</span>
+        </button>
+        
+        <button class="main-button button-bottom" onclick="toggleGrid('bottom')">
+            <span class="icon">+</span>
+        </button>
+
+        <!-- Homebase Component (Single instance) -->
         <Homebase wsUrl={wsUrl} />
-
-        <!-- Chat Section Component -->
-        <ChatSection wsUrl={wsUrl} />
     </div>
 
-    <!-- Grid Overlays -->
-    <div id="grid-overlay-1" class="grid-overlay">
-        <button class="grid-close" onclick="closeGrid()">&times;</button>
-        <div class="grid-container" id="grid-container-1"></div>
+    <!-- Harmony Grid Overlays -->
+    <div class="grid-overlay" id="grid-top">
+        <button class="close-button" onclick="closeGrid('top')">×</button>
+        <div class="grid-container" id="grid-container-top"></div>
     </div>
 
-    <div id="grid-overlay-2" class="grid-overlay">
-        <button class="grid-close" onclick="closeGrid()">&times;</button>
-        <div class="grid-container" id="grid-container-2"></div>
+    <div class="grid-overlay" id="grid-middle">
+        <button class="close-button" onclick="closeGrid('middle')">×</button>
+        <div class="grid-container" id="grid-container-middle"></div>
     </div>
 
-    <div id="grid-overlay-3" class="grid-overlay">
-        <button class="grid-close" onclick="closeGrid()">&times;</button>
-        <div class="grid-container" id="grid-container-3"></div>
+    <div class="grid-overlay" id="grid-bottom">
+        <button class="close-button" onclick="closeGrid('bottom')">×</button>
+        <div class="grid-container" id="grid-container-bottom"></div>
+    </div>
+
+    <!-- LED Display (Hidden) -->
+    <div class="led-display-container" id="ledDisplay">
+        <div class="led-grid" id="ledGrid"></div>
     </div>
 
     <!-- Floating Reactions Container -->
@@ -980,6 +1105,236 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
     <div id="money-container" class="money-container"></div>
 
     <script>
+        // Global Harmony Grid System Functions (must be global for onclick handlers)
+        // These MUST be declared first to be accessible from inline onclick handlers
+        
+        // Toggle grid visibility
+        function toggleGrid(position) {
+            const grid = document.getElementById(`grid-${position}`);
+            const button = document.querySelector(`.button-${position}`);
+            
+            // Check if this grid is already active
+            const isActive = grid && grid.classList.contains('active');
+            
+            // Close all grids first
+            ['top', 'middle', 'bottom'].forEach(pos => {
+                const g = document.getElementById(`grid-${pos}`);
+                const b = document.querySelector(`.button-${pos}`);
+                if (g) g.classList.remove('active');
+                if (b) b.classList.remove('active');
+            });
+            
+            // If it wasn't active, open it
+            if (!isActive && grid && button) {
+                grid.classList.add('active');
+                button.classList.add('active');
+            }
+        }
+
+        // Close grid
+        function closeGrid(position) {
+            const grid = document.getElementById(`grid-${position}`);
+            const button = document.querySelector(`.button-${position}`);
+            if (grid) grid.classList.remove('active');
+            if (button) button.classList.remove('active');
+        }
+
+        // Handle button clicks
+        function handleButton(grid, number) {
+            console.log(`Grid: ${grid}, Button: ${number}`);
+            
+            // Example actions based on grid and button
+            if (grid === 'top') {
+                // LED control - example: light up section
+                lightUpSection(number);
+            } else if (grid === 'middle') {
+                // Effects - example: run effect
+                runEffect(number);
+            } else if (grid === 'bottom') {
+                // Presets - example: load preset
+                loadPreset(number);
+            }
+        }
+
+        // Example: Light up LED section
+        function lightUpSection(section) {
+            const ledDisplay = document.getElementById('ledDisplay');
+            if (ledDisplay) ledDisplay.classList.add('active');
+            
+            // Light up a section of LEDs
+            const colors = ['red', 'green', 'blue', 'yellow', 'purple', 'white', 'orange', 'pink'];
+            const color = colors[section % colors.length];
+            
+            // Clear all LEDs
+            document.querySelectorAll('.led-pixel').forEach(pixel => {
+                pixel.className = 'led-pixel';
+            });
+            
+            // Light up section
+            const sectionSize = 312; // ~20000/64
+            const start = (section - 1) * sectionSize;
+            const end = start + sectionSize;
+            
+            for(let i = start; i < end && i < 20000; i++) {
+                const pixel = document.getElementById(`led-${i}`);
+                if (pixel) pixel.classList.add(color);
+            }
+        }
+
+        // Example: Run effect
+        function runEffect(effectNumber) {
+            const ledDisplay = document.getElementById('ledDisplay');
+            if (ledDisplay) ledDisplay.classList.add('active');
+            
+            // Simple wave effect
+            let offset = 0;
+            const interval = setInterval(() => {
+                document.querySelectorAll('.led-pixel').forEach((pixel, index) => {
+                    pixel.className = 'led-pixel';
+                    if ((index + offset) % 100 < 50) {
+                        pixel.classList.add('blue');
+                    }
+                });
+                offset += 5;
+                
+                if (offset > 100) clearInterval(interval);
+            }, 50);
+        }
+
+        // Example: Load preset
+        function loadPreset(presetNumber) {
+            console.log(`Loading preset ${presetNumber}`);
+            // Would load saved configuration
+        }
+        
+        // Initialize LED grid
+        function initializeLED() {
+            const ledGrid = document.getElementById('ledGrid');
+            // Create 20,000 LED pixels (200x100)
+            for(let i = 0; i < 20000; i++) {
+                const pixel = document.createElement('div');
+                pixel.className = 'led-pixel';
+                pixel.id = `led-${i}`;
+                ledGrid.appendChild(pixel);
+            }
+        }
+
+        // Toggle grid visibility
+        function toggleGrid(position) {
+            const grid = document.getElementById(`grid-${position}`);
+            const button = document.querySelector(`.button-${position}`);
+            
+            // Check if this grid is already active
+            const isActive = grid.classList.contains('active');
+            
+            // Close all grids first
+            ['top', 'middle', 'bottom'].forEach(pos => {
+                document.getElementById(`grid-${pos}`).classList.remove('active');
+                document.querySelector(`.button-${pos}`).classList.remove('active');
+            });
+            
+            // If it wasn't active, open it
+            if (!isActive) {
+                grid.classList.add('active');
+                button.classList.add('active');
+            }
+        }
+
+        // Close grid
+        function closeGrid(position) {
+            const grid = document.getElementById(`grid-${position}`);
+            const button = document.querySelector(`.button-${position}`);
+            grid.classList.remove('active');
+            button.classList.remove('active');
+        }
+
+        // Handle button clicks
+        function handleButton(grid, number) {
+            console.log(`Grid: ${grid}, Button: ${number}`);
+            
+            // Example actions based on grid and button
+            if (grid === 'top') {
+                // LED control - example: light up section
+                lightUpSection(number);
+            } else if (grid === 'middle') {
+                // Effects - example: run effect
+                runEffect(number);
+            } else if (grid === 'bottom') {
+                // Presets - example: load preset
+                loadPreset(number);
+            }
+        }
+
+        // Example: Light up LED section
+        function lightUpSection(section) {
+            // Show LED display
+            document.getElementById('ledDisplay').classList.add('active');
+            
+            // Light up a section of LEDs
+            const colors = ['red', 'green', 'blue', 'yellow', 'purple', 'white', 'orange', 'pink'];
+            const color = colors[section % colors.length];
+            
+            // Clear all LEDs
+            document.querySelectorAll('.led-pixel').forEach(pixel => {
+                pixel.className = 'led-pixel';
+            });
+            
+            // Light up section
+            const sectionSize = 312; // ~20000/64
+            const start = (section - 1) * sectionSize;
+            const end = start + sectionSize;
+            
+            for(let i = start; i < end && i < 20000; i++) {
+                document.getElementById(`led-${i}`).classList.add(color);
+            }
+        }
+
+        // Example: Run effect
+        function runEffect(effectNumber) {
+            document.getElementById('ledDisplay').classList.add('active');
+            
+            // Simple wave effect
+            let offset = 0;
+            const interval = setInterval(() => {
+                document.querySelectorAll('.led-pixel').forEach((pixel, index) => {
+                    pixel.className = 'led-pixel';
+                    if ((index + offset) % 100 < 50) {
+                        pixel.classList.add('blue');
+                    }
+                });
+                offset += 5;
+                
+                if (offset > 100) clearInterval(interval);
+            }, 50);
+        }
+
+        // Example: Load preset
+        function loadPreset(presetNumber) {
+            console.log(`Loading preset ${presetNumber}`);
+            // Would load saved configuration
+        }
+
+        // Initialize Harmony System
+        function initializeHarmonySystem() {
+            // Initialize LED grid
+            initializeLED();
+            
+            // Create 64-button grids for each container
+            ['top', 'middle', 'bottom'].forEach(position => {
+                const container = document.getElementById(`grid-container-${position}`);
+                if (container) {
+                    // Create 64 buttons
+                    for(let i = 1; i <= 64; i++) {
+                        const button = document.createElement('button');
+                        button.className = 'grid-button';
+                        button.textContent = i.toString();
+                        button.onclick = () => handleButton(position, i);
+                        container.appendChild(button);
+                    }
+                }
+            });
+        }
+
         class SoundFactoryHomebase {
             constructor() {
                 this.init();
@@ -1020,14 +1375,14 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
                 // Handle text reactions (SF, JP)
                 if (emoji === 'SF') {
                     reaction.style.fontWeight = '700';
-                    reaction.style.fontSize = '1.5rem';
+                    reaction.style.fontSize = '1.2rem';
                     reaction.style.background = 'linear-gradient(45deg, #ff0080, #8000ff)';
                     reaction.style.webkitBackgroundClip = 'text';
                     reaction.style.webkitTextFillColor = 'transparent';
                     reaction.style.backgroundClip = 'text';
                 } else if (emoji === 'JP') {
                     reaction.style.fontWeight = '700';
-                    reaction.style.fontSize = '1.5rem';
+                    reaction.style.fontSize = '1.2rem';
                     reaction.style.background = 'linear-gradient(45deg, #FFD700, #FFA500)';
                     reaction.style.webkitBackgroundClip = 'text';
                     reaction.style.webkitTextFillColor = 'transparent';
@@ -1071,14 +1426,14 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             }
 
             createMoneyEffect(amount, button) {
-                const billCount = Math.min(5, amount / 10);
+                const billCount = Math.min(3, Math.ceil(amount / 20)); // Reduced for mobile
                 
                 for (let i = 0; i < billCount; i++) {
                     setTimeout(() => {
                         const money = document.createElement('div');
                         money.className = 'floating-reaction';
                         money.textContent = '$' + Math.ceil(amount / billCount);
-                        money.style.fontSize = '1.5rem';
+                        money.style.fontSize = '1.2rem'; // Reduced from 1.5rem
                         money.style.fontWeight = '900';
                         money.style.color = '#10b981';
                         money.style.textShadow = '0 0 10px rgba(16, 185, 129, 0.8)';
@@ -1089,7 +1444,7 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
                         money.style.bottom = (window.innerHeight - rect.top - rect.height / 2) + 'px';
                         
                         // Random drift
-                        money.style.setProperty('--drift-x', (Math.random() - 0.5) * 100 + 'px');
+                        money.style.setProperty('--drift-x', (Math.random() - 0.5) * 80 + 'px'); // Reduced drift
                         money.style.animation = 'moneyShoot 2s ease-out forwards';
                         
                         document.getElementById('money-container').appendChild(money);
@@ -1101,6 +1456,8 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             setupChatSystem() {
                 const chatInput = document.getElementById('chatInput');
                 const sendBtn = document.getElementById('sendBtn');
+                
+                if (!chatInput || !sendBtn) return;
                 
                 const sendMessage = () => {
                     const message = chatInput.value.trim();
@@ -1189,6 +1546,7 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
                 let isDragging = false;
                 let startX = 0, startY = 0, initialX = 0, initialY = 0;
                 
+                // Mouse events
                 owncast.addEventListener('mousedown', (e) => {
                     isDragging = true;
                     startX = e.clientX;
@@ -1198,24 +1556,35 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
                     owncast.style.cursor = 'grabbing';
                 });
                 
+                // Touch events for mobile
+                owncast.addEventListener('touchstart', (e) => {
+                    isDragging = true;
+                    const touch = e.touches[0];
+                    startX = touch.clientX;
+                    startY = touch.clientY;
+                    initialX = owncast.offsetLeft;
+                    initialY = owncast.offsetTop;
+                    e.preventDefault();
+                });
+                
                 document.addEventListener('mousemove', (e) => {
                     if (!isDragging) return;
                     
                     const deltaX = e.clientX - startX;
                     const deltaY = e.clientY - startY;
                     
-                    let newX = initialX + deltaX;
-                    let newY = initialY + deltaY;
+                    this.updateOwncastPosition(deltaX, deltaY, owncast, initialX, initialY);
+                });
+                
+                document.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
                     
-                    // Keep within bounds
-                    const maxX = window.innerWidth - owncast.offsetWidth;
-                    const maxY = window.innerHeight - owncast.offsetHeight - 60; // Account for homebase
+                    const touch = e.touches[0];
+                    const deltaX = touch.clientX - startX;
+                    const deltaY = touch.clientY - startY;
                     
-                    newX = Math.max(0, Math.min(newX, maxX));
-                    newY = Math.max(60, Math.min(newY, maxY)); // Account for header
-                    
-                    owncast.style.left = newX + 'px';
-                    owncast.style.top = newY + 'px';
+                    this.updateOwncastPosition(deltaX, deltaY, owncast, initialX, initialY);
+                    e.preventDefault();
                 });
                 
                 document.addEventListener('mouseup', () => {
@@ -1224,6 +1593,25 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
                         owncast.style.cursor = 'move';
                     }
                 });
+                
+                document.addEventListener('touchend', () => {
+                    isDragging = false;
+                });
+            }
+
+            updateOwncastPosition(deltaX, deltaY, owncast, initialX, initialY) {
+                let newX = initialX + deltaX;
+                let newY = initialY + deltaY;
+                
+                // Keep within bounds
+                const maxX = window.innerWidth - owncast.offsetWidth;
+                const maxY = window.innerHeight - owncast.offsetHeight - 100; // Account for homebase
+                
+                newX = Math.max(0, Math.min(newX, maxX));
+                newY = Math.max(60, Math.min(newY, maxY)); // Account for header
+                
+                owncast.style.left = newX + 'px';
+                owncast.style.top = newY + 'px';
             }
 
             setupPlatformSwitcher() {
@@ -1252,29 +1640,32 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             }
         }
 
-        // Global function to close grid overlays
-        function closeGrid() {
-            document.querySelectorAll('.grid-overlay').forEach(overlay => {
-                overlay.classList.remove('active');
+        // Close grids on overlay click
+        document.querySelectorAll('.grid-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    const position = this.id.replace('grid-', '');
+                    closeGrid(position);
+                }
             });
-            
-            // Reset grid button states
-            document.querySelectorAll('.grid-btn').forEach(btn => {
-                btn.classList.remove('active');
-                btn.style.background = 'linear-gradient(135deg, #1a1a1a 0%, #000000 100%)';
-            });
-        }
+        });
 
-        // Keyboard support
-        document.addEventListener('keydown', (e) => {
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                closeGrid();
+                ['top', 'middle', 'bottom'].forEach(closeGrid);
+            } else if (e.key === '1') {
+                toggleGrid('top');
+            } else if (e.key === '2') {
+                toggleGrid('middle');
+            } else if (e.key === '3') {
+                toggleGrid('bottom');
             }
         });
 
         // Initialize when page loads
         window.addEventListener('load', () => {
             const homebase = new SoundFactoryHomebase();
+            initializeHarmonySystem();
         });
     </script>
-</MainLayout>
