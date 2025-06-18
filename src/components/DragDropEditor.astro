@@ -1,0 +1,1462 @@
+---
+// Drag and Drop Component Editor for Sound Factory
+export interface Props {
+  wsUrl?: string;
+}
+
+const { wsUrl = 'ws://localhost:8080' } = Astro.props;
+---
+
+<div class="drag-drop-editor">
+    <style>
+        .drag-drop-editor {
+            position: fixed;
+            inset: 0;
+            background: #000000;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Editor Toolbar */
+        .editor-toolbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            border-bottom: 2px solid #00ff00;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .editor-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00ff00, #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .editor-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .editor-btn {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .editor-btn:hover {
+            background: rgba(0, 255, 0, 0.4);
+            transform: scale(1.05);
+        }
+
+        .editor-btn.active {
+            background: #00ff00;
+            color: #000000;
+        }
+
+        /* Component Palette */
+        .component-palette {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            width: 250px;
+            height: calc(100vh - 60px);
+            background: rgba(26, 26, 26, 0.95);
+            border-right: 2px solid #333;
+            overflow-y: auto;
+            z-index: 900;
+            backdrop-filter: blur(10px);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .component-palette.open {
+            transform: translateX(0);
+        }
+
+        .palette-section {
+            padding: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .palette-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #00ff00;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .palette-item {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: grab;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .palette-item:hover {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+            transform: scale(1.02);
+        }
+
+        .palette-item:active {
+            cursor: grabbing;
+        }
+
+        .palette-icon {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+        }
+
+        .palette-info {
+            flex: 1;
+        }
+
+        .palette-name {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .palette-desc {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        /* Main Canvas */
+        .editor-canvas {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            right: 0;
+            bottom: 0;
+            background: #000000;
+            overflow: auto;
+            transition: left 0.3s ease;
+        }
+
+        .editor-canvas.palette-open {
+            left: 250px;
+        }
+
+        .canvas-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+
+        /* Draggable Components */
+        .draggable-component {
+            position: absolute;
+            min-width: 100px;
+            min-height: 60px;
+            background: rgba(26, 26, 26, 0.9);
+            border: 2px solid #333;
+            border-radius: 8px;
+            cursor: move;
+            user-select: none;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .draggable-component:hover {
+            border-color: #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .draggable-component.selected {
+            border-color: #ff9900;
+            box-shadow: 0 0 20px rgba(255, 153, 0, 0.5);
+        }
+
+        .draggable-component.editing {
+            border-color: #0099ff;
+            box-shadow: 0 0 20px rgba(0, 153, 255, 0.5);
+        }
+
+        /* Component Header */
+        .component-header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 12px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: move;
+        }
+
+        .component-title {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #ffffff;
+            pointer-events: none;
+        }
+
+        .component-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .component-control {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .control-edit {
+            background: #0099ff;
+        }
+
+        .control-delete {
+            background: #ff4444;
+        }
+
+        .control-clone {
+            background: #ffaa00;
+        }
+
+        /* Component Content */
+        .component-content {
+            padding: 12px;
+            height: calc(100% - 40px);
+            overflow: auto;
+        }
+
+        /* Resize Handles */
+        .resize-handle {
+            position: absolute;
+            background: #00ff00;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .draggable-component:hover .resize-handle,
+        .draggable-component.selected .resize-handle {
+            opacity: 0.7;
+        }
+
+        .resize-handle:hover {
+            opacity: 1;
+        }
+
+        .resize-se {
+            bottom: -3px;
+            right: -3px;
+            width: 12px;
+            height: 12px;
+            cursor: nw-resize;
+            border-radius: 0 0 8px 0;
+        }
+
+        .resize-e {
+            top: 50%;
+            right: -3px;
+            width: 6px;
+            height: 20px;
+            transform: translateY(-50%);
+            cursor: ew-resize;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .resize-s {
+            bottom: -3px;
+            left: 50%;
+            width: 20px;
+            height: 6px;
+            transform: translateX(-50%);
+            cursor: ns-resize;
+            border-radius: 0 0 6px 6px;
+        }
+
+        /* Property Panel */
+        .property-panel {
+            position: fixed;
+            right: 0;
+            top: 60px;
+            width: 300px;
+            height: calc(100vh - 60px);
+            background: rgba(26, 26, 26, 0.95);
+            border-left: 2px solid #333;
+            overflow-y: auto;
+            z-index: 900;
+            backdrop-filter: blur(10px);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .property-panel.open {
+            transform: translateX(0);
+        }
+
+        .property-section {
+            padding: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .property-label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #00ff00;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .property-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+
+        .property-input:focus {
+            border-color: #00ff00;
+            outline: none;
+        }
+
+        .property-color {
+            width: 50px;
+            height: 30px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .property-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        /* Component Types */
+        .money-component {
+            background: linear-gradient(45deg, #10b981, #34d399);
+            color: #000;
+            text-align: center;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .money-component:hover {
+            transform: scale(1.1);
+        }
+
+        .reaction-component {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reaction-component:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .chat-component {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input-comp {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 0.8rem;
+        }
+
+        .chat-send-comp {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .grid-component {
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            border: 2px solid #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .grid-component:hover {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        /* Live Preview Mode */
+        .preview-mode {
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 15px;
+            max-width: 300px;
+            z-index: 950;
+        }
+
+        .preview-title {
+            color: #00ff00;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .preview-stats {
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+
+        /* Snap Guidelines */
+        .snap-guide {
+            position: absolute;
+            background: #ff9900;
+            opacity: 0.7;
+            z-index: 800;
+            pointer-events: none;
+        }
+
+        .snap-guide.vertical {
+            width: 1px;
+            height: 100vh;
+        }
+
+        .snap-guide.horizontal {
+            width: 100vw;
+            height: 1px;
+        }
+
+        /* Export Panel */
+        .export-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00ff00;
+            border-radius: 15px;
+            padding: 30px;
+            min-width: 400px;
+            z-index: 1100;
+            display: none;
+        }
+
+        .export-panel.open {
+            display: block;
+        }
+
+        .export-title {
+            color: #00ff00;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .export-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .export-option:hover {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .export-name {
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .export-desc {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        /* Animations */
+        @keyframes componentSpawn {
+            0% {
+                transform: scale(0) rotate(180deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotate(90deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .component-spawn {
+            animation: componentSpawn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes snapHighlight {
+            0%, 100% {
+                opacity: 0.7;
+            }
+            50% {
+                opacity: 1;
+                box-shadow: 0 0 10px #ff9900;
+            }
+        }
+
+        .snap-highlight {
+            animation: snapHighlight 0.5s ease-in-out;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .component-palette,
+            .property-panel {
+                width: 100%;
+                transform: translateY(100%);
+            }
+
+            .component-palette.open,
+            .property-panel.open {
+                transform: translateY(0);
+            }
+
+            .editor-canvas.palette-open {
+                left: 0;
+            }
+
+            .editor-controls {
+                gap: 5px;
+            }
+
+            .editor-btn {
+                padding: 6px 12px;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+
+    <!-- Editor Toolbar -->
+    <div class="editor-toolbar">
+        <div class="editor-title">🎛️ SOUND FACTORY EDITOR</div>
+        
+        <div class="editor-controls">
+            <button class="editor-btn" id="paletteBtn">📦 Components</button>
+            <button class="editor-btn" id="propertiesBtn">⚙️ Properties</button>
+            <button class="editor-btn" id="previewBtn">👁️ Preview</button>
+            <button class="editor-btn" id="exportBtn">💾 Export</button>
+            <button class="editor-btn" id="clearBtn">🗑️ Clear</button>
+        </div>
+    </div>
+
+    <!-- Component Palette -->
+    <div class="component-palette" id="componentPalette">
+        <div class="palette-section">
+            <div class="palette-title">💰 Money Controls</div>
+            <div class="palette-item" data-type="money" data-amount="1">
+                <div class="palette-icon">💵</div>
+                <div class="palette-info">
+                    <div class="palette-name">Money Button</div>
+                    <div class="palette-desc">Interactive money button</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-section">
+            <div class="palette-title">😍 Reactions</div>
+            <div class="palette-item" data-type="reaction" data-emoji="🔥">
+                <div class="palette-icon">🔥</div>
+                <div class="palette-info">
+                    <div class="palette-name">Fire Reaction</div>
+                    <div class="palette-desc">Animated fire emoji</div>
+                </div>
+            </div>
+            <div class="palette-item" data-type="reaction" data-emoji="❤️">
+                <div class="palette-icon">❤️</div>
+                <div class="palette-info">
+                    <div class="palette-name">Heart Reaction</div>
+                    <div class="palette-desc">Love reaction button</div>
+                </div>
+            </div>
+            <div class="palette-item" data-type="reaction" data-emoji="🎧">
+                <div class="palette-icon">🎧</div>
+                <div class="palette-info">
+                    <div class="palette-name">Music Reaction</div>
+                    <div class="palette-desc">Music lover reaction</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-section">
+            <div class="palette-title">💬 Communication</div>
+            <div class="palette-item" data-type="chat">
+                <div class="palette-icon">💬</div>
+                <div class="palette-info">
+                    <div class="palette-name">Chat Input</div>
+                    <div class="palette-desc">Interactive chat system</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-section">
+            <div class="palette-title">🎛️ Grid Controls</div>
+            <div class="palette-item" data-type="grid">
+                <div class="palette-icon">+</div>
+                <div class="palette-info">
+                    <div class="palette-name">Grid Button</div>
+                    <div class="palette-desc">Opens 64-button grid</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-section">
+            <div class="palette-title">🎮 Custom Controls</div>
+            <div class="palette-item" data-type="custom" data-subtype="slider">
+                <div class="palette-icon">🎚️</div>
+                <div class="palette-info">
+                    <div class="palette-name">Slider Control</div>
+                    <div class="palette-desc">Adjustable slider</div>
+                </div>
+            </div>
+            <div class="palette-item" data-type="custom" data-subtype="knob">
+                <div class="palette-icon">🎛️</div>
+                <div class="palette-info">
+                    <div class="palette-name">Rotary Knob</div>
+                    <div class="palette-desc">Rotation control</div>
+                </div>
+            </div>
+            <div class="palette-item" data-type="custom" data-subtype="display">
+                <div class="palette-icon">📟</div>
+                <div class="palette-info">
+                    <div class="palette-name">LED Display</div>
+                    <div class="palette-desc">Information display</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Property Panel -->
+    <div class="property-panel" id="propertyPanel">
+        <div class="property-section">
+            <div class="property-label">Component Properties</div>
+            <div id="propertyContent">
+                <p style="color: #666; text-align: center; margin-top: 50px;">
+                    Select a component to edit its properties
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Canvas -->
+    <div class="editor-canvas" id="editorCanvas">
+        <div class="canvas-grid"></div>
+        <!-- Components will be added here dynamically -->
+    </div>
+
+    <!-- Preview Panel -->
+    <div class="preview-mode" id="previewPanel" style="display: none;">
+        <div class="preview-title">📊 Live Preview</div>
+        <div class="preview-stats">
+            <div>Components: <span id="componentCount">0</span></div>
+            <div>Canvas Size: <span id="canvasSize">Auto</span></div>
+            <div>Last Action: <span id="lastAction">Ready</span></div>
+        </div>
+    </div>
+
+    <!-- Export Panel -->
+    <div class="export-panel" id="exportPanel">
+        <div class="export-title">💾 Export Your Layout</div>
+        
+        <div class="export-option" onclick="exportLayout('json')">
+            <div class="export-name">📄 JSON Data</div>
+            <div class="export-desc">Export as JSON for development</div>
+        </div>
+        
+        <div class="export-option" onclick="exportLayout('html')">
+            <div class="export-name">🌐 HTML Code</div>
+            <div class="export-desc">Generate HTML/CSS code</div>
+        </div>
+        
+        <div class="export-option" onclick="exportLayout('astro')">
+            <div class="export-name">🚀 Astro Component</div>
+            <div class="export-desc">Export as Astro component</div>
+        </div>
+        
+        <div class="export-option" onclick="closeExportPanel()">
+            <div class="export-name">❌ Cancel</div>
+            <div class="export-desc">Close this panel</div>
+        </div>
+    </div>
+
+    <script>
+        class DragDropEditor {
+            constructor() {
+                this.components = [];
+                this.selectedComponent = null;
+                this.draggedComponent = null;
+                this.componentCounter = 0;
+                this.snapThreshold = 10;
+                this.gridSize = 20;
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.setupDragAndDrop();
+                this.updatePreview();
+            }
+
+            setupEventListeners() {
+                // Toolbar buttons
+                document.getElementById('paletteBtn').addEventListener('click', () => {
+                    this.togglePalette();
+                });
+
+                document.getElementById('propertiesBtn').addEventListener('click', () => {
+                    this.toggleProperties();
+                });
+
+                document.getElementById('previewBtn').addEventListener('click', () => {
+                    this.togglePreview();
+                });
+
+                document.getElementById('exportBtn').addEventListener('click', () => {
+                    this.openExportPanel();
+                });
+
+                document.getElementById('clearBtn').addEventListener('click', () => {
+                    this.clearCanvas();
+                });
+
+                // Canvas click
+                document.getElementById('editorCanvas').addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) {
+                        this.deselectAll();
+                    }
+                });
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Delete' && this.selectedComponent) {
+                        this.deleteComponent(this.selectedComponent);
+                    }
+                    if (e.key === 'Escape') {
+                        this.deselectAll();
+                    }
+                    if (e.ctrlKey || e.metaKey) {
+                        if (e.key === 's') {
+                            e.preventDefault();
+                            this.openExportPanel();
+                        }
+                        if (e.key === 'd' && this.selectedComponent) {
+                            e.preventDefault();
+                            this.cloneComponent(this.selectedComponent);
+                        }
+                    }
+                });
+            }
+
+            setupDragAndDrop() {
+                // Palette item drag
+                document.querySelectorAll('.palette-item').forEach(item => {
+                    item.addEventListener('dragstart', (e) => {
+                        const componentData = {
+                            type: item.dataset.type,
+                            emoji: item.dataset.emoji,
+                            amount: item.dataset.amount,
+                            subtype: item.dataset.subtype
+                        };
+                        e.dataTransfer.setData('text/plain', JSON.stringify(componentData));
+                    });
+
+                    item.draggable = true;
+                });
+
+                // Canvas drop
+                const canvas = document.getElementById('editorCanvas');
+                canvas.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+
+                canvas.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    this.createComponent(data, x, y);
+                });
+            }
+
+            createComponent(data, x, y) {
+                const component = document.createElement('div');
+                component.className = 'draggable-component component-spawn';
+                component.id = `component-${++this.componentCounter}`;
+                
+                const snappedPos = this.snapToGrid(x, y);
+                component.style.left = snappedPos.x + 'px';
+                component.style.top = snappedPos.y + 'px';
+
+                // Component header
+                const header = document.createElement('div');
+                header.className = 'component-header';
+                header.innerHTML = `
+                    <div class="component-title">${this.getComponentName(data)}</div>
+                    <div class="component-controls">
+                        <div class="component-control control-edit" onclick="editor.editComponent('${component.id}')">✏️</div>
+                        <div class="component-control control-clone" onclick="editor.cloneComponent('${component.id}')">📋</div>
+                        <div class="component-control control-delete" onclick="editor.deleteComponent('${component.id}')">❌</div>
+                    </div>
+                `;
+
+                // Component content
+                const content = document.createElement('div');
+                content.className = 'component-content';
+                content.innerHTML = this.generateComponentHTML(data);
+
+                // Resize handles
+                const resizeHandles = `
+                    <div class="resize-handle resize-se"></div>
+                    <div class="resize-handle resize-e"></div>
+                    <div class="resize-handle resize-s"></div>
+                `;
+
+                component.appendChild(header);
+                component.appendChild(content);
+                component.innerHTML += resizeHandles;
+
+                // Add to canvas
+                document.getElementById('editorCanvas').appendChild(component);
+
+                // Store component data
+                this.components.push({
+                    id: component.id,
+                    element: component,
+                    data: data,
+                    properties: this.getDefaultProperties(data)
+                });
+
+                // Make draggable and resizable
+                this.makeDraggable(component);
+                this.makeResizable(component);
+                this.makeSelectable(component);
+
+                this.updatePreview();
+                this.logAction(`Created ${this.getComponentName(data)}`);
+            }
+
+            getComponentName(data) {
+                const names = {
+                    money: `Money $${data.amount || '1'}`,
+                    reaction: `${data.emoji || '😀'} Reaction`,
+                    chat: 'Chat Input',
+                    grid: 'Grid Button',
+                    custom: `${data.subtype || 'Custom'} Control`
+                };
+                return names[data.type] || 'Component';
+            }
+
+            generateComponentHTML(data) {
+                switch (data.type) {
+                    case 'money':
+                        return `<div class="money-component">$${data.amount || '1'}</div>`;
+                    
+                    case 'reaction':
+                        return `<div class="reaction-component">${data.emoji || '😀'}</div>`;
+                    
+                    case 'chat':
+                        return `
+                            <div class="chat-component">
+                                <input class="chat-input-comp" placeholder="Type message..." />
+                                <button class="chat-send-comp">Send</button>
+                            </div>
+                        `;
+                    
+                    case 'grid':
+                        return `<div class="grid-component">+</div>`;
+                    
+                    case 'custom':
+                        if (data.subtype === 'slider') {
+                            return `<input type="range" style="width: 100%;" />`;
+                        } else if (data.subtype === 'knob') {
+                            return `<div style="width: 50px; height: 50px; border-radius: 50%; background: #333; margin: auto;"></div>`;
+                        } else if (data.subtype === 'display') {
+                            return `<div style="background: #000; color: #0f0; padding: 10px; font-family: monospace; border: 1px solid #333;">00:00:00</div>`;
+                        }
+                        break;
+                    
+                    default:
+                        return '<div>Custom Component</div>';
+                }
+            }
+
+            getDefaultProperties(data) {
+                return {
+                    width: data.type === 'chat' ? '200px' : '100px',
+                    height: '60px',
+                    background: 'rgba(26, 26, 26, 0.9)',
+                    border: '2px solid #333',
+                    borderRadius: '8px',
+                    color: '#ffffff',
+                    fontSize: '1rem'
+                };
+            }
+
+            makeDraggable(element) {
+                let isDragging = false;
+                let startX = 0, startY = 0;
+
+                const header = element.querySelector('.component-header');
+                
+                header.addEventListener('mousedown', (e) => {
+                    if (e.target.classList.contains('component-control')) return;
+                    
+                    isDragging = true;
+                    startX = e.clientX - element.offsetLeft;
+                    startY = e.clientY - element.offsetTop;
+                    element.style.cursor = 'grabbing';
+                    element.style.zIndex = '1000';
+                    
+                    this.selectComponent(element.id);
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+
+                    const x = e.clientX - startX;
+                    const y = e.clientY - startY;
+                    const snapped = this.snapToGrid(x, y);
+                    
+                    element.style.left = snapped.x + 'px';
+                    element.style.top = snapped.y + 'px';
+                    
+                    this.showSnapGuides(snapped.x, snapped.y);
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        element.style.cursor = 'move';
+                        element.style.zIndex = '';
+                        this.hideSnapGuides();
+                        this.updatePreview();
+                    }
+                });
+            }
+
+            makeResizable(element) {
+                const handles = element.querySelectorAll('.resize-handle');
+                
+                handles.forEach(handle => {
+                    let isResizing = false;
+                    let startX = 0, startY = 0, startWidth = 0, startHeight = 0;
+
+                    handle.addEventListener('mousedown', (e) => {
+                        e.stopPropagation();
+                        isResizing = true;
+                        startX = e.clientX;
+                        startY = e.clientY;
+                        startWidth = parseInt(window.getComputedStyle(element).width);
+                        startHeight = parseInt(window.getComputedStyle(element).height);
+                    });
+
+                    document.addEventListener('mousemove', (e) => {
+                        if (!isResizing) return;
+
+                        const deltaX = e.clientX - startX;
+                        const deltaY = e.clientY - startY;
+
+                        if (handle.classList.contains('resize-se')) {
+                            element.style.width = Math.max(100, startWidth + deltaX) + 'px';
+                            element.style.height = Math.max(60, startHeight + deltaY) + 'px';
+                        } else if (handle.classList.contains('resize-e')) {
+                            element.style.width = Math.max(100, startWidth + deltaX) + 'px';
+                        } else if (handle.classList.contains('resize-s')) {
+                            element.style.height = Math.max(60, startHeight + deltaY) + 'px';
+                        }
+                    });
+
+                    document.addEventListener('mouseup', () => {
+                        if (isResizing) {
+                            isResizing = false;
+                            this.updatePreview();
+                        }
+                    });
+                });
+            }
+
+            makeSelectable(element) {
+                element.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.selectComponent(element.id);
+                });
+            }
+
+            selectComponent(id) {
+                this.deselectAll();
+                
+                const component = this.components.find(c => c.id === id);
+                if (component) {
+                    component.element.classList.add('selected');
+                    this.selectedComponent = component;
+                    this.updatePropertyPanel(component);
+                }
+            }
+
+            deselectAll() {
+                document.querySelectorAll('.draggable-component').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                this.selectedComponent = null;
+                this.clearPropertyPanel();
+            }
+
+            deleteComponent(id) {
+                const component = this.components.find(c => c.id === id);
+                if (component) {
+                    component.element.remove();
+                    this.components = this.components.filter(c => c.id !== id);
+                    this.selectedComponent = null;
+                    this.clearPropertyPanel();
+                    this.updatePreview();
+                    this.logAction('Deleted component');
+                }
+            }
+
+            cloneComponent(id) {
+                const component = this.components.find(c => c.id === id);
+                if (component) {
+                    const rect = component.element.getBoundingClientRect();
+                    const canvas = document.getElementById('editorCanvas').getBoundingClientRect();
+                    const x = rect.left - canvas.left + 20;
+                    const y = rect.top - canvas.top + 20;
+                    
+                    this.createComponent(component.data, x, y);
+                    this.logAction('Cloned component');
+                }
+            }
+
+            editComponent(id) {
+                const component = this.components.find(c => c.id === id);
+                if (component) {
+                    component.element.classList.add('editing');
+                    this.selectComponent(id);
+                    this.toggleProperties(true);
+                    this.logAction('Editing component');
+                }
+            }
+
+            snapToGrid(x, y) {
+                return {
+                    x: Math.round(x / this.gridSize) * this.gridSize,
+                    y: Math.round(y / this.gridSize) * this.gridSize
+                };
+            }
+
+            showSnapGuides(x, y) {
+                this.hideSnapGuides();
+                
+                const canvas = document.getElementById('editorCanvas');
+                
+                // Vertical guide
+                const vGuide = document.createElement('div');
+                vGuide.className = 'snap-guide vertical';
+                vGuide.style.left = x + 'px';
+                canvas.appendChild(vGuide);
+                
+                // Horizontal guide
+                const hGuide = document.createElement('div');
+                hGuide.className = 'snap-guide horizontal';
+                hGuide.style.top = y + 'px';
+                canvas.appendChild(hGuide);
+                
+                setTimeout(() => this.hideSnapGuides(), 500);
+            }
+
+            hideSnapGuides() {
+                document.querySelectorAll('.snap-guide').forEach(guide => guide.remove());
+            }
+
+            togglePalette() {
+                const palette = document.getElementById('componentPalette');
+                const canvas = document.getElementById('editorCanvas');
+                const btn = document.getElementById('paletteBtn');
+                
+                palette.classList.toggle('open');
+                canvas.classList.toggle('palette-open');
+                btn.classList.toggle('active');
+            }
+
+            toggleProperties(force = null) {
+                const panel = document.getElementById('propertyPanel');
+                const btn = document.getElementById('propertiesBtn');
+                
+                if (force !== null) {
+                    panel.classList.toggle('open', force);
+                    btn.classList.toggle('active', force);
+                } else {
+                    panel.classList.toggle('open');
+                    btn.classList.toggle('active');
+                }
+            }
+
+            togglePreview() {
+                const panel = document.getElementById('previewPanel');
+                const btn = document.getElementById('previewBtn');
+                
+                if (panel.style.display === 'none' || !panel.style.display) {
+                    panel.style.display = 'block';
+                    btn.classList.add('active');
+                } else {
+                    panel.style.display = 'none';
+                    btn.classList.remove('active');
+                }
+            }
+
+            updatePropertyPanel(component) {
+                const content = document.getElementById('propertyContent');
+                content.innerHTML = `
+                    <div class="property-label">Position</div>
+                    <input type="number" class="property-input" placeholder="X" value="${parseInt(component.element.style.left)}" onchange="editor.updateProperty('${component.id}', 'x', this.value)">
+                    <input type="number" class="property-input" placeholder="Y" value="${parseInt(component.element.style.top)}" onchange="editor.updateProperty('${component.id}', 'y', this.value)">
+                    
+                    <div class="property-label">Size</div>
+                    <input type="number" class="property-input" placeholder="Width" value="${parseInt(component.element.style.width || component.properties.width)}" onchange="editor.updateProperty('${component.id}', 'width', this.value)">
+                    <input type="number" class="property-input" placeholder="Height" value="${parseInt(component.element.style.height || component.properties.height)}" onchange="editor.updateProperty('${component.id}', 'height', this.value)">
+                    
+                    <div class="property-label">Appearance</div>
+                    <input type="color" class="property-color" value="#1a1a1a" onchange="editor.updateProperty('${component.id}', 'backgroundColor', this.value)">
+                    <input type="range" class="property-slider" min="0" max="1" step="0.1" value="0.9" onchange="editor.updateProperty('${component.id}', 'opacity', this.value)">
+                    
+                    ${this.getTypeSpecificProperties(component)}
+                `;
+            }
+
+            getTypeSpecificProperties(component) {
+                switch (component.data.type) {
+                    case 'money':
+                        return `
+                            <div class="property-label">Money Amount</div>
+                            <input type="number" class="property-input" placeholder="Amount" value="${component.data.amount || 1}" onchange="editor.updateComponentData('${component.id}', 'amount', this.value)">
+                        `;
+                    case 'reaction':
+                        return `
+                            <div class="property-label">Emoji</div>
+                            <input type="text" class="property-input" placeholder="Emoji" value="${component.data.emoji || '😀'}" onchange="editor.updateComponentData('${component.id}', 'emoji', this.value)">
+                        `;
+                    default:
+                        return '';
+                }
+            }
+
+            updateProperty(id, property, value) {
+                const component = this.components.find(c => c.id === id);
+                if (!component) return;
+
+                const element = component.element;
+                
+                switch (property) {
+                    case 'x':
+                        element.style.left = value + 'px';
+                        break;
+                    case 'y':
+                        element.style.top = value + 'px';
+                        break;
+                    case 'width':
+                        element.style.width = value + 'px';
+                        break;
+                    case 'height':
+                        element.style.height = value + 'px';
+                        break;
+                    case 'backgroundColor':
+                        element.style.backgroundColor = value;
+                        break;
+                    case 'opacity':
+                        element.style.opacity = value;
+                        break;
+                }
+
+                component.properties[property] = value;
+                this.updatePreview();
+            }
+
+            updateComponentData(id, property, value) {
+                const component = this.components.find(c => c.id === id);
+                if (!component) return;
+
+                component.data[property] = value;
+                
+                // Regenerate content
+                const content = component.element.querySelector('.component-content');
+                content.innerHTML = this.generateComponentHTML(component.data);
+                
+                // Update title
+                const title = component.element.querySelector('.component-title');
+                title.textContent = this.getComponentName(component.data);
+                
+                this.updatePreview();
+            }
+
+            clearPropertyPanel() {
+                document.getElementById('propertyContent').innerHTML = `
+                    <p style="color: #666; text-align: center; margin-top: 50px;">
+                        Select a component to edit its properties
+                    </p>
+                `;
+            }
+
+            clearCanvas() {
+                if (confirm('Clear all components? This cannot be undone.')) {
+                    document.querySelectorAll('.draggable-component').forEach(el => el.remove());
+                    this.components = [];
+                    this.selectedComponent = null;
+                    this.clearPropertyPanel();
+                    this.updatePreview();
+                    this.logAction('Cleared canvas');
+                }
+            }
+
+            updatePreview() {
+                document.getElementById('componentCount').textContent = this.components.length;
+                document.getElementById('canvasSize').textContent = 'Auto';
+            }
+
+            logAction(action) {
+                document.getElementById('lastAction').textContent = action;
+            }
+
+            openExportPanel() {
+                document.getElementById('exportPanel').classList.add('open');
+            }
+
+            closeExportPanel() {
+                document.getElementById('exportPanel').classList.remove('open');
+            }
+
+            exportLayout(format) {
+                const layoutData = {
+                    components: this.components.map(c => ({
+                        id: c.id,
+                        type: c.data.type,
+                        data: c.data,
+                        properties: c.properties,
+                        position: {
+                            x: parseInt(c.element.style.left),
+                            y: parseInt(c.element.style.top)
+                        },
+                        size: {
+                            width: c.element.style.width,
+                            height: c.element.style.height
+                        }
+                    })),
+                    meta: {
+                        created: new Date().toISOString(),
+                        format: format,
+                        version: '1.0.0'
+                    }
+                };
+
+                switch (format) {
+                    case 'json':
+                        this.downloadFile('layout.json', JSON.stringify(layoutData, null, 2));
+                        break;
+                    case 'html':
+                        this.downloadFile('layout.html', this.generateHTML(layoutData));
+                        break;
+                    case 'astro':
+                        this.downloadFile('Layout.astro', this.generateAstro(layoutData));
+                        break;
+                }
+
+                this.closeExportPanel();
+                this.logAction(`Exported as ${format.toUpperCase()}`);
+            }
+
+            generateHTML(data) {
+                let html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory Layout</title>
+    <style>
+        .sound-factory-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: #000000;
+            overflow: hidden;
+        }
+        .sf-component {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .sf-component:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="sound-factory-container">
+`;
+
+                data.components.forEach(comp => {
+                    html += `        <div class="sf-component" style="left: ${comp.position.x}px; top: ${comp.position.y}px; width: ${comp.size.width}; height: ${comp.size.height};">
+            ${this.generateComponentHTML(comp.data)}
+        </div>
+`;
+                });
+
+                html += `    </div>
+</body>
+</html>`;
+
+                return html;
+            }
+
+            generateAstro(data) {
+                return `---
+// Generated Sound Factory Layout Component
+export interface Props {
+    wsUrl?: string;
+}
+
+const { wsUrl = 'ws://localhost:8080' } = Astro.props;
+---
+
+<div class="sound-factory-layout">
+    ${data.components.map(comp => 
+        `<div class="sf-component" style="left: ${comp.position.x}px; top: ${comp.position.y}px; width: ${comp.size.width}; height: ${comp.size.height};">
+        ${this.generateComponentHTML(comp.data)}
+    </div>`
+    ).join('\n    ')}
+</div>
+
+<style>
+    .sound-factory-layout {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        background: #000000;
+        overflow: hidden;
+    }
+    
+    .sf-component {
+        position: absolute;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .sf-component:hover {
+        transform: scale(1.05);
+    }
+</style>`;
+            }
+
+            downloadFile(filename, content) {
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // Global functions
+        window.editor = null;
+        window.exportLayout = function(format) {
+            if (window.editor) {
+                window.editor.exportLayout(format);
+            }
+        };
+
+        window.closeExportPanel = function() {
+            if (window.editor) {
+                window.editor.closeExportPanel();
+            }
+        };
+
+        // Initialize editor when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.editor = new DragDropEditor();
+        });
+    </script>
+</div>

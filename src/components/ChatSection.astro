@@ -9,7 +9,7 @@ export interface Props {
 const { wsUrl = 'ws://localhost:8080' } = Astro.props;
 ---
 
-<div class="chat-section">
+<div class="chat-section editable-component" data-component-type="chat-section">
   <div class="chat-header">
     <h3>Live Chat</h3>
     <div class="chat-status">

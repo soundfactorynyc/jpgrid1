@@ -1,0 +1,921 @@
+---
+// Sound Factory - Drag and Drop Component Editor
+export interface Props {
+  wsUrl?: string;
+}
+
+const { wsUrl = 'ws://localhost:8080' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory - Component Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000000;
+            color: #ffffff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Editor Header */
+        .editor-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            border-bottom: 2px solid #00ff00;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .editor-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00ff00, #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .editor-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .editor-btn {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .editor-btn:hover {
+            background: rgba(0, 255, 0, 0.4);
+            transform: scale(1.05);
+        }
+
+        .editor-btn.active {
+            background: #00ff00;
+            color: #000000;
+        }
+
+        /* Component Palette */
+        .component-palette {
+            position: fixed;
+            left: -250px;
+            top: 60px;
+            width: 250px;
+            height: calc(100vh - 60px);
+            background: rgba(26, 26, 26, 0.95);
+            border-right: 2px solid #333;
+            overflow-y: auto;
+            z-index: 900;
+            transition: left 0.3s ease;
+        }
+
+        .component-palette.open {
+            left: 0;
+        }
+
+        .palette-section {
+            padding: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .palette-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #00ff00;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .palette-item {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .palette-item:hover {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+            transform: scale(1.02);
+        }
+
+        .palette-icon {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+        }
+
+        .palette-info {
+            flex: 1;
+        }
+
+        .palette-name {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .palette-desc {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        /* Main Canvas */
+        .editor-canvas {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            right: 0;
+            bottom: 0;
+            background: #000000;
+            overflow: hidden;
+            transition: left 0.3s ease;
+        }
+
+        .editor-canvas.palette-open {
+            left: 250px;
+        }
+
+        .canvas-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+
+        /* Draggable Components */
+        .draggable-component {
+            position: absolute;
+            min-width: 80px;
+            min-height: 50px;
+            background: rgba(26, 26, 26, 0.9);
+            border: 2px solid #333;
+            border-radius: 8px;
+            cursor: move;
+            user-select: none;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .draggable-component:hover {
+            border-color: #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .draggable-component.selected {
+            border-color: #ff9900;
+            box-shadow: 0 0 20px rgba(255, 153, 0, 0.5);
+        }
+
+        /* Component Header */
+        .component-header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 6px 10px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: move;
+            font-size: 0.7rem;
+        }
+
+        .component-title {
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .component-controls {
+            display: flex;
+            gap: 3px;
+        }
+
+        .component-control {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .control-delete {
+            background: #ff4444;
+        }
+
+        .control-clone {
+            background: #ffaa00;
+        }
+
+        /* Component Content */
+        .component-content {
+            padding: 8px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Specific Component Styles */
+        .money-comp {
+            background: linear-gradient(45deg, #10b981, #34d399);
+            color: #000;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            padding: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .money-comp:hover {
+            transform: scale(1.1);
+        }
+
+        .reaction-comp {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+        }
+
+        .reaction-comp:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .chat-comp {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 5px;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .chat-input-comp {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 3px;
+        }
+
+        .chat-send-comp {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .grid-comp {
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            border: 2px solid #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+        }
+
+        .grid-comp:hover {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        /* Save Panel */
+        .save-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00ff00;
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 300px;
+            z-index: 1100;
+            display: none;
+        }
+
+        .save-panel.open {
+            display: block;
+        }
+
+        .save-title {
+            color: #00ff00;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .save-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .save-option:hover {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .save-name {
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .save-desc {
+            font-size: 0.7rem;
+            color: #999;
+        }
+
+        /* Animations */
+        @keyframes componentSpawn {
+            0% {
+                transform: scale(0) rotate(180deg);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .component-spawn {
+            animation: componentSpawn 0.3s ease-out;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .component-palette {
+                width: 100%;
+                left: -100%;
+            }
+
+            .component-palette.open {
+                left: 0;
+            }
+
+            .editor-canvas.palette-open {
+                left: 0;
+            }
+
+            .editor-controls {
+                gap: 5px;
+            }
+
+            .editor-btn {
+                padding: 6px 12px;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Editor Header -->
+    <div class="editor-header">
+        <div class="editor-title">🎛️ SOUND FACTORY EDITOR</div>
+        
+        <div class="editor-controls">
+            <button class="editor-btn" id="paletteBtn">📦</button>
+            <button class="editor-btn" id="previewBtn">👁️</button>
+            <button class="editor-btn" id="saveBtn">💾</button>
+            <button class="editor-btn" id="clearBtn">🗑️</button>
+        </div>
+    </div>
+
+    <!-- Component Palette -->
+    <div class="component-palette" id="componentPalette">
+        <div class="palette-section">
+            <div class="palette-title">💰 Money</div>
+            <div class="palette-item" onclick="addComponent('money', '$1')">
+                <div class="palette-icon">💵</div>
+                <div class="palette-info">
+                    <div class="palette-name">Money $1</div>
+                    <div class="palette-desc">Dollar button</div>
+                </div>
+            </div>
+            <div class="palette-item" onclick="addComponent('money', '$5')">
+                <div class="palette-icon">💴</div>
+                <div class="palette-info">
+                    <div class="palette-name">Money $5</div>
+                    <div class="palette-desc">Five dollar button</div>
+                </div>
+            </div>
+            <div class="palette-item" onclick="addComponent('money', '$10')">
+                <div class="palette-icon">💶</div>
+                <div class="palette-info">
+                    <div class="palette-name">Money $10</div>
+                    <div class="palette-desc">Ten dollar button</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-section">
+            <div class="palette-title">😍 Reactions</div>
+            <div class="palette-item" onclick="addComponent('reaction', '🔥')">
+                <div class="palette-icon">🔥</div>
+                <div class="palette-info">
+                    <div class="palette-name">Fire</div>
+                    <div class="palette-desc">Fire reaction</div>
+                </div>
+            </div>
+            <div class="palette-item" onclick="addComponent('reaction', '❤️')">
+                <div class="palette-icon">❤️</div>
+                <div class="palette-info">
+                    <div class="palette-name">Heart</div>
+                    <div class="palette-desc">Love reaction</div>
+                </div>
+            </div>
+            <div class="palette-item" onclick="addComponent('reaction', '🎧')">
+                <div class="palette-icon">🎧</div>
+                <div class="palette-info">
+                    <div class="palette-name">Music</div>
+                    <div class="palette-desc">Music reaction</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-section">
+            <div class="palette-title">💬 Chat</div>
+            <div class="palette-item" onclick="addComponent('chat', 'Chat')">
+                <div class="palette-icon">💬</div>
+                <div class="palette-info">
+                    <div class="palette-name">Chat Input</div>
+                    <div class="palette-desc">Message input</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-section">
+            <div class="palette-title">🎛️ Grid</div>
+            <div class="palette-item" onclick="addComponent('grid', '+')">
+                <div class="palette-icon">+</div>
+                <div class="palette-info">
+                    <div class="palette-name">Grid Button</div>
+                    <div class="palette-desc">64-button grid</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Canvas -->
+    <div class="editor-canvas" id="editorCanvas">
+        <div class="canvas-grid"></div>
+        <!-- Components will be added here -->
+    </div>
+
+    <!-- Save Panel -->
+    <div class="save-panel" id="savePanel">
+        <div class="save-title">💾 Save Layout</div>
+        
+        <div class="save-option" onclick="saveLayout('json')">
+            <div class="save-name">📄 JSON Data</div>
+            <div class="save-desc">Export component data</div>
+        </div>
+        
+        <div class="save-option" onclick="saveLayout('html')">
+            <div class="save-name">🌐 HTML File</div>
+            <div class="save-desc">Generate HTML page</div>
+        </div>
+        
+        <div class="save-option" onclick="closeSavePanel()">
+            <div class="save-name">❌ Cancel</div>
+            <div class="save-desc">Close this panel</div>
+        </div>
+    </div>
+
+    <script>
+        let components = [];
+        let componentCounter = 0;
+        let selectedComponent = null;
+        let isDragging = false;
+        let dragOffset = { x: 0, y: 0 };
+
+        // Initialize editor
+        function initEditor() {
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // Toolbar buttons
+            document.getElementById('paletteBtn').addEventListener('click', togglePalette);
+            document.getElementById('previewBtn').addEventListener('click', previewLayout);
+            document.getElementById('saveBtn').addEventListener('click', openSavePanel);
+            document.getElementById('clearBtn').addEventListener('click', clearCanvas);
+
+            // Canvas click to deselect
+            document.getElementById('editorCanvas').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) {
+                    deselectAll();
+                }
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Delete' && selectedComponent) {
+                    deleteComponent(selectedComponent);
+                }
+                if (e.key === 'Escape') {
+                    deselectAll();
+                }
+            });
+        }
+
+        function addComponent(type, content) {
+            const canvas = document.getElementById('editorCanvas');
+            const component = document.createElement('div');
+            const id = `component-${++componentCounter}`;
+            
+            component.id = id;
+            component.className = 'draggable-component component-spawn';
+            
+            // Random position
+            const x = Math.random() * (canvas.offsetWidth - 150) + 50;
+            const y = Math.random() * (canvas.offsetHeight - 100) + 50;
+            
+            component.style.left = x + 'px';
+            component.style.top = y + 'px';
+
+            // Component content based on type
+            let componentHTML = '';
+            
+            switch (type) {
+                case 'money':
+                    componentHTML = `
+                        <div class="component-header">
+                            <div class="component-title">${content}</div>
+                            <div class="component-controls">
+                                <div class="component-control control-clone" onclick="cloneComponent('${id}')">📋</div>
+                                <div class="component-control control-delete" onclick="deleteComponent('${id}')">❌</div>
+                            </div>
+                        </div>
+                        <div class="component-content">
+                            <div class="money-comp">${content}</div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'reaction':
+                    componentHTML = `
+                        <div class="component-header">
+                            <div class="component-title">${content} Reaction</div>
+                            <div class="component-controls">
+                                <div class="component-control control-clone" onclick="cloneComponent('${id}')">📋</div>
+                                <div class="component-control control-delete" onclick="deleteComponent('${id}')">❌</div>
+                            </div>
+                        </div>
+                        <div class="component-content">
+                            <div class="reaction-comp">${content}</div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'chat':
+                    componentHTML = `
+                        <div class="component-header">
+                            <div class="component-title">Chat Input</div>
+                            <div class="component-controls">
+                                <div class="component-control control-clone" onclick="cloneComponent('${id}')">📋</div>
+                                <div class="component-control control-delete" onclick="deleteComponent('${id}')">❌</div>
+                            </div>
+                        </div>
+                        <div class="component-content">
+                            <div class="chat-comp">
+                                <input class="chat-input-comp" placeholder="Type message..." />
+                                <button class="chat-send-comp">Send</button>
+                            </div>
+                        </div>
+                    `;
+                    component.style.width = '200px';
+                    break;
+                    
+                case 'grid':
+                    componentHTML = `
+                        <div class="component-header">
+                            <div class="component-title">Grid Button</div>
+                            <div class="component-controls">
+                                <div class="component-control control-clone" onclick="cloneComponent('${id}')">📋</div>
+                                <div class="component-control control-delete" onclick="deleteComponent('${id}')">❌</div>
+                            </div>
+                        </div>
+                        <div class="component-content">
+                            <div class="grid-comp">+</div>
+                        </div>
+                    `;
+                    component.style.width = '60px';
+                    component.style.height = '60px';
+                    break;
+            }
+
+            component.innerHTML = componentHTML;
+            canvas.appendChild(component);
+
+            // Store component data
+            components.push({
+                id: id,
+                type: type,
+                content: content,
+                element: component,
+                x: x,
+                y: y
+            });
+
+            // Make draggable
+            makeDraggable(component);
+            
+            // Auto-select new component
+            selectComponent(component);
+        }
+
+        function makeDraggable(element) {
+            const header = element.querySelector('.component-header');
+            
+            header.addEventListener('mousedown', (e) => {
+                if (e.target.classList.contains('component-control')) return;
+                
+                isDragging = true;
+                selectedComponent = element;
+                
+                const rect = element.getBoundingClientRect();
+                const canvas = document.getElementById('editorCanvas').getBoundingClientRect();
+                
+                dragOffset.x = e.clientX - (rect.left - canvas.left);
+                dragOffset.y = e.clientY - (rect.top - canvas.top);
+                
+                element.style.cursor = 'grabbing';
+                element.style.zIndex = '1000';
+                
+                selectComponent(element);
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging || selectedComponent !== element) return;
+
+                const canvas = document.getElementById('editorCanvas').getBoundingClientRect();
+                let x = e.clientX - canvas.left - dragOffset.x;
+                let y = e.clientY - canvas.top - dragOffset.y;
+                
+                // Keep within bounds
+                x = Math.max(0, Math.min(x, canvas.width - element.offsetWidth));
+                y = Math.max(0, Math.min(y, canvas.height - element.offsetHeight));
+                
+                element.style.left = x + 'px';
+                element.style.top = y + 'px';
+                
+                // Update stored position
+                const comp = components.find(c => c.id === element.id);
+                if (comp) {
+                    comp.x = x;
+                    comp.y = y;
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    if (selectedComponent) {
+                        selectedComponent.style.cursor = 'move';
+                        selectedComponent.style.zIndex = '';
+                    }
+                }
+            });
+
+            // Click to select
+            element.addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectComponent(element);
+            });
+        }
+
+        function selectComponent(element) {
+            deselectAll();
+            element.classList.add('selected');
+            selectedComponent = element;
+        }
+
+        function deselectAll() {
+            document.querySelectorAll('.draggable-component').forEach(el => {
+                el.classList.remove('selected');
+            });
+            selectedComponent = null;
+        }
+
+        function deleteComponent(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.remove();
+                components = components.filter(c => c.id !== id);
+                if (selectedComponent === element) {
+                    selectedComponent = null;
+                }
+            }
+        }
+
+        function cloneComponent(id) {
+            const comp = components.find(c => c.id === id);
+            if (comp) {
+                addComponent(comp.type, comp.content);
+            }
+        }
+
+        function togglePalette() {
+            const palette = document.getElementById('componentPalette');
+            const canvas = document.getElementById('editorCanvas');
+            const btn = document.getElementById('paletteBtn');
+            
+            palette.classList.toggle('open');
+            canvas.classList.toggle('palette-open');
+            btn.classList.toggle('active');
+        }
+
+        function previewLayout() {
+            // Create preview by hiding editor controls
+            document.querySelectorAll('.component-header').forEach(header => {
+                header.style.display = header.style.display === 'none' ? 'flex' : 'none';
+            });
+            
+            document.querySelectorAll('.draggable-component').forEach(comp => {
+                comp.style.cursor = comp.style.cursor === 'pointer' ? 'move' : 'pointer';
+            });
+            
+            const btn = document.getElementById('previewBtn');
+            btn.classList.toggle('active');
+        }
+
+        function openSavePanel() {
+            document.getElementById('savePanel').classList.add('open');
+        }
+
+        function closeSavePanel() {
+            document.getElementById('savePanel').classList.remove('open');
+        }
+
+        function saveLayout(format) {
+            const layoutData = {
+                components: components.map(c => ({
+                    id: c.id,
+                    type: c.type,
+                    content: c.content,
+                    x: c.x,
+                    y: c.y,
+                    width: c.element.style.width || 'auto',
+                    height: c.element.style.height || 'auto'
+                })),
+                created: new Date().toISOString()
+            };
+
+            if (format === 'json') {
+                downloadFile('sound-factory-layout.json', JSON.stringify(layoutData, null, 2));
+            } else if (format === 'html') {
+                const html = generateHTML(layoutData);
+                downloadFile('sound-factory-layout.html', html);
+            }
+            
+            closeSavePanel();
+        }
+
+        function generateHTML(data) {
+            let html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory Layout</title>
+    <style>
+        body { margin: 0; padding: 0; background: #000; color: #fff; font-family: Arial, sans-serif; height: 100vh; overflow: hidden; }
+        .layout-container { position: relative; width: 100%; height: 100%; }
+        .component { position: absolute; cursor: pointer; transition: all 0.3s ease; }
+        .component:hover { transform: scale(1.05); }
+        .money { background: linear-gradient(45deg, #10b981, #34d399); color: #000; padding: 10px 15px; border-radius: 15px; font-weight: bold; }
+        .reaction { background: rgba(255,255,255,0.1); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .chat { background: rgba(26,26,26,0.9); border: 1px solid #333; border-radius: 15px; padding: 10px; display: flex; gap: 10px; }
+        .chat input { flex: 1; background: transparent; border: none; color: #fff; padding: 5px; }
+        .chat button { background: #00ff00; color: #000; border: none; padding: 5px 10px; border-radius: 10px; font-weight: bold; }
+        .grid { background: #1a1a1a; border: 2px solid #333; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .grid:hover { border-color: #00ff00; }
+    </style>
+</head>
+<body>
+    <div class="layout-container">
+`;
+
+            data.components.forEach(comp => {
+                html += `        <div class="component ${comp.type}" style="left: ${comp.x}px; top: ${comp.y}px; width: ${comp.width}; height: ${comp.height};">
+            ${comp.content}
+        </div>
+`;
+            });
+
+            html += `    </div>
+    <script>
+        // Add interactive functionality here
+        document.querySelectorAll('.money').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.style.transform = 'scale(0.9)';
+                setTimeout(() => btn.style.transform = '', 200);
+            });
+        });
+        
+        document.querySelectorAll('.reaction').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.style.transform = 'scale(1.2)';
+                setTimeout(() => btn.style.transform = '', 300);
+            });
+        });
+    </script>
+</body>
+</html>`;
+
+            return html;
+        }
+
+        function downloadFile(filename, content) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function clearCanvas() {
+            if (confirm('Clear all components? This cannot be undone.')) {
+                document.querySelectorAll('.draggable-component').forEach(el => el.remove());
+                components = [];
+                selectedComponent = null;
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initEditor);
+    </script>
+</body>
+</html>

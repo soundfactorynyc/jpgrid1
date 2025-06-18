@@ -1,0 +1,44 @@
+---
+// Sound Factory - Integrated Component Editor Page
+import MainLayout from '../components/layout/MainLayout.astro';
+import DragDropEditor from '../components/DragDropEditor.astro';
+
+export interface Props {
+  wsUrl?: string;
+}
+
+const { wsUrl = 'ws://localhost:8080' } = Astro.props;
+---
+
+<MainLayout title="Sound Factory - Component Editor">
+    <DragDropEditor wsUrl={wsUrl} />
+    
+    <script>
+        // Initialize editor on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Sound Factory Component Editor loaded');
+            
+            // Add any editor-specific initialization here
+            (window as any).soundFactoryEditor = {
+                currentMode: 'design',
+                isDirty: false,
+                
+                toggleMode() {
+                    this.currentMode = this.currentMode === 'design' ? 'preview' : 'design';
+                    document.body.classList.toggle('preview-mode', this.currentMode === 'preview');
+                },
+                
+                save() {
+                    // Implement save functionality
+                    this.isDirty = false;
+                    console.log('Saving component changes...');
+                },
+                
+                exportToAstro() {
+                    // Export current design to Astro component format
+                    console.log('Exporting to Astro format...');
+                }
+            };
+        });
+    </script>
+</MainLayout>
