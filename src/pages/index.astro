@@ -354,6 +354,22 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             word-break: break-all;
         }
 
+        .stream-player {
+            width: 100%;
+            height: 60%;
+            margin: 0.1rem 0;
+            border-radius: 0.2rem;
+            overflow: hidden;
+            background: #111;
+        }
+
+        .stream-player video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0.2rem;
+        }
+
         /* HOMEBASE - Reduced spacing */
         .homebase {
             background: #000000;
@@ -1239,7 +1255,13 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         <div class="owncast-stream" id="owncastStream">
             <div class="owncast-title">OWNCAST + OBS</div>
             <div class="owncast-status">LIVE</div>
-            <div class="rtmp-info">RTMP: rtmp://localhost:1935/live</div>
+            <div class="rtmp-info">RTMP: rtmp://stream.soundfactorynyc.com/live</div>
+            <div class="stream-player">
+                <video id="owncastVideo" autoplay muted playsinline>
+                    <source src="https://live.soundfactorynyc.com/hls/stream.m3u8" type="application/x-mpegURL">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
             <div class="owncast-controls">
                 <button class="owncast-btn" id="prevVideo">◀</button>
                 <button class="owncast-btn" id="obsBtn">OBS</button>
