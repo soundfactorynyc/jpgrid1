@@ -1,5 +1,6 @@
 ---
-// Sound Factory - Component Grid System
+// Sound Factory - Simple Homebase Layout
+import MainLayout from '../components/layout/MainLayout.astro';
 
 export interface Props {
   wsUrl?: string;
@@ -8,12 +9,7 @@ export interface Props {
 const { wsUrl = 'ws://localhost:8080' } = Astro.props;
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sound Factory - Component Grid System</title>
+<MainLayout title="Sound Factory - Homebase">
     <style>
         * {
             margin: 0;
@@ -29,2141 +25,748 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             overflow: hidden;
             position: fixed;
             inset: 0;
+            max-width: 420px;
+            margin: 0 auto;
         }
 
-        /* Harmony Grid System */
-        .harmony-system {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+        /* Mobile Container */
+        .mobile-container {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            margin: 0 auto;
+            background: #000000;
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
 
         /* Header */
         .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            text-align: center;
             padding: 15px 20px;
             background: rgba(0, 0, 0, 0.9);
             border-bottom: 2px solid #ffffff;
-            backdrop-filter: blur(10px);
+            text-align: center;
             z-index: 200;
         }
 
         .logo {
             font-size: 1.8rem;
             font-weight: bold;
-            margin-bottom: 8px;
             background: linear-gradient(45deg, #ffffff, #cccccc);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .live-indicator {
-            display: inline-block;
-            padding: 6px 12px;
-            background: #ff0000;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 0.8rem;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* Grid Interface */
-        .grid-interface {
-            position: relative;
-            z-index: 100;
-        }
-
-        .main-button {
-            position: fixed;
-            left: 15px;
+        /* TikTok Video Area */
+        .tiktok-area {
+            flex: 1;
             background: #000000;
-            color: #ffffff;
-            border: 2px solid #333333;
-            width: clamp(50px, 12vw, 65px);
-            height: clamp(50px, 12vw, 65px);
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: clamp(24px, 6vw, 32px);
-            font-weight: bold;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 100;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .main-button:active {
-            transform: scale(0.9);
-            background: #1a1a1a;
-        }
-
-        .main-button.active {
-            border-color: #00ff00;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
-        }
-
-        .button-top { 
-            top: calc(max(env(safe-area-inset-top), 20px) + 100px);
-        }
-        .button-middle { 
-            top: 50%; 
-            transform: translateY(-50%); 
-        }
-        .button-bottom { 
-            bottom: max(env(safe-area-inset-bottom), 20px); 
-        }
-
-        .grid-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.98);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 90;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding-top: 120px;
-            backdrop-filter: blur(0px);
-        }
-
-        .grid-overlay.active {
-            opacity: 1;
-            visibility: visible;
-            backdrop-filter: blur(10px);
-        }
-
-        .grid-overlay.opening {
-            animation: gridSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        .grid-overlay.closing {
-            animation: gridSlideOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        @keyframes gridSlideIn {
-            0% {
-                opacity: 0;
-                transform: translateY(100%);
-                backdrop-filter: blur(0px);
-            }
-            50% {
-                opacity: 0.7;
-                backdrop-filter: blur(5px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-                backdrop-filter: blur(10px);
-            }
-        }
-
-        @keyframes gridSlideOut {
-            0% {
-                opacity: 1;
-                transform: translateY(0);
-                backdrop-filter: blur(10px);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-100%);
-                backdrop-filter: blur(0px);
-            }
-        }
-
-        .grid-container {
-            width: 100%;
-            height: 100%;
-            max-width: min(90vw, 80vh);
-            max-height: min(90vw, 80vh);
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(8, 1fr);
-            gap: clamp(4px, 1.2vw, 12px);
-            padding: 20px;
-        }
-
-        /* Component Grid Buttons */
-        .component-button {
-            background: #000000 !important;
-            color: #ffffff !important;
-            border: 2px solid #333333;
-            border-radius: clamp(8px, 2vw, 15px);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .tiktok-placeholder {
+            color: #666;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        /* Platform Switcher Corners */
+        .platform-corner {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .platform-corner:hover {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+        }
+
+        .corner-tl { top: 10px; left: 10px; }
+        .corner-tr { top: 10px; right: 10px; }
+        .corner-bl { bottom: 10px; left: 10px; }
+        .corner-br { bottom: 10px; right: 10px; }
+
+        /* Upload/Camera Buttons */
+        .upload-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .upload-btn {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+        }
+
+        /* Floating Owncast Stream */
+        .owncast-stream {
+            position: absolute;
+            top: 80px;
+            left: 10px;
+            width: 120px;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: clamp(8px, 2vw, 15px);
-            text-align: center;
-            min-height: clamp(80px, 12vw, 120px);
-            transform: scale(0.8);
-            opacity: 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-        }
-
-        .component-button.visible {
-            transform: scale(1);
-            opacity: 1;
-        }
-
-        .component-button:hover {
-            border-color: #00ff00;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
-            background: rgba(0, 255, 0, 0.1);
-            transform: translateY(-3px) scale(1.05);
-            z-index: 50;
-        }
-
-        .component-button:active {
-            transform: scale(0.95);
-            background: rgba(0, 255, 0, 0.2);
-        }
-
-        .component-button.activated {
-            background: linear-gradient(45deg, #00ff00, #00cc00);
-            color: #000000;
-            border-color: #00ff00;
-            box-shadow: 0 0 25px rgba(0, 255, 0, 0.8);
-            animation: activatedPulse 2s ease-in-out infinite;
-        }
-
-        .component-button.locked {
-            background: linear-gradient(45deg, #ff9900, #ff6600);
-            color: #000000;
-            border-color: #ff9900;
-            box-shadow: 0 0 25px rgba(255, 153, 0, 0.8);
-            animation: lockedGlow 3s ease-in-out infinite;
-        }
-
-        @keyframes activatedPulse {
-            0%, 100% { box-shadow: 0 0 25px rgba(0, 255, 0, 0.8); }
-            50% { box-shadow: 0 0 35px rgba(0, 255, 0, 1); }
-        }
-
-        @keyframes lockedGlow {
-            0%, 100% { box-shadow: 0 0 25px rgba(255, 153, 0, 0.8); }
-            50% { box-shadow: 0 0 35px rgba(255, 153, 0, 1); }
-        }
-
-        .component-icon {
-            font-size: clamp(1.5rem, 4.5vw, 2.5rem);
-            margin-bottom: clamp(4px, 1vw, 8px);
-            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
-            line-height: 1;
-        }
-
-        .component-title {
-            font-size: clamp(0.65rem, 2vw, 1rem);
-            font-weight: 600;
-            line-height: 1.1;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-            word-wrap: break-word;
-            hyphens: auto;
-        }
-
-        /* Regular Grid Buttons (middle and bottom) */
-        .grid-button {
-            background: #000000;
-            color: #ffffff;
-            border: 1px solid #333333;
-            border-radius: clamp(6px, 1.5vw, 12px);
-            cursor: pointer;
-            font-size: clamp(12px, 3vw, 20px);
-            font-weight: 500;
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .grid-button:hover {
-            border-color: #ff9900;
-            box-shadow: 0 0 10px rgba(255, 153, 0, 0.5);
-        }
-
-        .grid-button:active {
-            transform: scale(0.95);
-            background: #1a1a1a;
-        }
-
-        .grid-button.active-control {
-            background: #ff9900;
-            color: #000000;
-        }
-
-        .close-button {
-            position: absolute;
-            top: calc(max(env(safe-area-inset-top), 20px) + 20px);
-            right: max(env(safe-area-inset-right), 20px);
-            background: #000000;
-            color: #ffffff;
-            border: 2px solid #333333;
-            width: clamp(45px, 10vw, 55px);
-            height: clamp(45px, 10vw, 55px);
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: clamp(20px, 5vw, 28px);
-            z-index: 101;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .close-button:hover {
-            border-color: #ff0000;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
-        }
-
-        .icon {
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-block;
-        }
-
-        .main-button.active .icon {
-            transform: rotate(45deg);
-        }
-
-        /* LED Display */
-        .led-display-container {
-            position: fixed;
-            inset: 0;
-            background: #000000;
-            display: none;
-            z-index: 80;
-            padding-top: 120px;
-        }
-
-        .led-display-container.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .led-display {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .led-grid {
-            display: grid;
-            grid-template-columns: repeat(100, 1fr);
-            grid-template-rows: repeat(200, 1fr);
-            gap: 0;
-            width: min(100vw, 50vh);
-            height: min(200vw, 100vh);
-            background: #000000;
-            border: 2px solid #333;
-            border-radius: 10px;
-        }
-
-        .led-pixel {
-            background: #111111;
-            border: none;
-            aspect-ratio: 1/1;
-            transition: background-color 0.1s ease;
-        }
-
-        .led-pixel.on { background: #00ff00; }
-        .led-pixel.red { background: #ff0000; }
-        .led-pixel.green { background: #00ff00; }
-        .led-pixel.blue { background: #0099ff; }
-        .led-pixel.yellow { background: #ffff00; }
-        .led-pixel.purple { background: #9900ff; }
-        .led-pixel.white { background: #ffffff; }
-        .led-pixel.orange { background: #ff9900; }
-
-        /* Status and Info */
-        .status-indicator {
-            position: fixed;
-            top: calc(max(env(safe-area-inset-top), 20px) + 100px);
-            right: 20px;
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid #333;
-            border-radius: 20px;
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 110;
-            backdrop-filter: blur(10px);
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #333;
-            transition: all 0.3s ease;
-        }
-
-        .status-dot.connected { background: #00ff00; }
-        .status-dot.active { background: #ff9900; }
-
-        .status-text {
-            color: #999;
-            font-size: 12px;
-        }
-
-        .grid-info {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid #333;
-            border-radius: 15px;
-            padding: 12px 20px;
-            z-index: 110;
-            backdrop-filter: blur(10px);
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .grid-info.visible {
-            opacity: 1;
-        }
-
-        /* Component Selection System */
-        .component-button.selected {
-            border-color: #ffaa00 !important;
-            box-shadow: 0 0 20px rgba(255, 170, 0, 0.8) !important;
-            background: rgba(255, 170, 0, 0.2) !important;
-        }
-
-        .component-checkbox {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 20px;
-            height: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #333;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            color: #00ff00;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        .component-button:hover .component-checkbox {
-            opacity: 1;
-        }
-
-        .component-button.selected .component-checkbox {
-            opacity: 1;
-            background: #ffaa00;
-            border-color: #ffaa00;
-            color: #000;
-        }
-
-        /* Merge Controls Interface */
-        .merge-controls-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.98);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 200;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .merge-controls-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .merge-controls-container {
-            width: 100%;
-            max-width: 1200px;
-            max-height: 90vh;
-            background: #000000;
-            border: 3px solid #00ff00;
-            border-radius: 20px;
-            padding: 30px;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 255, 0, 0.3);
-        }
-
-        .merge-controls-header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 20px;
-        }
-
-        .merge-controls-title {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #00ff00;
-            margin-bottom: 10px;
-        }
-
-        .merge-controls-subtitle {
-            color: #cccccc;
-            font-size: 1.1rem;
-        }
-
-        .component-control-panel {
-            background: #000000 !important;
-            border: 2px solid #00ff00;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
-        }
-
-        .component-control-panel:hover {
-            border-color: #00ff00;
-            box-shadow: 0 0 25px rgba(0, 255, 0, 0.4);
-        }
-
-        .control-panel-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #333;
-        }
-
-        .control-panel-icon {
-            font-size: 2rem;
-            margin-right: 15px;
-        }
-
-        .control-panel-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #ffffff;
-        }
-
-        .control-panel-category {
-            background: rgba(0, 255, 0, 0.2);
-            color: #00ff00;
-            padding: 4px 12px;
-            border-radius: 10px;
             font-size: 0.8rem;
-            margin-left: auto;
+            z-index: 100;
+            cursor: move;
+            box-shadow: 0 4px 20px rgba(0, 255, 0, 0.3);
         }
 
-        .controls-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .control-group {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 15px;
-            border: 1px solid #333;
-        }
-
-        .control-label {
-            color: #cccccc;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .control-knob {
-            width: 60px;
-            height: 60px;
-            background: radial-gradient(circle, #333 30%, #000 70%);
-            border: 3px solid #666;
-            border-radius: 50%;
-            position: relative;
-            cursor: pointer;
-            margin: 0 auto 10px;
-            transition: all 0.3s ease;
-        }
-
-        .control-knob:hover {
-            border-color: #00ff00;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
-        }
-
-        .control-knob::after {
-            content: '';
-            position: absolute;
-            top: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 3px;
-            height: 20px;
-            background: #00ff00;
-            border-radius: 2px;
-            transform-origin: 50% 25px;
-        }
-
-        .control-slider {
-            width: 100%;
-            height: 6px;
-            background: #333;
-            border-radius: 3px;
-            position: relative;
-            cursor: pointer;
-            margin: 10px 0;
-        }
-
-        .control-slider::after {
-            content: '';
-            position: absolute;
-            top: -3px;
-            left: 30%;
-            width: 12px;
-            height: 12px;
-            background: #00ff00;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .control-slider:hover::after {
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
-        }
-
-        .control-button {
-            background: #333;
-            color: #ffffff;
-            border: 2px solid #666;
-            border-radius: 8px;
-            padding: 8px 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        .control-button:hover {
-            border-color: #00ff00;
-            background: rgba(0, 255, 0, 0.1);
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
-        }
-
-        .control-button.active {
-            background: #00ff00;
-            color: #000000;
-            border-color: #00ff00;
-        }
-
-        .merge-action-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #333;
-        }
-
-        .merge-button {
-            background: #00ff00;
-            color: #000000;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-size: 1.1rem;
+        .owncast-title {
             font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            margin-bottom: 5px;
         }
 
-        .merge-button:hover {
-            background: #00cc00;
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(0, 255, 0, 0.4);
-        }
-
-        .merge-button.secondary {
-            background: #333;
-            color: #ffffff;
-            border: 2px solid #666;
-        }
-
-        .merge-button.secondary:hover {
-            border-color: #00ff00;
-            background: rgba(0, 255, 0, 0.1);
-        }
-
-        /* Selection Counter */
-        .selection-counter {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #ffaa00;
-            border-radius: 25px;
-            padding: 12px 20px;
-            display: none;
-            align-items: center;
-            gap: 10px;
-            z-index: 150;
-            backdrop-filter: blur(10px);
-        }
-
-        .selection-counter.visible {
-            display: flex;
-        }
-
-        .selection-count {
-            color: #ffaa00;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .merge-selected-btn {
-            background: #ffaa00;
-            color: #000000;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .merge-selected-btn:hover {
-            background: #ff8800;
-            transform: scale(1.05);
-        }
-
-        /* Enhanced Component Tooltip */
-        .tooltip {
-            position: fixed;
-            background: rgba(0, 0, 0, 0.95);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            max-width: 350px;
-            z-index: 1000;
-            border: 2px solid #00ff00;
-            backdrop-filter: blur(15px);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 30px rgba(0, 255, 0, 0.3);
-            transform: translateY(10px);
-        }
-
-        .tooltip.visible {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateY(0);
-        }
-
-        .tooltip-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .tooltip-title {
-            font-weight: bold;
+        .owncast-status {
             color: #00ff00;
-            font-size: 1.1rem;
-            line-height: 1.2;
-        }
-
-        .tooltip-category {
-            background: rgba(0, 255, 0, 0.2);
-            color: #00ff00;
-            padding: 2px 8px;
-            border-radius: 10px;
             font-size: 0.7rem;
-            font-weight: 600;
         }
 
-        .tooltip-description {
-            margin-bottom: 12px;
-            line-height: 1.4;
-            color: #e0e0e0;
-        }
-
-        .tooltip-section {
-            margin-bottom: 10px;
-        }
-
-        .tooltip-section-title {
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 4px;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .tooltip-section-content {
-            color: #cccccc;
-            line-height: 1.3;
-            font-size: 0.8rem;
-        }
-
-        .tooltip-meta {
-            display: flex;
-            gap: 15px;
-            margin: 12px 0;
-            padding: 8px 0;
-            border-top: 1px solid #333;
-            border-bottom: 1px solid #333;
-        }
-
-        .tooltip-difficulty {
+        /* HOMEBASE - Single Horizontal Line */
+        .homebase {
+            background: #000000;
+            border-top: 2px solid #333;
+            padding: 10px 5px;
             display: flex;
             align-items: center;
             gap: 5px;
+            overflow-x: auto;
+            min-height: 60px;
         }
 
-        .difficulty-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #666;
-        }
-
-        .difficulty-indicator.active {
-            background: #00ff00;
-        }
-
-        .tooltip-fun-factor {
+        /* Money Buttons */
+        .money-section {
             display: flex;
-            align-items: center;
             gap: 3px;
+            flex-shrink: 0;
         }
 
-        .fun-star {
-            color: #666;
-            font-size: 0.8rem;
-        }
-
-        .fun-star.active {
-            color: #ffaa00;
-        }
-
-        .tooltip-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 15px;
-        }
-
-        .tooltip-button {
-            background: #00ff00;
-            color: #000000;
+        .money-btn {
+            background: linear-gradient(45deg, #10b981, #34d399);
+            color: #000;
             border: none;
-            padding: 6px 12px;
+            padding: 8px 12px;
             border-radius: 15px;
             font-size: 0.8rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
-            flex: 1;
+            min-width: 40px;
         }
 
-        .tooltip-button:hover {
+        .money-btn:nth-child(2) { background: linear-gradient(45deg, #3b82f6, #60a5fa); }
+        .money-btn:nth-child(3) { background: linear-gradient(45deg, #8b5cf6, #a78bfa); }
+        .money-btn:nth-child(4) { background: linear-gradient(45deg, #ec4899, #f472b6); }
+        .money-btn:nth-child(5) { background: linear-gradient(45deg, #f59e0b, #fbbf24); }
+        .money-btn:nth-child(6) { background: linear-gradient(45deg, #ef4444, #f87171); }
+
+        .money-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .money-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Reaction Buttons */
+        .reaction-section {
+            display: flex;
+            gap: 3px;
+            flex-shrink: 0;
+        }
+
+        .reaction-btn {
+            width: 35px;
+            height: 35px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reaction-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            transition: width 0.6s, height 0.6s;
+            border-radius: 50%;
+        }
+
+        .reaction-btn:hover::before {
+            width: 60px;
+            height: 60px;
+        }
+
+        .reaction-btn:hover {
+            transform: translateY(-2px) scale(1.1);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .reaction-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Special SF/JP buttons */
+        .sf-btn, .jp-btn {
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(255, 0, 128, 0.2), rgba(128, 0, 255, 0.2));
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            letter-spacing: 0.5px;
+        }
+
+        .jp-btn {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+        }
+
+        .sf-btn:hover {
+            box-shadow: 0 4px 15px rgba(255, 0, 128, 0.4);
+        }
+
+        .jp-btn:hover {
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Chat Section */
+        .chat-section {
+            flex: 1;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            min-width: 0;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            outline: none;
+            min-width: 80px;
+        }
+
+        .chat-input::placeholder {
+            color: #666;
+        }
+
+        .chat-input:focus {
+            border-color: #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        .send-btn {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .send-btn:hover {
             background: #00cc00;
             transform: scale(1.05);
         }
 
-        .tooltip-button.lock {
-            background: #ff9900;
+        /* Grid Buttons */
+        .grid-buttons {
+            display: flex;
+            gap: 3px;
+            flex-shrink: 0;
         }
 
-        .tooltip-button.lock:hover {
-            background: #ff6600;
+        .grid-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 6px 8px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 30px;
         }
 
-        /* Animation for grid buttons */
-        @keyframes componentFadeIn {
-            from {
+        .grid-btn:hover {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        /* Floating Reactions Container */
+        .reactions-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 35;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .floating-reaction {
+            position: absolute;
+            font-size: 2rem;
+            pointer-events: none;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+        }
+
+        /* Money Container */
+        .money-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 35;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        /* Animations */
+        @keyframes elegantFloat {
+            0% {
+                transform: translateY(0) scale(0) rotate(0deg);
                 opacity: 0;
-                transform: scale(0.6) translateY(20px);
             }
-            to {
+            5% {
+                transform: translateY(-10px) scale(0.5) rotate(5deg);
+                opacity: 0.8;
+            }
+            15% {
+                transform: translateY(-50px) scale(1) rotate(10deg);
                 opacity: 1;
-                transform: scale(1) translateY(0);
+            }
+            85% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-400px) translateX(var(--drift)) scale(0.8) rotate(180deg);
+                opacity: 0;
             }
         }
 
-        .grid-overlay.active .component-button {
-            animation: componentFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            opacity: 0;
-        }
-
-        .grid-overlay.active .component-button:nth-child(1) { animation-delay: 0.05s; }
-        .grid-overlay.active .component-button:nth-child(2) { animation-delay: 0.1s; }
-        .grid-overlay.active .component-button:nth-child(3) { animation-delay: 0.15s; }
-        .grid-overlay.active .component-button:nth-child(4) { animation-delay: 0.2s; }
-        .grid-overlay.active .component-button:nth-child(5) { animation-delay: 0.25s; }
-        .grid-overlay.active .component-button:nth-child(6) { animation-delay: 0.3s; }
-        .grid-overlay.active .component-button:nth-child(7) { animation-delay: 0.35s; }
-        .grid-overlay.active .component-button:nth-child(8) { animation-delay: 0.4s; }
-        .grid-overlay.active .component-button:nth-child(9) { animation-delay: 0.45s; }
-        .grid-overlay.active .component-button:nth-child(10) { animation-delay: 0.5s; }
-        .grid-overlay.active .component-button:nth-child(11) { animation-delay: 0.55s; }
-        .grid-overlay.active .component-button:nth-child(12) { animation-delay: 0.6s; }
-        .grid-overlay.active .component-button:nth-child(13) { animation-delay: 0.65s; }
-        .grid-overlay.active .component-button:nth-child(14) { animation-delay: 0.7s; }
-        .grid-overlay.active .component-button:nth-child(15) { animation-delay: 0.75s; }
-        .grid-overlay.active .component-button:nth-child(16) { animation-delay: 0.8s; }
-        
-        /* Continue pattern for all 64 buttons */
-        .grid-overlay.active .component-button:nth-child(n+17) { 
-            animation-delay: calc(0.85s + (var(--index, 17) - 17) * 0.02s); 
+        @keyframes moneyShoot {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg) scale(0.5);
+                opacity: 0;
+            }
+            10% {
+                transform: translateY(-10vh) translateX(var(--drift-x)) rotate(90deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-80vh) translateX(calc(var(--drift-x) * 2)) rotate(720deg) scale(0.8);
+                opacity: 0;
+            }
         }
 
         /* Mobile optimizations */
-        @media (max-width: 768px) {
-            .header {
-                padding: 10px 15px;
+        @media (max-width: 420px) {
+            .money-btn {
+                padding: 6px 8px;
+                font-size: 0.7rem;
+                min-width: 35px;
             }
             
-            .logo {
-                font-size: 1.4rem;
-                margin-bottom: 5px;
+            .reaction-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
             }
             
-            .button-top {
-                top: calc(max(env(safe-area-inset-top), 15px) + 80px);
+            .sf-btn, .jp-btn {
+                font-size: 0.6rem;
             }
             
-            .grid-overlay {
-                padding-top: 100px;
+            .chat-input {
+                font-size: 0.7rem;
+                padding: 6px 10px;
             }
             
-            .led-display-container {
-                padding-top: 100px;
+            .send-btn {
+                padding: 6px 10px;
+                font-size: 0.7rem;
+            }
+            
+            .grid-btn {
+                padding: 5px 6px;
+                font-size: 0.6rem;
+                min-width: 25px;
             }
         }
     </style>
-</head>
-<body>
-    <!-- Header -->
-    <div class="header">
-        <div class="logo">SOUND FACTORY</div>
-    </div>
 
-    <!-- Harmony Grid System -->
-    <div class="harmony-system">
-        <!-- Grid Interface -->
-        <div class="grid-interface">
-            <button class="main-button button-top" data-grid="top">
-                <span class="icon">+</span>
-            </button>
-            
-            <button class="main-button button-middle" data-grid="middle">
-                <span class="icon">+</span>
-            </button>
-            
-            <button class="main-button button-bottom" data-grid="bottom">
-                <span class="icon">+</span>
-            </button>
+    <div class="mobile-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">SOUND FACTORY</div>
+        </div>
 
-            <!-- Component Grid Overlay (Top) -->
-            <div class="grid-overlay" id="grid-top">
-                <button class="close-button" data-close="top">×</button>
-                <div class="grid-container" id="component-grid">
-                    <!-- 64 component buttons generated by JavaScript -->
-                </div>
+        <!-- TikTok Video Area -->
+        <div class="tiktok-area">
+            <!-- Platform Switcher Corners -->
+            <div class="platform-corner corner-tl">IG</div>
+            <div class="platform-corner corner-tr">SF</div>
+            <div class="platform-corner corner-bl">TT</div>
+            <div class="platform-corner corner-br">FB</div>
+
+            <!-- Upload/Camera Controls -->
+            <div class="upload-controls">
+                <button class="upload-btn">📹</button>
+                <button class="upload-btn">📤</button>
             </div>
 
-            <!-- TikTok Reactions Grid (Middle) -->
-            <div class="grid-overlay" id="grid-middle">
-                <button class="close-button" data-close="middle">×</button>
-                <div class="grid-container" id="reaction-grid">
-                    <!-- 64 TikTok reaction component buttons -->
-                </div>
-            </div>
-
-            <!-- Chat/Social Grid (Bottom) -->
-            <div class="grid-overlay" id="grid-bottom">
-                <button class="close-button" data-close="bottom">×</button>
-                <div class="grid-container" id="social-grid">
-                    <!-- 64 social component buttons -->
-                </div>
+            <!-- TikTok Placeholder -->
+            <div class="tiktok-placeholder">
+                TIKTOK VIDEO<br>
+                <small style="font-size: 1rem; color: #888;">(Full Screen)</small>
             </div>
         </div>
 
-        <!-- LED Display -->
-        <div class="led-display-container" id="ledDisplayContainer">
-            <div class="led-display">
-                <div class="led-grid" id="ledGrid">
-                    <!-- LED pixels generated by JavaScript -->
-                </div>
-            </div>
+        <!-- Floating Owncast Stream -->
+        <div class="owncast-stream" id="owncastStream">
+            <div class="owncast-title">OWNCAST</div>
+            <div class="owncast-status">LIVE</div>
         </div>
-    </div>
 
-    <!-- Status Indicator -->
-    <div class="status-indicator">
-        <span class="status-dot connected"></span>
-        <span class="status-text">Ready</span>
-    </div>
-
-    <!-- Grid Info -->
-    <div class="grid-info" id="gridInfo">
-        <div>Select a component to activate</div>
-    </div>
-
-    <!-- Enhanced Tooltip -->
-    <div class="tooltip" id="tooltip">
-        <div class="tooltip-header">
-            <div class="tooltip-title" id="tooltipTitle"></div>
-            <div class="tooltip-category" id="tooltipCategory"></div>
-        </div>
-        <div class="tooltip-description" id="tooltipDescription"></div>
-        
-        <div class="tooltip-section" id="tooltipHowItWorks">
-            <div class="tooltip-section-title">How It Works</div>
-            <div class="tooltip-section-content" id="tooltipHowItWorksContent"></div>
-        </div>
-        
-        <div class="tooltip-section" id="tooltipTips">
-            <div class="tooltip-section-title">Tips & Tricks</div>
-            <div class="tooltip-section-content" id="tooltipTipsContent"></div>
-        </div>
-        
-        <div class="tooltip-meta" id="tooltipMeta">
-            <div class="tooltip-difficulty">
-                <span style="font-size: 0.7rem; font-weight: 600; margin-right: 5px;">DIFFICULTY:</span>
-                <div class="difficulty-indicator" id="diff1"></div>
-                <div class="difficulty-indicator" id="diff2"></div>
-                <div class="difficulty-indicator" id="diff3"></div>
+        <!-- HOMEBASE - Single Horizontal Line -->
+        <div class="homebase">
+            <!-- Money Section -->
+            <div class="money-section">
+                <button class="money-btn" data-amount="1">$1</button>
+                <button class="money-btn" data-amount="5">$5</button>
+                <button class="money-btn" data-amount="10">$10</button>
+                <button class="money-btn" data-amount="20">$20</button>
+                <button class="money-btn" data-amount="50">$50</button>
+                <button class="money-btn" data-amount="100">$100</button>
             </div>
-            <div class="tooltip-fun-factor">
-                <span style="font-size: 0.7rem; font-weight: 600; margin-right: 3px;">FUN:</span>
-                <span class="fun-star" id="fun1">★</span>
-                <span class="fun-star" id="fun2">★</span>
-                <span class="fun-star" id="fun3">★</span>
-                <span class="fun-star" id="fun4">★</span>
-                <span class="fun-star" id="fun5">★</span>
-            </div>
-        </div>
-        
-        <div class="tooltip-actions">
-            <button class="tooltip-button" id="activateTooltipBtn">Select</button>
-            <button class="tooltip-button lock" id="lockTooltipBtn">Lock Open</button>
-        </div>
-    </div>
 
-    <!-- Selection Counter -->
-    <div class="selection-counter" id="selectionCounter">
-        <span class="selection-count" id="selectionCount">0 Selected</span>
-        <button class="merge-selected-btn" id="mergeSelectedBtn">Merge Components</button>
-    </div>
+            <!-- Reaction Section -->
+            <div class="reaction-section">
+                <button class="reaction-btn" data-emoji="🔥" data-effect="sparkle">🔥</button>
+                <button class="reaction-btn" data-emoji="🎧" data-effect="bounce">🎧</button>
+                <button class="reaction-btn" data-emoji="❤️" data-effect="float">❤️</button>
+                <button class="reaction-btn sf-btn" data-emoji="SF" data-effect="spiral">SF</button>
+                <button class="reaction-btn jp-btn" data-emoji="JP" data-effect="sparkle">JP</button>
+                <button class="reaction-btn" data-emoji="👠" data-effect="bounce">👠</button>
+                <button class="reaction-btn" data-emoji="🏳️‍🌈" data-effect="spiral">🏳️‍🌈</button>
+                <button class="reaction-btn" data-emoji="💃" data-effect="float">💃</button>
+            </div>
 
-    <!-- Merge Controls Overlay -->
-    <div class="merge-controls-overlay" id="mergeControlsOverlay">
-        <div class="merge-controls-container">
-            <div class="merge-controls-header">
-                <div class="merge-controls-title">🎛️ LIVE STREAM CONTROL CENTER</div>
-                <div class="merge-controls-subtitle">Professional DJ Controls - Ready for Live Stream</div>
+            <!-- Chat Section -->
+            <div class="chat-section">
+                <input type="text" class="chat-input" placeholder="Type message..." id="chatInput">
+                <button class="send-btn" id="sendBtn">Send</button>
             </div>
-            
-            <div id="mergeControlsContent">
-                <!-- Dynamic content will be inserted here -->
-            </div>
-            
-            <div class="merge-action-buttons">
-                <button class="merge-button" id="goLiveBtn">🔴 GO LIVE</button>
-                <button class="merge-button" id="recordBtn">⏺️ RECORD</button>
-                <button class="merge-button secondary" id="closeMergeBtn">Close</button>
+
+            <!-- Grid Buttons -->
+            <div class="grid-buttons">
+                <button class="grid-btn" id="grid1">G1</button>
+                <button class="grid-btn" id="grid2">G2</button>
+                <button class="grid-btn" id="grid3">G3</button>
             </div>
         </div>
     </div>
 
-    <script define:vars={{ wsUrl }}>
-        class SoundFactoryGrid {
+    <!-- Floating Reactions Container -->
+    <div id="reactions-container" class="reactions-container"></div>
+
+    <!-- Money Container -->
+    <div id="money-container" class="money-container"></div>
+
+    <script>
+        class SoundFactoryHomebase {
             constructor() {
-                this.activeGrid = null;
-                this.activatedComponents = new Set();
-                this.ledPixels = [];
-                this.ledGrid = [];
-                
                 this.init();
             }
 
             init() {
-                this.setupGridInterface();
-                this.createComponentButtons();
-                this.createReactionButtons();
-                this.createSocialButtons();
-                this.initializeLEDDisplay();
-                this.setupEventListeners();
-                this.setAnimationDelays();
+                this.setupReactionButtons();
+                this.setupMoneyButtons();
+                this.setupChatSystem();
+                this.setupGridButtons();
+                this.setupOwncastDragging();
+                this.setupPlatformSwitcher();
             }
 
-            setupGridInterface() {
-                // Main button handlers
-                document.querySelectorAll('.main-button').forEach(button => {
+            setupReactionButtons() {
+                const reactionButtons = document.querySelectorAll('.reaction-btn');
+                
+                reactionButtons.forEach(button => {
                     button.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const gridName = button.dataset.grid;
-                        this.toggleGrid(gridName);
-                    });
-                });
-
-                // Close button handlers
-                document.querySelectorAll('.close-button').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const gridName = button.dataset.close;
-                        this.closeGrid(gridName);
-                    });
-                });
-            }
-
-            createComponentButtons() {
-                const componentGrid = document.getElementById('component-grid');
-                
-                // 64 DJ Jonathan Peters Sound Factory components
-                this.components = [
-                    {
-                        icon: "🧠", 
-                        title: "Mind-Reading Track Selector", 
-                        description: "AI reads the room's vibe through webcams/chat and suggests perfect next tracks",
-                        howItWorks: "Uses computer vision and chat sentiment analysis to detect crowd energy and mood, then suggests tracks that match the vibe",
-                        tips: "Override suggestions with gesture controls or emoji voting. Works best when crowd is actively chatting and moving!",
-                        difficulty: "Intermediate",
-                        funFactor: 5,
-                        category: "AI-Powered DJ Control",
-                        controls: [
-                            { type: "knob", label: "House Genre", value: 50 },
-                            { type: "knob", label: "Techno Genre", value: 30 },
-                            { type: "knob", label: "Deep House", value: 70 },
-                            { type: "knob", label: "Progressive", value: 40 },
-                            { type: "slider", label: "BPM Range", value: 128 },
-                            { type: "knob", label: "Energy Level", value: 80 },
-                            { type: "button", label: "Mood: Uplifting", active: true },
-                            { type: "button", label: "Era: 90s Classic", active: false }
-                        ]
-                    },
-                    {
-                        icon: "✂️", 
-                        title: "Crowd-Powered Beat Surgeon", 
-                        description: "Fans collectively control beat slicing in real-time - swipe to chop, pinch to stretch, shake phone to scatter beats",
-                        howItWorks: "Touch gestures from multiple fans combine to manipulate the beat. Swipe gestures chop beats, pinch stretches them, shake creates scatter effects",
-                        tips: "Coordinate with friends for epic beat battles! Try rapid swipes during build-ups for maximum impact. Shake during drops for chaos mode!",
-                        difficulty: "Beginner",
-                        funFactor: 5,
-                        category: "AI-Powered DJ Control",
-                        controls: [
-                            { type: "button", label: "Slice Pad 1", active: false },
-                            { type: "button", label: "Slice Pad 2", active: false },
-                            { type: "button", label: "Slice Pad 3", active: true },
-                            { type: "button", label: "Slice Pad 4", active: false },
-                            { type: "knob", label: "Stutter Rate", value: 60 },
-                            { type: "slider", label: "Gate Amount", value: 45 },
-                            { type: "knob", label: "Chop Speed", value: 75 },
-                            { type: "slider", label: "Scatter Intensity", value: 30 }
-                        ]
-                    },
-                    {
-                        icon: "🎤", 
-                        title: "Vocal Vanisher/Multiplier", 
-                        description: "Strip vocals with a gesture, add harmonies with another, create acapella moments instantly",
-                        howItWorks: "Gesture recognition removes or enhances vocal tracks. Swipe down removes vocals, swipe up adds harmonies, circle gesture creates echo effects",
-                        tips: "Perfect for sing-along moments! Use during breakdowns for dramatic effect. Combine with other fans for layered harmonies!",
-                        difficulty: "Beginner", 
-                        funFactor: 4,
-                        category: "AI-Powered DJ Control",
-                        controls: [
-                            { type: "knob", label: "Vocal Isolation", value: 85 },
-                            { type: "slider", label: "5th Harmonies", value: 40 },
-                            { type: "slider", label: "3rd Harmonies", value: 60 },
-                            { type: "slider", label: "Octave Harmonies", value: 20 },
-                            { type: "knob", label: "Formant Shift", value: 50 },
-                            { type: "knob", label: "Gender Bender", value: 50 },
-                            { type: "button", label: "Acapella Mode", active: false },
-                            { type: "button", label: "Echo Effect", active: true }
-                        ]
-                    },
-                    {icon: "🌈", title: "Light Frequency Mapper", description: "Audio to color spectrum"},
-                    {icon: "💫", title: "Motion Blur Engine", description: "Hypnotic motion trails"},
-                    {icon: "✨", title: "Particle Storm", description: "Dancing particle system"},
-                    {icon: "🌌", title: "Holographic Depth", description: "3D visual layers"},
-                    {icon: "🎨", title: "Chromatic Wave Synth", description: "Color wave synthesis"},
-                    {icon: "🔄", title: "Infinity Mirror", description: "Endless recursive visuals"},
-                    {icon: "⚛️", title: "Quantum Visual", description: "Multiple visual states"},
-                    {icon: "📐", title: "Sacred Geometry", description: "Mathematical patterns"},
-                    {icon: "🌀", title: "Dimensional Gateway", description: "Musical portals"},
-                    {icon: "💧", title: "Liquid Light", description: "Flowing liquid light"},
-                    {icon: "🔤", title: "Kinetic Typography", description: "Dancing text/logos"},
-                    {icon: "📡", title: "Visual Echo", description: "Visual music echoes"},
-                    {icon: "🕸️", title: "Hypnotic Patterns", description: "Trance-inducing patterns"},
-                    {icon: "🧠", title: "Crowd Consciousness", description: "Unified mind-state"},
-                    {icon: "📈", title: "Energy Predictor", description: "Energy peak prediction"},
-                    {icon: "👁️", title: "Attention Sync", description: "Crowd focus alignment"},
-                    {icon: "❤️", title: "Emotional Resonance", description: "Shared emotion display"},
-                    {icon: "💭", title: "Memory Sync", description: "Shared musical memories"},
-                    {icon: "🔮", title: "Intuition Field", description: "Collective intuition"},
-                    {icon: "🧬", title: "Group Telepathy", description: "Fan connections"},
-                    {icon: "🌊", title: "Flow State", description: "Unified optimal experience"},
-                    {icon: "🤝", title: "Empathy Matrix", description: "Emotional connections"},
-                    {icon: "💫", title: "Unity Pulse", description: "Perfect synchronization"},
-                    {icon: "✨", title: "Transcendence Display", description: "Collective transcendence"},
-                    {icon: "🎓", title: "Crowd Wisdom", description: "Collective intelligence"},
-                    {icon: "🫁", title: "Breathing Sync", description: "Breathing pattern display"},
-                    {icon: "📊", title: "Group Consciousness", description: "Collective mental state"},
-                    {icon: "💓", title: "Biometric Harmony", description: "Biology sync display"},
-                    {icon: "🕸️", title: "Neural Network", description: "Fan connection network"},
-                    {icon: "🌫️", title: "Virtual Fog", description: "Realistic fog effects"},
-                    {icon: "⚡", title: "Digital Strobe", description: "Perfect strobe timing"},
-                    {icon: "🎨", title: "LED Wall Painter", description: "Emotion-responsive LEDs"},
-                    {icon: "🔴", title: "Laser Coordinator", description: "Safe laser sequences"},
-                    {icon: "✨", title: "Mirror Ball Galaxy", description: "Multiple mirror balls"},
-                    {icon: "📽️", title: "Projection Mapping", description: "3D projections"},
-                    {icon: "🌅", title: "Ambient Atmosphere", description: "Mood lighting sync"},
-                    {icon: "🎆", title: "Effect Synchronizer", description: "Unified effect coordination"},
-                    {icon: "🌈", title: "Color Therapy", description: "Psychology-based colors"},
-                    {icon: "💡", title: "Light Choreographer", description: "Venue light coordination"},
-                    {icon: "⬆️", title: "Ceiling Effects", description: "Overhead effects"},
-                    {icon: "⬇️", title: "Floor LED", description: "Dance floor lighting"},
-                    {icon: "🎨", title: "Wall Wash", description: "Wall color effects"},
-                    {icon: "💨", title: "Smoke Effects", description: "Timed smoke bursts"},
-                    {icon: "⚡", title: "Lightning Effects", description: "Climactic lightning"},
-                    {icon: "🎊", title: "Confetti Cannon", description: "Virtual celebration"},
-                    {icon: "💃", title: "Dance Recognition", description: "Dance move scoring"},
-                    {icon: "🥊", title: "Dance Battle", description: "Head-to-head dancing"},
-                    {icon: "👯", title: "Crowd Sync", description: "Group movement display"},
-                    {icon: "📊", title: "Energy Multiplier", description: "High-energy amplification"},
-                    {icon: "👗", title: "Outfit Spotlight", description: "Fashion highlighting"},
-                    {icon: "🔥", title: "Heat Mapper", description: "Activity zone visualization"},
-                    {icon: "🔄", title: "Movement Predictor", description: "Crowd flow optimization"},
-                    {icon: "🏆", title: "Energy Leaderboard", description: "High-energy rewards"},
-                    {icon: "📷", title: "Dance Archive", description: "Epic moment capture"},
-                    {icon: "🎭", title: "Group Choreography", description: "Coordinated suggestions"},
-                    {icon: "😊", title: "Emotion Analyzer", description: "Expression analysis"},
-                    {icon: "💡", title: "Light Response", description: "Movement-following lights"},
-                    {icon: "📚", title: "Dance Tutorial", description: "Custom move tutorials"},
-                    {icon: "🤲", title: "Unity Indicator", description: "Unified movement display"},
-                    {icon: "⭐", title: "Fan Loyalty", description: "Regular attendee rewards"},
-                    {icon: "🔗", title: "Social Mapper", description: "Friendship formation"},
-                    {icon: "🎯", title: "Track Predictor", description: "Predicts crowd favorites"},
-                    {icon: "🎪", title: "Experience Engine", description: "Ultimate immersion system"}
-                ];
-
-                this.components.forEach((component, index) => {
-                    const button = document.createElement('button');
-                    button.className = 'component-button';
-                    button.dataset.index = index + 1;
-                    button.innerHTML = `
-                        <div class="component-icon">${component.icon}</div>
-                        <div class="component-title">${component.title}</div>
-                        <div class="component-checkbox">✓</div>
-                    `;
-                    
-                    button.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        this.toggleComponentSelection(component, index + 1, button);
-                    });
-                    button.addEventListener('mouseenter', (e) => this.showTooltip(e, component, 'component'));
-                    button.addEventListener('mouseleave', () => this.hideTooltip());
-                    
-                    componentGrid.appendChild(button);
-                });
-            }
-
-            createReactionButtons() {
-                const reactionGrid = document.getElementById('reaction-grid');
-                
-                // 64 Advanced TikTok Reaction & Visual Control components
-                const reactionComponents = [
-                    {icon: "🎯", title: "Reaction Trajectory Designer", description: "Design custom flight paths for explosive reactions"},
-                    {icon: "💥", title: "Mega Explosion Creator", description: "Create mind-blowing custom explosion effects"},
-                    {icon: "⚽", title: "Physics Bounce Simulator", description: "Realistic physics for bouncing reactions"},
-                    {icon: "🪂", title: "Parachute Drop Controller", description: "Floating reactions with custom parachute designs"},
-                    {icon: "🌍", title: "Gravity Manipulation Engine", description: "Control gravity effects for zero-G reactions"},
-                    {icon: "💨", title: "Wind Storm Generator", description: "Create powerful wind patterns for reactions"},
-                    {icon: "🧲", title: "Magnetic Force Fields", description: "Attraction and repulsion magnetic forces"},
-                    {icon: "💫", title: "Collision Impact System", description: "Reactions interact and create chain effects"},
-                    {icon: "✨", title: "Particle Trail Designer", description: "Custom trails that follow reactions"},
-                    {icon: "📏", title: "Size Morphing Engine", description: "Reactions that grow, shrink, or pulse"},
-                    {icon: "🌀", title: "Spin & Rotation Master", description: "Custom rotation and spinning effects"},
-                    {icon: "⚡", title: "Speed Variation Controller", description: "Accelerate, decelerate, or zigzag patterns"},
-                    {icon: "👻", title: "Fade & Transparency Engine", description: "Smooth fade in/out effects with timing"},
-                    {icon: "✂️", title: "Reaction Splitting System", description: "Single reactions split into multiple pieces"},
-                    {icon: "🌈", title: "Color Shifting Engine", description: "Dynamic color changes as reactions travel"},
-                    {icon: "🔊", title: "Sound Effect Trigger", description: "Custom sound effects when reactions impact"},
-                    {icon: "📸", title: "Custom Image Uploader", description: "Upload personal images for reactions"},
-                    {icon: "🎬", title: "Animation Studio Pro", description: "Create custom animated reaction sequences"},
-                    {icon: "🏷️", title: "Personal Brand Integration", description: "Use your logos and designs in reactions"},
-                    {icon: "🎨", title: "3D Texture Mapping", description: "Apply custom textures to 3D reaction objects"},
-                    {icon: "✨", title: "Particle Effect Designer", description: "Custom particle systems attached to reactions"},
-                    {icon: "🦋", title: "Shape Morphing System", description: "Reactions transform shape as they move"},
-                    {icon: "📚", title: "Multi-Layer Builder", description: "Combine multiple elements into single reactions"},
-                    {icon: "⏰", title: "Precision Timing Controller", description: "Exact control over reaction duration and timing"},
-                    {icon: "🎯", title: "Smart Trigger System", description: "Set when and how reactions activate automatically"},
-                    {icon: "📊", title: "Intensity Response Scaler", description: "Adjust how dramatically reactions respond to music"},
-                    {icon: "📁", title: "Reaction Collection Manager", description: "Save and organize your custom reaction designs"},
-                    {icon: "🤝", title: "Community Sharing Network", description: "Share custom reactions with other fans"},
-                    {icon: "🔧", title: "Template Modification Engine", description: "Modify pre-built reactions with personal touches"},
-                    {icon: "👁️", title: "Live Preview Studio", description: "Test custom reactions before using them live"},
-                    {icon: "⚡", title: "Batch Reaction Creator", description: "Create multiple related reactions simultaneously"},
-                    {icon: "🧬", title: "AI Evolution System", description: "Reactions learn and evolve based on usage"},
-                    {icon: "🏠", title: "Virtual Room Physics", description: "Reactions interact with virtual room elements"},
-                    {icon: "🏃", title: "Obstacle Course Creator", description: "Custom obstacles for reactions to navigate"},
-                    {icon: "🎯", title: "Target Achievement System", description: "Hit targets to trigger special effects"},
-                    {icon: "⚠️", title: "Environmental Hazard Generator", description: "Virtual hazards that affect reaction movement"},
-                    {icon: "🌀", title: "Portal Teleportation Network", description: "Portals that teleport reactions across screen"},
-                    {icon: "🛡️", title: "Force Field Generator", description: "Invisible barriers that deflect reactions"},
-                    {icon: "🚀", title: "Launcher Platform Designer", description: "Custom launch pads with unique firing patterns"},
-                    {icon: "🖼️", title: "Interactive Backdrop System", description: "Backgrounds that react to incoming reactions"},
-                    {icon: "🥅", title: "Reaction Catcher Network", description: "Virtual nets and catchers around the screen"},
-                    {icon: "🌦️", title: "Weather Effect Integration", description: "Rain, snow, wind affecting reaction movement"},
-                    {icon: "💡", title: "Advanced Lighting Engine", description: "Reactions cast shadows and reflect light"},
-                    {icon: "👥", title: "Virtual Crowd Integration", description: "Reactions interact with virtual crowd members"},
-                    {icon: "📡", title: "Echo Memory System", description: "Reactions leave temporary marks on environment"},
-                    {icon: "📦", title: "Dynamic Platform Creator", description: "Moving platforms that reactions can land on"},
-                    {icon: "📢", title: "Amplification Power Zones", description: "Special areas that boost reaction effects"},
-                    {icon: "🎨", title: "Background Element Editor", description: "Modify backgrounds to affect reactions"},
-                    {icon: "🔗", title: "Collaborative Chain Builder", description: "Multiple fans create connected reaction sequences"},
-                    {icon: "⚔️", title: "Reaction Battle Arena", description: "Compete with custom reaction designs"},
-                    {icon: "👥", title: "Group Synchronization Hub", description: "Coordinate reactions between multiple fans"},
-                    {icon: "🗳️", title: "Community Voting System", description: "Fans vote on best custom reaction designs"},
-                    {icon: "🎵", title: "Reaction Remix Engine", description: "Combine multiple fans' reactions into hybrids"},
-                    {icon: "📚", title: "Global Reaction Library", description: "Access shared database of fan creations"},
-                    {icon: "📈", title: "Trend Analysis Tracker", description: "Shows which reaction styles are trending"},
-                    {icon: "🏆", title: "Creative Challenge Arena", description: "Daily/weekly challenges for reaction creativity"},
-                    {icon: "🤝", title: "Collaboration Studio Pro", description: "Multiple fans work together on single reactions"},
-                    {icon: "↩️", title: "Smart Response System", description: "Reactions respond to other fans' reactions"},
-                    {icon: "📢", title: "Viral Echo Network", description: "Reactions trigger copycat reactions from others"},
-                    {icon: "🎆", title: "Mega Spectacular Builder", description: "Combine hundreds of reactions into epic shows"},
-                    {icon: "📖", title: "Visual Story Creator", description: "Use reactions to tell compelling visual stories"},
-                    {icon: "💃", title: "Reaction Dance Choreographer", description: "Reactions dance in formation with music"},
-                    {icon: "🎉", title: "Community Event Coordinator", description: "Organize moments where all fans react together"},
-                    {icon: "🏛️", title: "Reaction Legacy Archive", description: "Preserve and replay legendary reaction moments"},
-                    {icon: "🎪", title: "Ultimate Reaction Engine", description: "Master control system for all reaction types"}
-                ];
-
-                reactionComponents.forEach((component, index) => {
-                    const button = document.createElement('button');
-                    button.className = 'component-button';
-                    button.dataset.index = index + 1;
-                    button.innerHTML = `
-                        <div class="component-icon">${component.icon}</div>
-                        <div class="component-title">${component.title}</div>
-                    `;
-                    
-                    button.addEventListener('click', () => this.activateReactionComponent(component, index + 1, button));
-                    button.addEventListener('mouseenter', (e) => this.showTooltip(e, component, 'reaction'));
-                    button.addEventListener('mouseleave', () => this.hideTooltip());
-                    
-                    reactionGrid.appendChild(button);
-                });
-            }
-
-            createSocialButtons() {
-                const socialGrid = document.getElementById('social-grid');
-                
-                // 64 Advanced Social, Communication & Community components
-                const socialComponents = [
-                    {icon: "🎼", title: "AI Music Context Translator", description: "Instantly explains DJ terms and techniques"},
-                    {icon: "🎭", title: "Vibe Energy Synchronizer", description: "Matches fans to chat rooms by energy levels"},
-                    {icon: "💬", title: "Conversation Flow Optimizer", description: "AI suggests perfect conversation topics"},
-                    {icon: "🤝", title: "Soul Connection Intelligence", description: "Finds fans with compatible personalities"},
-                    {icon: "💭", title: "Musical Memory Network", description: "Share and visualize musical experiences"},
-                    {icon: "⚡", title: "Energy Communication Adapter", description: "Chat intensity adapts to crowd energy"},
-                    {icon: "📚", title: "Collaborative Story Engine", description: "Fans create stories inspired by tracks"},
-                    {icon: "😊", title: "Emotion Visual Translator", description: "Convert feelings into visual chat elements"},
-                    {icon: "🧠", title: "Collective Wisdom Synthesizer", description: "AI combines crowd insights into knowledge"},
-                    {icon: "🌍", title: "Cultural Bridge Constructor", description: "Connect fans from different backgrounds"},
-                    {icon: "🎓", title: "Fan Education Network", description: "Veterans teach newcomers about house music"},
-                    {icon: "🔮", title: "Anticipation Builder Pro", description: "Build excitement for upcoming tracks"},
-                    {icon: "📼", title: "Nostalgia Trigger Engine", description: "Spark discussions about classic moments"},
-                    {icon: "🔍", title: "Music Discovery Chat Hub", description: "Fans discover and share new tracks"},
-                    {icon: "🤝", title: "Real-time Collaboration Portal", description: "Work together on music-related projects"},
-                    {icon: "🎉", title: "Community Celebration Orchestrator", description: "Organize special moment celebrations"},
-                    {icon: "💕", title: "Musical Soul Mate Finder", description: "Connect fans with deep musical compatibility"},
-                    {icon: "💃", title: "Dance Partner Matching Service", description: "Pair fans for virtual and real dancing"},
-                    {icon: "🎛️", title: "Production Collaboration Network", description: "Connect music creators and collaborators"},
-                    {icon: "📅", title: "Event Organization Hub", description: "Plan local Sound Factory-style events"},
-                    {icon: "👨‍🏫", title: "Mentorship Matching System", description: "Connect newcomers with experienced fans"},
-                    {icon: "🌐", title: "Global Cultural Exchange", description: "Bridge connections between house scenes worldwide"},
-                    {icon: "🎨", title: "Fan Art Collaboration Space", description: "Visual artists and musicians collaborate"},
-                    {icon: "💚", title: "Music Therapy Support Network", description: "Connect fans using music for healing"},
-                    {icon: "💿", title: "Record Collector Community", description: "Vinyl and digital music collectors unite"},
-                    {icon: "📝", title: "Blog Collaboration Platform", description: "Create shared music blogs and content"},
-                    {icon: "📷", title: "Photography Circle Network", description: "Fans who capture club moments connect"},
-                    {icon: "📚", title: "Music Education Study Groups", description: "Learning circles for production and theory"},
-                    {icon: "🤲", title: "Community Service Coordinator", description: "Organize charity events through music"},
-                    {icon: "🔗", title: "Cross-Platform Integration Hub", description: "Connect online fans with club community"},
-                    {icon: "🏛️", title: "Legacy Project Organizer", description: "Preserve and celebrate house music history"},
-                    {icon: "🔮", title: "Future Vision Planning Center", description: "Community planning for music evolution"},
-                    {icon: "🧩", title: "Collective Problem Solving Engine", description: "Apply crowd intelligence to challenges"},
-                    {icon: "📈", title: "Trend Prediction Network", description: "Fans collectively predict music trends"},
-                    {icon: "⭐", title: "Quality Assessment System", description: "Community-driven music quality control"},
-                    {icon: "💡", title: "Innovation Synthesis Engine", description: "Combine insights into breakthrough concepts"},
-                    {icon: "🔬", title: "Research Collaboration Hub", description: "Coordinate music history and culture research"},
-                    {icon: "📋", title: "Creative Process Documentation", description: "Record how musical innovations emerge"},
-                    {icon: "🌍", title: "Cross-Cultural Music Analysis", description: "Explore global house music variations"},
-                    {icon: "💻", title: "Technology Impact Assessment", description: "Study how tech affects music culture"},
-                    {icon: "📊", title: "Social Impact Measurement", description: "Track positive effects of music community"},
-                    {icon: "📖", title: "Educational Content Creation", description: "Fans create learning materials together"},
-                    {icon: "💼", title: "Music Business Intelligence", description: "Share industry knowledge and trends"},
-                    {icon: "🏺", title: "Cultural Preservation Network", description: "Maintain authentic house music traditions"},
-                    {icon: "🚀", title: "Future Skills Development", description: "Prepare for music technology evolution"},
-                    {icon: "💚", title: "Community Health Optimization", description: "Maintain positive, supportive environment"},
-                    {icon: "🎓", title: "Wisdom Transfer System", description: "Pass knowledge from veterans to newcomers"},
-                    {icon: "🔍", title: "Meta-Community Analysis", description: "Study how community functions and evolves"},
-                    {icon: "🤲", title: "Unity Experience Generator", description: "Create moments of profound connection"},
-                    {icon: "🌊", title: "Collective Flow State Inducer", description: "Guide community into optimal experience"},
-                    {icon: "✨", title: "Shared Transcendence Facilitator", description: "Enable group transcendent experiences"},
-                    {icon: "🧘", title: "Musical Enlightenment Platform", description: "Use music for consciousness expansion"},
-                    {icon: "💚", title: "Healing Circle Coordinator", description: "Organize music-based healing sessions"},
-                    {icon: "🕯️", title: "Meditation Integration System", description: "Combine music with mindfulness practices"},
-                    {icon: "🙏", title: "Spiritual Discussion Forum", description: "Explore deeper meanings of music and dance"},
-                    {icon: "🧠", title: "Consciousness Expansion Network", description: "Share techniques for enhanced awareness"},
-                    {icon: "⭐", title: "Sacred Experience Creator", description: "Design profound spiritual moments"},
-                    {icon: "🎭", title: "Community Ritual Designer", description: "Create meaningful ceremonies and celebrations"},
-                    {icon: "🛤️", title: "Transformative Journey Guide", description: "Help fans use music for personal growth"},
-                    {icon: "🎯", title: "Collective Intention Setter", description: "Unite community around shared goals"},
-                    {icon: "⚡", title: "Energy Healing Facilitator", description: "Use music frequencies for wellness"},
-                    {icon: "🔮", title: "Wisdom Circle Moderator", description: "Facilitate deep sharing and learning"},
-                    {icon: "❤️", title: "Compassion Amplification Engine", description: "Increase kindness throughout community"},
-                    {icon: "🌟", title: "Legacy Creation Platform", description: "Build lasting positive impact through music"},
-                    {icon: "🎪", title: "Ultimate Social Consciousness", description: "Master system for community transcendence"}
-                ];
-
-                socialComponents.forEach((component, index) => {
-                    const button = document.createElement('button');
-                    button.className = 'component-button';
-                    button.dataset.index = index + 1;
-                    button.innerHTML = `
-                        <div class="component-icon">${component.icon}</div>
-                        <div class="component-title">${component.title}</div>
-                    `;
-                    
-                    button.addEventListener('click', () => this.activateSocialComponent(component, index + 1, button));
-                    button.addEventListener('mouseenter', (e) => this.showTooltip(e, component, 'social'));
-                    button.addEventListener('mouseleave', () => this.hideTooltip());
-                    
-                    socialGrid.appendChild(button);
-                });
-            }
-
-            initializeLEDDisplay() {
-                const ledGrid = document.getElementById('ledGrid');
-                const rows = 200;
-                const cols = 100;
-                
-                for (let row = 0; row < rows; row++) {
-                    this.ledGrid[row] = [];
-                    for (let col = 0; col < cols; col++) {
-                        const pixel = document.createElement('div');
-                        pixel.className = 'led-pixel';
-                        pixel.dataset.row = row;
-                        pixel.dataset.col = col;
+                        const emoji = button.dataset.emoji;
+                        const effect = button.dataset.effect;
                         
-                        ledGrid.appendChild(pixel);
-                        this.ledPixels.push(pixel);
-                        this.ledGrid[row][col] = pixel;
-                    }
-                }
-            }
-
-            toggleGrid(gridName) {
-                const grid = document.getElementById(`grid-${gridName}`);
-                const button = document.querySelector(`.button-${gridName}`);
-                
-                // Prevent rapid clicking
-                if (grid.classList.contains('opening') || grid.classList.contains('closing')) {
-                    return;
-                }
-                
-                // Close other grids first
-                ['top', 'middle', 'bottom'].forEach(name => {
-                    if (name !== gridName && this.activeGrid === name) {
-                        this.closeGrid(name);
-                    }
+                        // Add glow to button
+                        button.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.8)';
+                        setTimeout(() => button.style.boxShadow = '', 500);
+                        
+                        // Create floating reaction
+                        this.createFloatingReaction(emoji, e.currentTarget, effect);
+                    });
                 });
+            }
+
+            createFloatingReaction(emoji, button, effect) {
+                const reaction = document.createElement('div');
+                reaction.className = 'floating-reaction';
+                reaction.textContent = emoji;
                 
-                if (this.activeGrid === gridName) {
-                    this.closeGrid(gridName);
-                } else {
-                    this.openGrid(gridName);
+                // Handle text reactions (SF, JP)
+                if (emoji === 'SF') {
+                    reaction.style.fontWeight = '700';
+                    reaction.style.fontSize = '1.5rem';
+                    reaction.style.background = 'linear-gradient(45deg, #ff0080, #8000ff)';
+                    reaction.style.webkitBackgroundClip = 'text';
+                    reaction.style.webkitTextFillColor = 'transparent';
+                    reaction.style.backgroundClip = 'text';
+                } else if (emoji === 'JP') {
+                    reaction.style.fontWeight = '700';
+                    reaction.style.fontSize = '1.5rem';
+                    reaction.style.background = 'linear-gradient(45deg, #FFD700, #FFA500)';
+                    reaction.style.webkitBackgroundClip = 'text';
+                    reaction.style.webkitTextFillColor = 'transparent';
+                    reaction.style.backgroundClip = 'text';
                 }
+                
+                // Get button position
+                const rect = button.getBoundingClientRect();
+                const startX = rect.left + rect.width / 2;
+                const startY = rect.top + rect.height / 2;
+                
+                // Position at button
+                reaction.style.left = startX + 'px';
+                reaction.style.bottom = (window.innerHeight - startY) + 'px';
+                
+                // Random drift
+                reaction.style.setProperty('--drift', (Math.random() - 0.5) * 60 + 'px');
+                reaction.style.animation = 'elegantFloat 3s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+                
+                document.getElementById('reactions-container').appendChild(reaction);
+                
+                // Clean up
+                setTimeout(() => reaction.remove(), 3500);
             }
 
-            openGrid(gridName) {
-                const grid = document.getElementById(`grid-${gridName}`);
-                const button = document.querySelector(`.button-${gridName}`);
+            setupMoneyButtons() {
+                const moneyButtons = document.querySelectorAll('.money-btn');
                 
-                // Add opening animation classes
-                grid.classList.add('opening');
-                button.classList.add('opening');
-                button.classList.add('active');
-                
-                // Show grid with animation
-                grid.style.visibility = 'visible';
-                grid.classList.add('active');
-                
-                this.activeGrid = gridName;
-                
-                // Show LED display with delay
-                setTimeout(() => {
-                    document.getElementById('ledDisplayContainer').classList.add('active');
-                }, 300);
-                
-                // Show grid info
-                const gridInfo = document.getElementById('gridInfo');
-                const infoText = {
-                    top: 'Select components to activate',
-                    middle: 'TikTok reaction controls',
-                    bottom: 'Social & chat controls'
-                };
-                gridInfo.textContent = infoText[gridName];
-                setTimeout(() => {
-                    gridInfo.classList.add('visible');
-                }, 500);
-                
-                // Remove opening class after animation
-                setTimeout(() => {
-                    grid.classList.remove('opening');
-                    button.classList.remove('opening');
-                }, 600);
-                
-                this.updateStatus(`${gridName} Grid Active`, 'active');
-                
-                // Animate components in
-                this.animateComponentsIn(gridName);
-            }
-
-            closeGrid(gridName) {
-                const grid = document.getElementById(`grid-${gridName}`);
-                const button = document.querySelector(`.button-${gridName}`);
-                
-                if (!grid.classList.contains('active')) return;
-                
-                // Add closing animation
-                grid.classList.add('closing');
-                
-                // Hide elements
-                document.getElementById('ledDisplayContainer').classList.remove('active');
-                document.getElementById('gridInfo').classList.remove('visible');
-                
-                // Remove active states
-                button.classList.remove('active');
-                
-                // Complete close after animation
-                setTimeout(() => {
-                    grid.classList.remove('active', 'closing');
-                    grid.style.visibility = 'hidden';
-                    
-                    if (this.activeGrid === gridName) {
-                        this.activeGrid = null;
-                        this.updateStatus('Ready', 'connected');
-                    }
-                }, 400);
-            }
-
-            animateComponentsIn(gridName) {
-                const containerIds = {
-                    top: 'component-grid',
-                    middle: 'reaction-grid', 
-                    bottom: 'social-grid'
-                };
-                
-                const container = document.getElementById(containerIds[gridName]);
-                const components = container.querySelectorAll('.component-button');
-                
-                // Reset all components
-                components.forEach(component => {
-                    component.classList.remove('visible');
-                    component.style.opacity = '0';
-                    component.style.transform = 'scale(0.6) translateY(20px)';
+                moneyButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const amount = parseInt(button.dataset.amount);
+                        
+                        // Button feedback
+                        button.style.transform = 'scale(0.9)';
+                        setTimeout(() => button.style.transform = '', 200);
+                        
+                        // Create money effect
+                        this.createMoneyEffect(amount, e.currentTarget);
+                    });
                 });
+            }
+
+            createMoneyEffect(amount, button) {
+                const billCount = Math.min(5, amount / 10);
                 
-                // Animate in with staggered timing
-                components.forEach((component, index) => {
+                for (let i = 0; i < billCount; i++) {
                     setTimeout(() => {
-                        component.classList.add('visible');
-                        component.style.opacity = '1';
-                        component.style.transform = 'scale(1) translateY(0)';
-                    }, index * 30); // 30ms delay between each component
-                });
-            }
-
-            activateComponent(component, index, buttonElement) {
-                const componentId = `${component.title}-${index}`;
-                
-                if (this.activatedComponents.has(componentId)) {
-                    // Deactivate
-                    this.activatedComponents.delete(componentId);
-                    buttonElement.classList.remove('activated');
-                    this.updateStatus(`Deactivated: ${component.title}`, 'connected');
-                } else {
-                    // Activate
-                    this.activatedComponents.add(componentId);
-                    buttonElement.classList.add('activated');
-                    this.updateStatus(`Activated: ${component.title}`, 'active');
-                    
-                    // Create LED effect
-                    this.createComponentLEDEffect(index, component);
-                }
-                
-                // Visual feedback
-                buttonElement.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    buttonElement.style.transform = '';
-                }, 150);
-            }
-
-            activateReactionComponent(component, index, buttonElement) {
-                const componentId = `reaction-${component.title}-${index}`;
-                
-                if (this.activatedComponents.has(componentId)) {
-                    this.activatedComponents.delete(componentId);
-                    buttonElement.classList.remove('activated');
-                    this.updateStatus(`Deactivated: ${component.title}`, 'connected');
-                } else {
-                    this.activatedComponents.add(componentId);
-                    buttonElement.classList.add('activated');
-                    this.updateStatus(`Activated: ${component.title}`, 'active');
-                    this.createReactionLEDEffect(index);
-                }
-                
-                buttonElement.style.transform = 'scale(0.95)';
-                setTimeout(() => { buttonElement.style.transform = ''; }, 150);
-            }
-
-            activateSocialComponent(component, index, buttonElement) {
-                const componentId = `social-${component.title}-${index}`;
-                
-                if (this.activatedComponents.has(componentId)) {
-                    this.activatedComponents.delete(componentId);
-                    buttonElement.classList.remove('activated');
-                    this.updateStatus(`Deactivated: ${component.title}`, 'connected');
-                } else {
-                    this.activatedComponents.add(componentId);
-                    buttonElement.classList.add('activated');
-                    this.updateStatus(`Activated: ${component.title}`, 'active');
-                    this.createSocialLEDEffect(index);
-                }
-                
-                buttonElement.style.transform = 'scale(0.95)';
-                setTimeout(() => { buttonElement.style.transform = ''; }, 150);
-            }
-
-            createComponentLEDEffect(index, component) {
-                // Component creates green patterns
-                const section = parseInt(index);
-                const rowsPerSection = Math.floor(200 / 8);
-                const colsPerSection = Math.floor(100 / 8);
-                const row = Math.floor((section - 1) / 8) * rowsPerSection;
-                const col = ((section - 1) % 8) * colsPerSection;
-                
-                this.fillLEDSection(row, col, rowsPerSection, colsPerSection, 'green');
-            }
-
-            createReactionLEDEffect(index) {
-                // Reactions create orange patterns
-                const section = parseInt(index);
-                const rowsPerSection = Math.floor(200 / 8);
-                const colsPerSection = Math.floor(100 / 8);
-                const row = Math.floor((section - 1) / 8) * rowsPerSection;
-                const col = ((section - 1) % 8) * colsPerSection;
-                
-                this.fillLEDSection(row, col, rowsPerSection, colsPerSection, 'orange');
-            }
-
-            createSocialLEDEffect(index) {
-                // Social creates blue patterns
-                const section = parseInt(index);
-                const rowsPerSection = Math.floor(200 / 8);
-                const colsPerSection = Math.floor(100 / 8);
-                const row = Math.floor((section - 1) / 8) * rowsPerSection;
-                const col = ((section - 1) % 8) * colsPerSection;
-                
-                this.fillLEDSection(row, col, rowsPerSection, colsPerSection, 'blue');
-            }
-
-            fillLEDSection(startRow, startCol, height, width, color) {
-                for (let row = startRow; row < startRow + height && row < 200; row++) {
-                    for (let col = startCol; col < startCol + width && col < 100; col++) {
-                        const pixel = this.ledGrid[row]?.[col];
-                        if (pixel) {
-                            pixel.className = `led-pixel ${color}`;
-                        }
-                    }
-                }
-            }
-
-            showTooltip(e, component, type) {
-                const tooltip = document.getElementById('tooltip');
-                const tooltipTitle = document.getElementById('tooltipTitle');
-                const tooltipCategory = document.getElementById('tooltipCategory');
-                const tooltipDescription = document.getElementById('tooltipDescription');
-                const tooltipHowItWorksContent = document.getElementById('tooltipHowItWorksContent');
-                const tooltipTipsContent = document.getElementById('tooltipTipsContent');
-                const tooltipMeta = document.getElementById('tooltipMeta');
-                const activateBtn = document.getElementById('activateTooltipBtn');
-                const lockBtn = document.getElementById('lockTooltipBtn');
-                
-                // Set basic info
-                tooltipTitle.textContent = component.title;
-                tooltipDescription.textContent = component.description;
-                
-                // Set category
-                if (component.category) {
-                    tooltipCategory.textContent = component.category;
-                    tooltipCategory.style.display = 'block';
-                } else {
-                    tooltipCategory.style.display = 'none';
-                }
-                
-                // Set enhanced content for first 3 components
-                if (component.howItWorks) {
-                    tooltipHowItWorksContent.textContent = component.howItWorks;
-                    document.getElementById('tooltipHowItWorks').style.display = 'block';
-                } else {
-                    document.getElementById('tooltipHowItWorks').style.display = 'none';
-                }
-                
-                if (component.tips) {
-                    tooltipTipsContent.textContent = component.tips;
-                    document.getElementById('tooltipTips').style.display = 'block';
-                } else {
-                    document.getElementById('tooltipTips').style.display = 'none';
-                }
-                
-                // Set difficulty indicators
-                if (component.difficulty) {
-                    const difficultyLevels = {
-                        'Beginner': 1,
-                        'Intermediate': 2,
-                        'Advanced': 3
-                    };
-                    const level = difficultyLevels[component.difficulty] || 1;
-                    
-                    for (let i = 1; i <= 3; i++) {
-                        const indicator = document.getElementById(`diff${i}`);
-                        if (i <= level) {
-                            indicator.classList.add('active');
-                        } else {
-                            indicator.classList.remove('active');
-                        }
-                    }
-                    tooltipMeta.style.display = 'flex';
-                } else {
-                    tooltipMeta.style.display = 'none';
-                }
-                
-                // Set fun factor stars
-                if (component.funFactor) {
-                    for (let i = 1; i <= 5; i++) {
-                        const star = document.getElementById(`fun${i}`);
-                        if (i <= component.funFactor) {
-                            star.classList.add('active');
-                        } else {
-                            star.classList.remove('active');
-                        }
-                    }
-                }
-                
-                // Position tooltip
-                const rect = e.target.getBoundingClientRect();
-                const tooltipWidth = 350;
-                let left = rect.left + rect.width/2 - tooltipWidth/2;
-                let top = rect.top - 200;
-                
-                // Keep tooltip on screen
-                if (left < 10) left = 10;
-                if (left + tooltipWidth > window.innerWidth - 10) {
-                    left = window.innerWidth - tooltipWidth - 10;
-                }
-                if (top < 10) top = rect.bottom + 10;
-                
-                tooltip.style.left = left + 'px';
-                tooltip.style.top = top + 'px';
-                
-                // Store component data for button actions
-                tooltip.dataset.componentType = type;
-                tooltip.dataset.componentData = JSON.stringify(component);
-                tooltip.dataset.targetButton = e.target.dataset.index;
-                
-                tooltip.classList.add('visible');
-                
-                // Setup button actions
-                activateBtn.onclick = () => this.activateFromTooltip(e.target);
-                lockBtn.onclick = () => this.lockFromTooltip(e.target);
-            }
-
-            hideTooltip() {
-                const tooltip = document.getElementById('tooltip');
-                // Don't hide if mouse is over tooltip
-                if (!tooltip.matches(':hover')) {
-                    tooltip.classList.remove('visible');
-                }
-            }
-
-            activateFromTooltip(buttonElement) {
-                buttonElement.click();
-                this.hideTooltip();
-            }
-
-            lockFromTooltip(buttonElement) {
-                buttonElement.classList.add('locked');
-                const tooltip = document.getElementById('tooltip');
-                tooltip.classList.remove('visible');
-                
-                // Keep tooltip visible when hovering over locked components
-                buttonElement.addEventListener('mouseenter', (e) => {
-                    const component = JSON.parse(tooltip.dataset.componentData);
-                    const type = tooltip.dataset.componentType;
-                    this.showTooltip(e, component, type);
-                });
-            }
-
-            toggleComponentSelection(component, index, buttonElement) {
-                const componentId = `${component.title}-${index}`;
-                
-                if (buttonElement.classList.contains('selected')) {
-                    // Deselect
-                    buttonElement.classList.remove('selected');
-                    this.selectedComponents = this.selectedComponents.filter(c => c.id !== componentId);
-                } else {
-                    // Select
-                    buttonElement.classList.add('selected');
-                    if (!this.selectedComponents) this.selectedComponents = [];
-                    this.selectedComponents.push({
-                        id: componentId,
-                        component: component,
-                        index: index,
-                        buttonElement: buttonElement
-                    });
-                }
-                
-                this.updateSelectionCounter();
-            }
-
-            updateSelectionCounter() {
-                const counter = document.getElementById('selectionCounter');
-                const countText = document.getElementById('selectionCount');
-                const mergeBtn = document.getElementById('mergeSelectedBtn');
-                
-                const count = this.selectedComponents ? this.selectedComponents.length : 0;
-                
-                if (count > 0) {
-                    counter.classList.add('visible');
-                    countText.textContent = `${count} Selected`;
-                    mergeBtn.onclick = () => this.openMergeControls();
-                } else {
-                    counter.classList.remove('visible');
-                }
-            }
-
-            openMergeControls() {
-                if (!this.selectedComponents || this.selectedComponents.length === 0) return;
-                
-                const overlay = document.getElementById('mergeControlsOverlay');
-                const content = document.getElementById('mergeControlsContent');
-                
-                // Generate control panels for selected components
-                content.innerHTML = '';
-                
-                this.selectedComponents.forEach(selected => {
-                    const panel = this.createControlPanel(selected.component);
-                    content.appendChild(panel);
-                });
-                
-                // Setup action buttons
-                document.getElementById('goLiveBtn').onclick = () => this.goLive();
-                document.getElementById('recordBtn').onclick = () => this.startRecording();
-                document.getElementById('closeMergeBtn').onclick = () => this.closeMergeControls();
-                
-                overlay.classList.add('active');
-            }
-
-            createControlPanel(component) {
-                const panel = document.createElement('div');
-                panel.className = 'component-control-panel';
-                
-                panel.innerHTML = `
-                    <div class="control-panel-header">
-                        <div class="control-panel-icon">${component.icon}</div>
-                        <div class="control-panel-title">${component.title}</div>
-                        <div class="control-panel-category">${component.category || 'Component'}</div>
-                    </div>
-                    <div class="controls-grid" id="controls-${component.title.replace(/\s+/g, '-')}">
-                        <!-- Controls will be inserted here -->
-                    </div>
-                `;
-                
-                // Add controls if they exist
-                if (component.controls) {
-                    const controlsGrid = panel.querySelector('.controls-grid');
-                    
-                    component.controls.forEach(control => {
-                        const controlGroup = document.createElement('div');
-                        controlGroup.className = 'control-group';
+                        const money = document.createElement('div');
+                        money.className = 'floating-reaction';
+                        money.textContent = '$' + Math.ceil(amount / billCount);
+                        money.style.fontSize = '1.5rem';
+                        money.style.fontWeight = '900';
+                        money.style.color = '#10b981';
+                        money.style.textShadow = '0 0 10px rgba(16, 185, 129, 0.8)';
                         
-                        controlGroup.innerHTML = `
-                            <div class="control-label">${control.label}</div>
-                            ${this.createControlElement(control)}
-                        `;
+                        // Get button position
+                        const rect = button.getBoundingClientRect();
+                        money.style.left = (rect.left + rect.width / 2) + 'px';
+                        money.style.bottom = (window.innerHeight - rect.top - rect.height / 2) + 'px';
                         
-                        controlsGrid.appendChild(controlGroup);
-                    });
-                }
-                
-                return panel;
-            }
-
-            createControlElement(control) {
-                switch (control.type) {
-                    case 'knob':
-                        return `<div class="control-knob" data-value="${control.value}" style="transform: rotate(${(control.value / 100) * 270 - 135}deg)"></div>`;
-                    case 'slider':
-                        return `<div class="control-slider" data-value="${control.value}"></div>`;
-                    case 'button':
-                        return `<button class="control-button ${control.active ? 'active' : ''}">${control.label}</button>`;
-                    default:
-                        return `<div class="control-knob" data-value="50"></div>`;
+                        // Random drift
+                        money.style.setProperty('--drift-x', (Math.random() - 0.5) * 100 + 'px');
+                        money.style.animation = 'moneyShoot 2s ease-out forwards';
+                        
+                        document.getElementById('money-container').appendChild(money);
+                        setTimeout(() => money.remove(), 2000);
+                    }, i * 100);
                 }
             }
 
-            goLive() {
-                // Fan's personal live stream (not affecting main DJ stream)
-                this.updateStatus('🔴 YOUR PERSONAL STREAM LIVE', 'active');
+            setupChatSystem() {
+                const chatInput = document.getElementById('chatInput');
+                const sendBtn = document.getElementById('sendBtn');
                 
-                // Show success message
-                const overlay = document.getElementById('mergeControlsOverlay');
-                const header = overlay.querySelector('.merge-controls-title');
-                header.textContent = '🔴 YOUR LIVE STREAM - Component Controls Active';
-                header.style.color = '#ff0000';
+                const sendMessage = () => {
+                    const message = chatInput.value.trim();
+                    if (message) {
+                        console.log('Sending message:', message);
+                        chatInput.value = '';
+                        
+                        // Visual feedback
+                        sendBtn.style.background = '#00aa00';
+                        setTimeout(() => sendBtn.style.background = '#00ff00', 200);
+                    }
+                };
                 
-                // Update subtitle
-                const subtitle = overlay.querySelector('.merge-controls-subtitle');
-                subtitle.textContent = 'Broadcasting Your Component Mix - Independent of Main DJ Stream';
-                
-                // Enable recording
-                document.getElementById('recordBtn').style.display = 'inline-block';
-                
-                // Add live streaming visual effects
-                document.querySelectorAll('.component-control-panel').forEach(panel => {
-                    panel.style.borderColor = '#ff0000';
-                    panel.style.boxShadow = '0 0 20px rgba(255, 0, 0, 0.4)';
-                });
-            }
-
-            startRecording() {
-                // Record fan's personal stream
-                this.updateStatus('⏺️ RECORDING YOUR STREAM', 'active');
-                
-                const recordBtn = document.getElementById('recordBtn');
-                recordBtn.textContent = '⏹️ STOP RECORDING';
-                recordBtn.onclick = () => this.stopRecording();
-                
-                // Add recording visual effects
-                document.querySelectorAll('.control-knob').forEach(knob => {
-                    knob.style.boxShadow = '0 0 10px rgba(255, 0, 0, 0.6)';
-                });
-            }
-
-            stopRecording() {
-                // Stop recording fan's stream
-                this.updateStatus('💾 YOUR RECORDING SAVED', 'connected');
-                
-                const recordBtn = document.getElementById('recordBtn');
-                recordBtn.textContent = '📤 POST TO SOCIAL';
-                recordBtn.onclick = () => this.postToSocial();
-                
-                // Remove recording effects
-                document.querySelectorAll('.control-knob').forEach(knob => {
-                    knob.style.boxShadow = '';
-                });
-            }
-
-            postToSocial() {
-                // Post fan's creation to social media
-                this.updateStatus('📤 POSTING YOUR CREATION TO SOCIAL', 'active');
-                
-                setTimeout(() => {
-                    this.updateStatus('✅ POSTED TO INSTAGRAM/FACEBOOK/TIKTOK', 'connected');
-                    
-                    const recordBtn = document.getElementById('recordBtn');
-                    recordBtn.textContent = '⏺️ RECORD NEW SESSION';
-                    recordBtn.onclick = () => this.startRecording();
-                    
-                    // Show success animation
-                    document.querySelectorAll('.component-control-panel').forEach(panel => {
-                        panel.style.borderColor = '#00ff00';
-                        panel.style.boxShadow = '0 0 25px rgba(0, 255, 0, 0.5)';
-                        setTimeout(() => {
-                            panel.style.borderColor = '#00ff00';
-                            panel.style.boxShadow = '0 0 15px rgba(0, 255, 0, 0.2)';
-                        }, 1000);
-                    });
-                }, 2000);
-            }
-
-            closeMergeControls() {
-                const overlay = document.getElementById('mergeControlsOverlay');
-                overlay.classList.remove('active');
-                
-                // Reset header
-                const header = overlay.querySelector('.merge-controls-title');
-                header.textContent = '🎛️ LIVE STREAM CONTROL CENTER';
-                header.style.color = '#00ff00';
-            }
-
-            setupEventListeners() {
-                // Initialize selected components array
-                this.selectedComponents = [];
-                
-                // Close on overlay click (but not when clicking components)
-                document.querySelectorAll('.grid-overlay').forEach(overlay => {
-                    overlay.addEventListener('click', (e) => {
-                        if (e.target === overlay) {
-                            const gridName = overlay.id.replace('grid-', '');
-                            this.closeGrid(gridName);
-                        }
-                    });
-                });
-
-                // Close merge controls on overlay click
-                document.getElementById('mergeControlsOverlay').addEventListener('click', (e) => {
-                    if (e.target.id === 'mergeControlsOverlay') {
-                        this.closeMergeControls();
+                sendBtn.addEventListener('click', sendMessage);
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendMessage();
                     }
                 });
+            }
 
-                // Enhanced tooltip interactions
-                const tooltip = document.getElementById('tooltip');
-                let tooltipTimeout;
+            setupGridButtons() {
+                const gridButtons = document.querySelectorAll('.grid-btn');
                 
-                tooltip.addEventListener('mouseenter', () => {
-                    clearTimeout(tooltipTimeout);
-                    tooltip.classList.add('visible');
-                });
-                
-                tooltip.addEventListener('mouseleave', () => {
-                    tooltipTimeout = setTimeout(() => {
-                        tooltip.classList.remove('visible');
-                    }, 200);
-                });
-
-                // Improved keyboard shortcuts
-                document.addEventListener('keydown', (e) => {
-                    // Prevent shortcuts when typing in inputs
-                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-                        return;
-                    }
-                    
-                    switch(e.key) {
-                        case 'Escape':
-                            e.preventDefault();
-                            if (this.activeGrid) {
-                                this.closeGrid(this.activeGrid);
-                            }
-                            break;
-                        case '1':
-                            e.preventDefault();
-                            this.toggleGrid('top');
-                            break;
-                        case '2':
-                            e.preventDefault();
-                            this.toggleGrid('middle');
-                            break;
-                        case '3':
-                            e.preventDefault();
-                            this.toggleGrid('bottom');
-                            break;
-                        case ' ':
-                            e.preventDefault();
-                            this.clearLEDDisplay();
-                            break;
-                        case 'c':
-                        case 'C':
-                            e.preventDefault();
-                            this.clearAllActivations();
-                            break;
-                    }
-                });
-
-                // Add smooth transitions for main buttons
-                document.querySelectorAll('.main-button').forEach(button => {
-                    button.addEventListener('mouseenter', () => {
-                        if (!button.classList.contains('active')) {
-                            button.style.transform = 'scale(1.1)';
-                        }
-                    });
-                    
-                    button.addEventListener('mouseleave', () => {
-                        if (!button.classList.contains('active')) {
-                            button.style.transform = 'scale(1)';
-                        }
+                gridButtons.forEach((button, index) => {
+                    button.addEventListener('click', () => {
+                        console.log(`Grid ${index + 1} clicked`);
+                        
+                        // Visual feedback
+                        button.style.background = 'rgba(0, 255, 0, 0.3)';
+                        setTimeout(() => button.style.background = 'rgba(255, 255, 255, 0.05)', 300);
                     });
                 });
             }
 
-            clearAllActivations() {
-                this.activatedComponents.clear();
-                document.querySelectorAll('.component-button').forEach(button => {
-                    button.classList.remove('activated', 'locked');
-                });
-                this.clearLEDDisplay();
-                this.updateStatus('All components cleared', 'connected');
-            }
-
-            clearLEDDisplay() {
-                this.ledPixels.forEach(pixel => {
-                    pixel.className = 'led-pixel';
-                });
-            }
-
-            setAnimationDelays() {
-                document.querySelectorAll('.component-button, .grid-button').forEach((button, index) => {
-                    button.style.setProperty('--index', index + 1);
-                });
-            }
-
-            updateStatus(text, state) {
-                const statusText = document.querySelector('.status-text');
-                const statusDot = document.querySelector('.status-dot');
+            setupOwncastDragging() {
+                const owncast = document.getElementById('owncastStream');
+                if (!owncast) return;
                 
-                statusText.textContent = text;
-                statusDot.className = `status-dot ${state}`;
+                let isDragging = false;
+                let startX = 0, startY = 0, initialX = 0, initialY = 0;
+                
+                owncast.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    initialX = owncast.offsetLeft;
+                    initialY = owncast.offsetTop;
+                    owncast.style.cursor = 'grabbing';
+                });
+                
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    
+                    const deltaX = e.clientX - startX;
+                    const deltaY = e.clientY - startY;
+                    
+                    let newX = initialX + deltaX;
+                    let newY = initialY + deltaY;
+                    
+                    // Keep within bounds
+                    const maxX = window.innerWidth - owncast.offsetWidth;
+                    const maxY = window.innerHeight - owncast.offsetHeight - 60; // Account for homebase
+                    
+                    newX = Math.max(0, Math.min(newX, maxX));
+                    newY = Math.max(60, Math.min(newY, maxY)); // Account for header
+                    
+                    owncast.style.left = newX + 'px';
+                    owncast.style.top = newY + 'px';
+                });
+                
+                document.addEventListener('mouseup', () => {
+                    isDragging = false;
+                    if (owncast) {
+                        owncast.style.cursor = 'move';
+                    }
+                });
+            }
+
+            setupPlatformSwitcher() {
+                const corners = document.querySelectorAll('.platform-corner');
+                
+                corners.forEach(corner => {
+                    corner.addEventListener('click', () => {
+                        const platform = corner.textContent;
+                        console.log(`Switching to platform: ${platform}`);
+                        
+                        // Visual feedback
+                        corner.style.background = 'rgba(0, 255, 0, 0.5)';
+                        setTimeout(() => corner.style.background = 'rgba(0, 0, 0, 0.7)', 300);
+                    });
+                });
+                
+                // Upload buttons
+                const uploadButtons = document.querySelectorAll('.upload-btn');
+                uploadButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        console.log('Upload/Camera clicked');
+                        button.style.background = 'rgba(0, 255, 0, 0.5)';
+                        setTimeout(() => button.style.background = 'rgba(0, 0, 0, 0.7)', 300);
+                    });
+                });
             }
         }
 
         // Initialize when page loads
         window.addEventListener('load', () => {
-            const soundFactoryGrid = new SoundFactoryGrid();
-            window.soundFactoryGrid = soundFactoryGrid;
+            const homebase = new SoundFactoryHomebase();
         });
     </script>
-</body>
-</html>
+</MainLayout>
