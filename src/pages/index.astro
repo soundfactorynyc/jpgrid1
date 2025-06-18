@@ -41,23 +41,6 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             position: relative;
         }
 
-        /* Header */
-        .header {
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.9);
-            border-bottom: 2px solid #ffffff;
-            text-align: center;
-            z-index: 200;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            background: linear-gradient(45deg, #ffffff, #cccccc);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
 
         /* TikTok Video Area */
         .tiktok-area {
@@ -104,23 +87,23 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         .corner-bl { bottom: 10px; left: 10px; }
         .corner-br { bottom: 10px; right: 10px; }
 
-        /* Upload/Camera Buttons */
+        /* Upload/Camera Buttons - Smaller */
         .upload-controls {
             position: absolute;
-            bottom: 20px;
+            bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .upload-btn {
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid #333;
             color: #fff;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 1.2rem;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -130,29 +113,87 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             border-color: #00ff00;
         }
 
-        /* TikTok Control Buttons */
-        .tiktok-controls {
+        /* Grid Buttons - Positioned Around Screen */
+        .grid-btn-top {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 10px;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 150;
+        }
+
+        .grid-btn-middle {
             position: absolute;
             top: 50%;
-            right: 10px;
+            left: 10px;
             transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 10px;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 35px;
+            height: 35px;
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-            z-index: 10;
+            align-items: center;
+            justify-content: center;
+            z-index: 150;
+        }
+
+        .grid-btn-top:hover, .grid-btn-middle:hover {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+            transform: scale(1.1);
+        }
+
+        .grid-btn-middle:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Control Buttons Row */
+        .control-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            padding: 5px;
+            border-bottom: 1px solid #333;
+        }
+
+        .control-section {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .control-btn {
             background: rgba(0, 0, 0, 0.8);
             border: 1px solid #333;
             color: #fff;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: 0.7rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            min-width: 60px;
+            min-width: 50px;
             text-align: center;
         }
 
@@ -453,7 +494,6 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             gap: 5px;
             align-items: center;
             flex: 1;
-            margin-left: 10px;
         }
 
         /* Chat Section */
@@ -612,32 +652,22 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
     </style>
 
     <div class="mobile-container">
-        <!-- Header -->
-        <div class="header">
-            <div class="logo">SOUND FACTORY</div>
-        </div>
-
-        <!-- TikTok Video Area -->
+        <!-- TikTok Video Area - Full Screen -->
         <div class="tiktok-area">
+            <!-- Grid Buttons - Positioned Around Screen -->
+            <button class="grid-btn-top" id="grid1">+</button>
+            <button class="grid-btn-middle" id="grid2">+</button>
+
             <!-- Platform Switcher Corners -->
             <div class="platform-corner corner-tl">IG</div>
             <div class="platform-corner corner-tr">SF</div>
             <div class="platform-corner corner-bl">TT</div>
             <div class="platform-corner corner-br">FB</div>
 
-            <!-- Upload/Camera Controls -->
+            <!-- Upload/Camera Controls - Smaller -->
             <div class="upload-controls">
-                <button class="upload-btn">📹</button>
                 <button class="upload-btn">📤</button>
-            </div>
-
-            <!-- TikTok Control Buttons -->
-            <div class="tiktok-controls">
-                <button class="control-btn hey-btn" id="heyBtn">HEY</button>
-                <button class="control-btn nah-btn" id="nahBtn">NAH</button>
-                <button class="control-btn mute-btn" id="muteLiveBtn">🔇 Live</button>
-                <button class="control-btn mute-btn" id="muteVideoBtn">🔇 Video</button>
-                <button class="control-btn block-btn" id="blockBtn">🚫 Block</button>
+                <button class="upload-btn">📷</button>
             </div>
 
             <!-- TikTok Placeholder -->
@@ -659,6 +689,17 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
 
         <!-- HOMEBASE - Multiple Rows -->
         <div class="homebase">
+            <!-- Control Row -->
+            <div class="control-row">
+                <div class="control-section">
+                    <button class="control-btn hey-btn" id="heyBtn">HEY</button>
+                    <button class="control-btn nah-btn" id="nahBtn">NAH</button>
+                    <button class="control-btn mute-btn" id="muteLiveBtn">🔇 Live</button>
+                    <button class="control-btn mute-btn" id="muteVideoBtn">🔇 Video</button>
+                    <button class="control-btn block-btn" id="blockBtn">🚫 Block</button>
+                </div>
+            </div>
+
             <!-- Money Row -->
             <div class="money-row">
                 <div class="money-section">
@@ -687,12 +728,8 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
 
             <!-- Chat Row -->
             <div class="chat-row">
-                <!-- Grid Buttons (Plus Signs) -->
-                <div class="grid-buttons">
-                    <button class="grid-btn" id="grid1">+</button>
-                    <button class="grid-btn" id="grid2">+</button>
-                    <button class="grid-btn" id="grid3">+</button>
-                </div>
+                <!-- Grid Button 3 -->
+                <button class="grid-btn" id="grid3">+</button>
                 
                 <!-- Chat Input Section -->
                 <div class="chat-input-section">
