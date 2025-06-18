@@ -41,22 +41,13 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             position: relative;
         }
 
-        /* Header */
+        /* Header - Minimal */
         .header {
-            padding: 15px 20px;
+            padding: 10px 20px;
             background: rgba(0, 0, 0, 0.9);
-            border-bottom: 2px solid #ffffff;
             text-align: center;
             z-index: 200;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            background: linear-gradient(45deg, #ffffff, #cccccc);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            min-height: 40px;
         }
 
         /* TikTok Video Area */
@@ -160,16 +151,23 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             font-size: 0.7rem;
         }
 
-        /* HOMEBASE - Single Horizontal Line */
+        /* HOMEBASE - Multi-Row Layout */
         .homebase {
             background: #000000;
             border-top: 2px solid #333;
-            padding: 10px 5px;
+            padding: 8px 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 120px;
+        }
+
+        .homebase-row {
             display: flex;
             align-items: center;
             gap: 5px;
             overflow-x: auto;
-            min-height: 60px;
+            min-height: 35px;
         }
 
         /* Money Buttons */
@@ -327,29 +325,178 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             transform: scale(1.05);
         }
 
-        /* Grid Buttons */
-        .grid-buttons {
+        /* Left Side Grid Buttons */
+        .left-grid-buttons {
+            position: fixed;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
             display: flex;
-            gap: 3px;
-            flex-shrink: 0;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 150;
         }
 
         .grid-btn {
-            background: rgba(255, 255, 255, 0.05);
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            border: 2px solid #333333;
+            color: #ffffff;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.5),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .grid-btn:hover {
+            transform: translateX(5px);
+            border-color: #00ff00;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            box-shadow: 
+                0 6px 20px rgba(0, 0, 0, 0.6),
+                inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        }
+
+        .grid-btn:active {
+            transform: translateX(2px) scale(0.95);
+            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+        }
+
+        .grid-btn.active {
+            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+            border-color: #0088ff;
+            box-shadow: 
+                0 6px 20px rgba(0, 102, 204, 0.4),
+                inset 0 1px 1px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Grid Overlay - 64 Button Grid */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .grid-overlay.active {
+            display: flex;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 3px;
+            width: 90%;
+            height: 80%;
+            max-width: 350px;
+            max-height: 350px;
+        }
+
+        .grid-cell {
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
             border: 1px solid #333;
             color: #fff;
-            padding: 6px 8px;
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 0.7rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
-            min-width: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 35px;
         }
 
-        .grid-btn:hover {
+        .grid-cell:hover {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
             border-color: #00ff00;
-            background: rgba(0, 255, 0, 0.1);
+            transform: scale(1.05);
+        }
+
+        .grid-cell:active {
+            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+            transform: scale(0.95);
+        }
+
+        .grid-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .grid-close:hover {
+            background: #ff6666;
+            transform: scale(1.1);
+        }
+
+        /* NAH Button */
+        .nah-btn {
+            background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+            color: #ffffff;
+            border: 2px solid #ff6666;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nah-btn:hover {
+            background: linear-gradient(135deg, #ff6666 0%, #ff4444 100%);
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 68, 68, 0.4);
+        }
+
+        /* YAY Button */
+        .yay-btn {
+            background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+            color: #000000;
+            border: 2px solid #44ff44;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .yay-btn:hover {
+            background: linear-gradient(135deg, #44ff44 0%, #00ff00 100%);
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 255, 0, 0.4);
         }
 
         /* Floating Reactions Container */
@@ -462,7 +609,6 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
     <div class="mobile-container">
         <!-- Header -->
         <div class="header">
-            <div class="logo">SOUND FACTORY</div>
         </div>
 
         <!-- TikTok Video Area -->
@@ -492,43 +638,65 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             <div class="owncast-status">LIVE</div>
         </div>
 
-        <!-- HOMEBASE - Single Horizontal Line -->
+        <!-- Left Side Grid Buttons -->
+        <div class="left-grid-buttons">
+            <button class="grid-btn" id="grid1">G1</button>
+            <button class="grid-btn" id="grid2">G2</button>
+        </div>
+
+        <!-- HOMEBASE - Multi-Row Layout -->
         <div class="homebase">
-            <!-- Money Section -->
-            <div class="money-section">
-                <button class="money-btn" data-amount="1">$1</button>
-                <button class="money-btn" data-amount="5">$5</button>
-                <button class="money-btn" data-amount="10">$10</button>
-                <button class="money-btn" data-amount="20">$20</button>
-                <button class="money-btn" data-amount="50">$50</button>
-                <button class="money-btn" data-amount="100">$100</button>
+            <!-- Row 1: Money Section -->
+            <div class="homebase-row">
+                <div class="money-section">
+                    <button class="money-btn" data-amount="1">$1</button>
+                    <button class="money-btn" data-amount="5">$5</button>
+                    <button class="money-btn" data-amount="10">$10</button>
+                    <button class="money-btn" data-amount="20">$20</button>
+                    <button class="money-btn" data-amount="50">$50</button>
+                    <button class="money-btn" data-amount="100">$100</button>
+                </div>
             </div>
 
-            <!-- Reaction Section -->
-            <div class="reaction-section">
-                <button class="reaction-btn" data-emoji="🔥" data-effect="sparkle">🔥</button>
-                <button class="reaction-btn" data-emoji="🎧" data-effect="bounce">🎧</button>
-                <button class="reaction-btn" data-emoji="❤️" data-effect="float">❤️</button>
-                <button class="reaction-btn sf-btn" data-emoji="SF" data-effect="spiral">SF</button>
-                <button class="reaction-btn jp-btn" data-emoji="JP" data-effect="sparkle">JP</button>
-                <button class="reaction-btn" data-emoji="👠" data-effect="bounce">👠</button>
-                <button class="reaction-btn" data-emoji="🏳️‍🌈" data-effect="spiral">🏳️‍🌈</button>
-                <button class="reaction-btn" data-emoji="💃" data-effect="float">💃</button>
+            <!-- Row 2: Reaction Section -->
+            <div class="homebase-row">
+                <div class="reaction-section">
+                    <button class="reaction-btn" data-emoji="🔥" data-effect="sparkle">🔥</button>
+                    <button class="reaction-btn" data-emoji="🎧" data-effect="bounce">🎧</button>
+                    <button class="reaction-btn" data-emoji="❤️" data-effect="float">❤️</button>
+                    <button class="reaction-btn sf-btn" data-emoji="SF" data-effect="spiral">SF</button>
+                    <button class="reaction-btn jp-btn" data-emoji="JP" data-effect="sparkle">JP</button>
+                    <button class="reaction-btn" data-emoji="👠" data-effect="bounce">👠</button>
+                    <button class="reaction-btn" data-emoji="🏳️‍🌈" data-effect="spiral">🏳️‍🌈</button>
+                    <button class="reaction-btn" data-emoji="💃" data-effect="float">💃</button>
+                </div>
             </div>
 
-            <!-- Chat Section -->
-            <div class="chat-section">
-                <input type="text" class="chat-input" placeholder="Type message..." id="chatInput">
-                <button class="send-btn" id="sendBtn">Send</button>
-            </div>
-
-            <!-- Grid Buttons -->
-            <div class="grid-buttons">
-                <button class="grid-btn" id="grid1">G1</button>
-                <button class="grid-btn" id="grid2">G2</button>
+            <!-- Row 3: Chat Section + G3 Button -->
+            <div class="homebase-row">
+                <div class="chat-section">
+                    <input type="text" class="chat-input" placeholder="Type message..." id="chatInput">
+                    <button class="send-btn" id="sendBtn">Send</button>
+                </div>
                 <button class="grid-btn" id="grid3">G3</button>
             </div>
         </div>
+    </div>
+
+    <!-- Grid Overlays -->
+    <div id="grid-overlay-1" class="grid-overlay">
+        <button class="grid-close" onclick="closeGrid()">&times;</button>
+        <div class="grid-container" id="grid-container-1"></div>
+    </div>
+
+    <div id="grid-overlay-2" class="grid-overlay">
+        <button class="grid-close" onclick="closeGrid()">&times;</button>
+        <div class="grid-container" id="grid-container-2"></div>
+    </div>
+
+    <div id="grid-overlay-3" class="grid-overlay">
+        <button class="grid-close" onclick="closeGrid()">&times;</button>
+        <div class="grid-container" id="grid-container-3"></div>
     </div>
 
     <!-- Floating Reactions Container -->
@@ -681,17 +849,63 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             }
 
             setupGridButtons() {
+                // Create 64-button grids for each grid container
+                this.createGrid('grid-container-1');
+                this.createGrid('grid-container-2');
+                this.createGrid('grid-container-3');
+                
                 const gridButtons = document.querySelectorAll('.grid-btn');
                 
                 gridButtons.forEach((button, index) => {
                     button.addEventListener('click', () => {
-                        console.log(`Grid ${index + 1} clicked`);
+                        const gridNumber = index + 1;
+                        console.log(`Grid ${gridNumber} clicked - Opening 64-button grid`);
                         
                         // Visual feedback
-                        button.style.background = 'rgba(0, 255, 0, 0.3)';
-                        setTimeout(() => button.style.background = 'rgba(255, 255, 255, 0.05)', 300);
+                        button.style.background = 'linear-gradient(135deg, #0066cc 0%, #004499 100%)';
+                        button.classList.add('active');
+                        
+                        // Open the corresponding grid overlay
+                        this.openGrid(gridNumber);
                     });
                 });
+            }
+
+            createGrid(containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                
+                // Clear existing content
+                container.innerHTML = '';
+                
+                // Create 64 buttons (8x8 grid)
+                for (let i = 1; i <= 64; i++) {
+                    const cell = document.createElement('button');
+                    cell.className = 'grid-cell';
+                    cell.textContent = i.toString();
+                    cell.addEventListener('click', () => {
+                        console.log(`Grid cell ${i} clicked`);
+                        // Add visual feedback
+                        cell.style.background = 'linear-gradient(135deg, #0066cc 0%, #004499 100%)';
+                        setTimeout(() => {
+                            cell.style.background = 'linear-gradient(135deg, #1a1a1a 0%, #000000 100%)';
+                        }, 200);
+                    });
+                    container.appendChild(cell);
+                }
+            }
+
+            openGrid(gridNumber) {
+                // Close any open grids first
+                document.querySelectorAll('.grid-overlay').forEach(overlay => {
+                    overlay.classList.remove('active');
+                });
+                
+                // Open the selected grid
+                const overlay = document.getElementById(`grid-overlay-${gridNumber}`);
+                if (overlay) {
+                    overlay.classList.add('active');
+                }
             }
 
             setupOwncastDragging() {
@@ -763,6 +977,26 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
                 });
             }
         }
+
+        // Global function to close grid overlays
+        function closeGrid() {
+            document.querySelectorAll('.grid-overlay').forEach(overlay => {
+                overlay.classList.remove('active');
+            });
+            
+            // Reset grid button states
+            document.querySelectorAll('.grid-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.background = 'linear-gradient(135deg, #1a1a1a 0%, #000000 100%)';
+            });
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeGrid();
+            }
+        });
 
         // Initialize when page loads
         window.addEventListener('load', () => {
