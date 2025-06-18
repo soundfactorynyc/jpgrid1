@@ -302,6 +302,31 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         transform: scale(1.05);
     }
 
+    /* Gift Button */
+    .gift-btn {
+        background: linear-gradient(45deg, #ff6b6b, #feca57);
+        color: #000;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-width: 60px;
+        text-align: center;
+    }
+
+    .gift-btn:hover {
+        background: linear-gradient(45deg, #ff5252, #ffb74d);
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    }
+
+    .gift-btn:active {
+        transform: scale(0.9);
+    }
+
     /* Mobile optimizations */
     @media (max-width: 420px) {
         .money-btn {
@@ -382,9 +407,6 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         <!-- Grid Button 3 -->
         <button class="grid-btn" id="grid3">+</button>
         
-        <!-- Gift Button -->
-        <button class="gift-btn" id="giftBtn">🎁 Gift</button>
-        
         <!-- Chat Input Section -->
         <div class="chat-input-section">
             <input type="text" class="chat-input" placeholder="Type your message..." id="chatInput">
@@ -404,6 +426,7 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             this.setupMoneyButtons();
             this.setupChatSystem();
             this.setupGridButtons();
+            this.setupGiftButton();
         }
 
         setupReactionButtons() {
@@ -552,6 +575,100 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
                     setTimeout(() => button.style.background = 'rgba(255, 255, 255, 0.05)', 300);
                 });
             });
+        }
+
+        setupGiftButton() {
+            const giftBtn = document.getElementById('giftBtn');
+            
+            if (giftBtn) {
+                giftBtn.addEventListener('click', () => {
+                    console.log('Gift button clicked - Opening social media share options');
+                    
+                    // Visual feedback
+                    giftBtn.style.transform = 'scale(0.9)';
+                    giftBtn.style.background = 'linear-gradient(45deg, #ff5252, #ffb74d)';
+                    
+                    setTimeout(() => {
+                        giftBtn.style.transform = '';
+                        giftBtn.style.background = 'linear-gradient(45deg, #ff6b6b, #feca57)';
+                    }, 200);
+                    
+                    // Share to social media and group chat
+                    this.shareToSocialMedia();
+                });
+            }
+        }
+
+        shareToSocialMedia() {
+            const shareText = "🎁 Check out this amazing Sound Factory stream! 🔥";
+            const shareUrl = window.location.href;
+            
+            // Create share options
+            const shareOptions = [
+                {
+                    name: 'Instagram Stories',
+                    action: () => {
+                        // Instagram sharing (would integrate with Instagram API)
+                        console.log('Sharing to Instagram Stories');
+                        this.showShareFeedback('Instagram Stories');
+                    }
+                },
+                {
+                    name: 'TikTok',
+                    action: () => {
+                        // TikTok sharing
+                        console.log('Sharing to TikTok');
+                        this.showShareFeedback('TikTok');
+                    }
+                },
+                {
+                    name: 'Facebook',
+                    action: () => {
+                        // Facebook sharing
+                        const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                        window.open(fbUrl, '_blank', 'width=600,height=400');
+                        this.showShareFeedback('Facebook');
+                    }
+                },
+                {
+                    name: 'Group Chat',
+                    action: () => {
+                        // Copy link for group chat sharing
+                        navigator.clipboard.writeText(`${shareText} ${shareUrl}`).then(() => {
+                            this.showShareFeedback('Group Chat (Link Copied!)');
+                        });
+                    }
+                }
+            ];
+            
+            // For now, cycle through options or show all
+            console.log('Share options available:', shareOptions.map(opt => opt.name));
+            
+            // Auto-share to group chat (copy link)
+            shareOptions[3].action(); // Group chat option
+        }
+
+        showShareFeedback(platform) {
+            // Create floating feedback
+            const feedback = document.createElement('div');
+            feedback.className = 'floating-reaction';
+            feedback.textContent = `Shared to ${platform}! 🎁`;
+            feedback.style.fontSize = '1rem';
+            feedback.style.fontWeight = '700';
+            feedback.style.color = '#feca57';
+            feedback.style.textShadow = '0 0 10px rgba(254, 202, 87, 0.8)';
+            
+            // Position at center
+            feedback.style.left = '50%';
+            feedback.style.bottom = '60%';
+            feedback.style.transform = 'translateX(-50%)';
+            
+            // Animation
+            feedback.style.setProperty('--drift', '0px');
+            feedback.style.animation = 'explosiveReaction 3s ease-out forwards';
+            
+            document.getElementById('reactions-container').appendChild(feedback);
+            setTimeout(() => feedback.remove(), 3000);
         }
     }
 

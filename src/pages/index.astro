@@ -346,6 +346,14 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             font-size: 0.5rem; /* Reduced from 0.7rem */
         }
 
+        .rtmp-info {
+            color: #ffa500;
+            font-size: 0.4rem;
+            margin: 0.1rem 0;
+            text-align: center;
+            word-break: break-all;
+        }
+
         /* HOMEBASE - Reduced spacing */
         .homebase {
             background: #000000;
@@ -1211,6 +1219,7 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
                 <button class="social-btn">IG</button>
                 <button class="social-btn">TT</button>
                 <button class="social-btn">FB</button>
+                <button class="social-btn gift-btn" id="giftBtn">🎁</button>
             </div>
 
             <!-- Upload/Camera Controls - Smaller -->
@@ -1228,10 +1237,13 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
 
         <!-- Floating Owncast Stream -->
         <div class="owncast-stream" id="owncastStream">
-            <div class="owncast-title">OWNCAST</div>
+            <div class="owncast-title">OWNCAST + OBS</div>
             <div class="owncast-status">LIVE</div>
+            <div class="rtmp-info">RTMP: rtmp://localhost:1935/live</div>
             <div class="owncast-controls">
                 <button class="owncast-btn" id="prevVideo">◀</button>
+                <button class="owncast-btn" id="obsBtn">OBS</button>
+                <button class="owncast-btn" id="rtmpBtn">RTMP</button>
                 <button class="owncast-btn" id="nextVideo">▶</button>
             </div>
         </div>
