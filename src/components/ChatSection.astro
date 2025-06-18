@@ -1,7 +1,5 @@
 ---
-// src/components/ChatSection.astro
-// Dedicated chat section component for the right side
-
+// Simple Chat Input Component - Just the input line
 export interface Props {
   wsUrl?: string;
 }
@@ -9,32 +7,10 @@ export interface Props {
 const { wsUrl = 'ws://localhost:8080' } = Astro.props;
 ---
 
-<div class="chat-section editable-component" data-component-type="chat-section">
-  <div class="chat-header">
-    <h3>Live Chat</h3>
-    <div class="chat-status">
-      <span class="status-dot"></span>
-      <span>Online</span>
-    </div>
-  </div>
-  
-  <div class="chat-messages" id="chatMessages">
-    <div class="message system-message">
-      <span class="message-text">Welcome to Sound Factory! 🎛️</span>
-    </div>
-    <div class="message user-message">
-      <span class="username">DJ_Master</span>
-      <span class="message-text">This beat is fire! 🔥</span>
-    </div>
-    <div class="message user-message">
-      <span class="username">VibeMaster</span>
-      <span class="message-text">Love the energy! 💃</span>
-    </div>
-  </div>
-  
+<div class="chat-section">
   <div class="chat-input-container">
     <div class="chat-input-wrapper">
-      <input type="text" class="chat-input" placeholder="Type your message..." id="chatInput">
+      <input type="text" class="chat-input" placeholder="Type in group chat..." id="chatInput">
       <button class="send-btn" id="sendBtn">Send</button>
     </div>
   </div>
@@ -42,243 +18,101 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
 
 <style>
   .chat-section {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 280px;
-    height: calc(100vh - 40px);
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(20, 20, 20, 0.95) 100%);
-    border: 1px solid #333;
-    border-radius: 12px;
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-    z-index: 50;
-  }
-
-  .chat-header {
-    padding: 15px 20px;
-    border-bottom: 1px solid #333;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: linear-gradient(135deg, rgba(0, 102, 204, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
-    border-radius: 12px 12px 0 0;
-  }
-
-  .chat-header h3 {
-    margin: 0;
-    color: #fff;
-    font-size: 16px;
-    font-weight: bold;
-  }
-
-  .chat-status {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: #00ff00;
-  }
-
-  .status-dot {
-    width: 8px;
-    height: 8px;
-    background: #00ff00;
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-
-  .chat-messages {
-    flex: 1;
-    padding: 15px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .message {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .system-message {
-    align-items: center;
-  }
-
-  .system-message .message-text {
-    background: rgba(0, 102, 204, 0.2);
-    color: #66ccff;
-    padding: 8px 12px;
-    border-radius: 12px;
-    font-size: 12px;
-    text-align: center;
-    border: 1px solid rgba(0, 102, 204, 0.3);
-  }
-
-  .user-message {
-    align-items: flex-start;
-  }
-
-  .username {
-    font-size: 11px;
-    color: #888;
-    font-weight: bold;
-    margin-bottom: 2px;
-  }
-
-  .user-message .message-text {
-    background: rgba(255, 255, 255, 0.05);
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 12px;
-    font-size: 13px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    max-width: 100%;
-    word-wrap: break-word;
+    justify-content: center;
   }
 
   .chat-input-container {
-    padding: 15px;
-    border-top: 1px solid #333;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 0 0 12px 12px;
+    width: 100%;
+    max-width: 800px;
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6);
   }
 
   .chat-input-wrapper {
     display: flex;
-    gap: 8px;
+    gap: 12px;
     align-items: center;
   }
 
   .chat-input {
     flex: 1;
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid #333;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: #fff;
-    padding: 10px 12px;
-    border-radius: 20px;
-    font-size: 13px;
+    padding: 12px 16px;
+    border-radius: 25px;
+    font-size: 14px;
     outline: none;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
   }
 
   .chat-input::placeholder {
-    color: #666;
+    color: #888;
   }
 
   .chat-input:focus {
     border-color: #00ff00;
-    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
     background: rgba(255, 255, 255, 0.08);
   }
 
   .send-btn {
-    background: #00ff00;
+    background: linear-gradient(135deg, #00ff00, #00cc00);
     color: #000;
     border: none;
-    padding: 10px 16px;
-    border-radius: 20px;
-    font-size: 12px;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     white-space: nowrap;
+    min-width: 70px;
   }
 
   .send-btn:hover {
-    background: #00cc00;
-    transform: scale(1.05);
+    background: linear-gradient(135deg, #00cc00, #00aa00);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 0, 0.4);
   }
 
   .send-btn:active {
-    transform: scale(0.95);
+    transform: translateY(0);
   }
 
-  /* Scrollbar styling */
-  .chat-messages::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .chat-messages::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
-  }
-
-  .chat-messages::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 3px;
-  }
-
-  .chat-messages::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
-  }
-
-  /* Mobile optimizations */
+  /* Mobile Responsive */
   @media (max-width: 768px) {
-    .chat-section {
-      width: 250px;
-      right: 10px;
-      top: 10px;
-      height: calc(100vh - 20px);
-    }
-    
-    .chat-header {
+    .chat-input-container {
       padding: 12px 15px;
     }
     
-    .chat-header h3 {
-      font-size: 14px;
-    }
-    
-    .chat-messages {
-      padding: 12px;
-    }
-    
-    .chat-input-container {
-      padding: 12px;
-    }
-    
     .chat-input {
+      padding: 10px 14px;
       font-size: 12px;
-      padding: 8px 10px;
     }
     
     .send-btn {
-      padding: 8px 12px;
-      font-size: 11px;
-    }
-  }
-
-  /* Extra small screens */
-  @media (max-width: 420px) {
-    .chat-section {
-      width: 200px;
-      right: 5px;
-      top: 5px;
-      height: calc(100vh - 10px);
+      padding: 10px 16px;
+      font-size: 12px;
+      min-width: 60px;
     }
   }
 </style>
 
 <script>
-  class ChatController {
+  class SimpleChatController {
     constructor() {
-      this.messages = [];
       this.init();
     }
 
     init() {
       this.setupChatInput();
-      this.setupAutoScroll();
     }
 
     setupChatInput() {
@@ -290,17 +124,12 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
       const sendMessage = () => {
         const message = chatInput.value.trim();
         if (message) {
-          this.addMessage('You', message);
+          console.log('Group chat message:', message);
           chatInput.value = '';
           
           // Visual feedback
-          sendBtn.style.background = '#00aa00';
-          setTimeout(() => sendBtn.style.background = '#00ff00', 200);
-          
-          // Simulate response (optional)
-          setTimeout(() => {
-            this.addSystemMessage('Message sent! 📤');
-          }, 500);
+          sendBtn.style.transform = 'scale(0.95)';
+          setTimeout(() => sendBtn.style.transform = '', 150);
         }
       };
       
@@ -311,55 +140,12 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
         }
       });
     }
-
-    addMessage(username, text) {
-      const messagesContainer = document.getElementById('chatMessages');
-      if (!messagesContainer) return;
-
-      const messageDiv = document.createElement('div');
-      messageDiv.className = 'message user-message';
-      messageDiv.innerHTML = `
-        <span class="username">${username}</span>
-        <span class="message-text">${text}</span>
-      `;
-      
-      messagesContainer.appendChild(messageDiv);
-      this.scrollToBottom();
-    }
-
-    addSystemMessage(text) {
-      const messagesContainer = document.getElementById('chatMessages');
-      if (!messagesContainer) return;
-
-      const messageDiv = document.createElement('div');
-      messageDiv.className = 'message system-message';
-      messageDiv.innerHTML = `<span class="message-text">${text}</span>`;
-      
-      messagesContainer.appendChild(messageDiv);
-      this.scrollToBottom();
-    }
-
-    scrollToBottom() {
-      const messagesContainer = document.getElementById('chatMessages');
-      if (messagesContainer) {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-      }
-    }
-
-    setupAutoScroll() {
-      // Auto-scroll to bottom when new messages arrive
-      const messagesContainer = document.getElementById('chatMessages');
-      if (messagesContainer) {
-        // Initial scroll to bottom
-        setTimeout(() => this.scrollToBottom(), 100);
-      }
-    }
   }
 
   // Initialize when component loads
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => new ChatController());
+    document.addEventListener('DOMContentLoaded', () => new SimpleChatController());
   } else {
-    new ChatController();
+    new SimpleChatController();
   }
 </script>

@@ -1,0 +1,166 @@
+---
+// SocialMediaSwitcher.astro - Right-side feed switching buttons
+export interface Props {
+  editable?: boolean;
+}
+
+const { editable = false } = Astro.props;
+---
+
+<div class="social-media-switcher" data-editable={editable}>
+  <button class="feed-btn sf-btn active" data-feed="sf" title="Sound Factory Feed">
+    SF
+  </button>
+  <button class="feed-btn ig-btn" data-feed="instagram" title="Instagram Feed">
+    IG
+  </button>
+  <button class="feed-btn tt-btn" data-feed="tiktok" title="TikTok Feed">
+    TT
+  </button>
+  <button class="feed-btn fb-btn" data-feed="facebook" title="Facebook Feed">
+    FB
+  </button>
+</div>
+
+<style>
+  .social-media-switcher {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 1000;
+  }
+
+  .feed-btn {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 
+      0 4px 15px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .sf-btn {
+    background: linear-gradient(135deg, #FF0066, #FF1493);
+  }
+
+  .ig-btn {
+    background: linear-gradient(135deg, #E4405F, #C13584);
+  }
+
+  .tt-btn {
+    background: linear-gradient(135deg, #000000, #FF0050);
+  }
+
+  .fb-btn {
+    background: linear-gradient(135deg, #1877F2, #42A5F5);
+  }
+
+  .feed-btn:hover {
+    transform: translateX(-5px) scale(1.1);
+    box-shadow: 
+      0 8px 25px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+
+  .feed-btn:active {
+    transform: translateX(-2px) scale(1.05);
+  }
+
+  .feed-btn.active {
+    transform: translateX(-8px) scale(1.15);
+    box-shadow: 
+      0 10px 30px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      0 0 20px rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .social-media-switcher {
+      right: 10px;
+      gap: 8px;
+    }
+
+    .feed-btn {
+      width: 40px;
+      height: 40px;
+      font-size: 12px;
+    }
+  }
+</style>
+
+<script>
+  class SocialMediaSwitcher {
+    constructor() {
+      this.currentFeed = 'sf';
+      this.init();
+    }
+
+    init() {
+      console.log('🔄 Social Media Switcher initialized');
+      this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+      const feedButtons = document.querySelectorAll('.feed-btn');
+      
+      feedButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          const feedType = e.target.dataset.feed;
+          this.switchFeed(feedType, e.target);
+        });
+      });
+    }
+
+    switchFeed(feedType, button) {
+      console.log(`🔄 Switching to ${feedType} feed`);
+      
+      // Update active state
+      document.querySelectorAll('.feed-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      button.classList.add('active');
+      
+      this.currentFeed = feedType;
+      
+      // Trigger feed change event
+      const event = new CustomEvent('feedChange', {
+        detail: { feedType }
+      });
+      document.dispatchEvent(event);
+      
+      // Add button press effect
+      button.style.transform = 'translateX(-2px) scale(1.02)';
+      setTimeout(() => {
+        button.style.transform = '';
+      }, 150);
+    }
+
+    getCurrentFeed() {
+      return this.currentFeed;
+    }
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      window.socialMediaSwitcher = new SocialMediaSwitcher();
+    });
+  } else {
+    window.socialMediaSwitcher = new SocialMediaSwitcher();
+  }
+</script>

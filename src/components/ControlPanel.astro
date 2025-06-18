@@ -1,0 +1,234 @@
+---
+// ControlPanel.astro - YAA/NAH and control buttons
+export interface Props {
+  editable?: boolean;
+}
+
+const { editable = false } = Astro.props;
+---
+
+<div class="control-panel" data-editable={editable}>
+  <button class="control-btn yaa-btn" data-action="yaa">YAA</button>
+  <button class="control-btn nah-btn" data-action="nah">NAH</button>
+  <button class="control-btn mute-btn" data-action="mute-live">🔇 Live</button>
+  <button class="control-btn mute-btn" data-action="mute-video">🔇 Video</button>
+  <button class="control-btn block-btn" data-action="block">Block</button>
+</div>
+
+<style>
+  .control-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 12px;
+    z-index: 800;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(20px);
+    padding: 15px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  .control-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 
+      0 4px 15px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    min-width: 80px;
+  }
+
+  .yaa-btn {
+    background: linear-gradient(135deg, #32CD32, #228B22);
+  }
+
+  .nah-btn {
+    background: linear-gradient(135deg, #DC143C, #8B0000);
+  }
+
+  .mute-btn {
+    background: linear-gradient(135deg, #FF8C00, #FF6347);
+    min-width: 100px;
+  }
+
+  .block-btn {
+    background: linear-gradient(135deg, #8B0000, #4B0000);
+  }
+
+  .control-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 
+      0 8px 25px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+
+  .control-btn:active {
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 
+      0 4px 15px rgba(0, 0, 0, 0.3),
+      inset 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  .control-btn.pressed {
+    animation: buttonPress 0.3s ease;
+  }
+
+  @keyframes buttonPress {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .control-panel {
+      flex-wrap: wrap;
+      padding: 12px;
+      gap: 8px;
+    }
+
+    .control-btn {
+      padding: 10px 16px;
+      font-size: 12px;
+      min-width: 70px;
+    }
+
+    .mute-btn {
+      min-width: 80px;
+    }
+  }
+</style>
+
+<script>
+  class ControlPanel {
+    constructor() {
+      this.init();
+    }
+
+    init() {
+      console.log('🎮 Control Panel initialized');
+      this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+      const controlButtons = document.querySelectorAll('.control-btn');
+      
+      controlButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          const target = e.target as HTMLElement;
+          const action = target.dataset.action;
+          this.handleControlAction(action, target);
+        });
+      });
+    }
+
+    handleControlAction(action: string | undefined, button: HTMLElement) {
+      if (!action) return;
+      
+      this.addButtonPressEffect(button);
+      
+      switch (action) {
+        case 'yaa':
+          console.log('✅ YAA action triggered');
+          this.shootReaction('👍', button);
+          break;
+        case 'nah':
+          console.log('❌ NAH action triggered');
+          this.shootReaction('👎', button);
+          break;
+        case 'mute-live':
+          console.log('🔇 Mute Live action triggered');
+          this.toggleMute('live');
+          break;
+        case 'mute-video':
+          console.log('🔇 Mute Video action triggered');
+          this.toggleMute('video');
+          break;
+        case 'block':
+          console.log('🚫 Block action triggered');
+          this.shootReaction('🚫', button);
+          break;
+      }
+    }
+
+    shootReaction(emoji: string, button: HTMLElement) {
+      // Try to use Enhanced Magical Reaction System
+      if (typeof window !== 'undefined' && (window as any).magicalReaction) {
+        console.log(`✨ Using Enhanced Magical Reaction System: ${emoji}`);
+        (window as any).magicalReaction.shoot(emoji, 'love', 10);
+      } else {
+        console.log('⚠️ Enhanced Magical Reaction System not available, using fallback');
+        this.fallbackAnimation(button, emoji);
+      }
+    }
+
+    toggleMute(type: string) {
+      // Implement mute functionality
+      console.log(`🔇 Toggling ${type} mute`);
+      
+      // Trigger mute event
+      const event = new CustomEvent('muteToggle', {
+        detail: { type }
+      });
+      document.dispatchEvent(event);
+    }
+
+    fallbackAnimation(button: HTMLElement, content: string) {
+      const rect = button.getBoundingClientRect();
+      const flyingElement = document.createElement('div');
+      
+      flyingElement.textContent = content;
+      flyingElement.style.cssText = `
+        position: fixed;
+        left: ${rect.left + rect.width / 2}px;
+        top: ${rect.top}px;
+        font-size: 32px;
+        font-weight: bold;
+        color: #ff006e;
+        pointer-events: none;
+        z-index: 9999;
+        transition: all 1s ease-out;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      `;
+      
+      document.body.appendChild(flyingElement);
+      
+      setTimeout(() => {
+        flyingElement.style.transform = 'translateY(-100px) scale(1.5)';
+        flyingElement.style.opacity = '0';
+      }, 50);
+      
+      setTimeout(() => {
+        flyingElement.remove();
+      }, 1050);
+    }
+
+    addButtonPressEffect(button: HTMLElement) {
+      button.classList.add('pressed');
+      setTimeout(() => {
+        button.classList.remove('pressed');
+      }, 300);
+    }
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      window.controlPanel = new ControlPanel();
+    });
+  } else {
+    window.controlPanel = new ControlPanel();
+  }
+</script>
