@@ -1,6 +1,9 @@
 ---
 // Sound Factory - Simple Homebase Layout
 import MainLayout from '../components/layout/MainLayout.astro';
+import Homebase from '../components/Homebase.astro';
+import SoundFactoryGrid from '../components/SoundFactoryGrid.astro';
+import ChatSection from '../components/ChatSection.astro';
 
 export interface Props {
   wsUrl?: string;
@@ -654,10 +657,6 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
     <div class="mobile-container">
         <!-- TikTok Video Area - Full Screen -->
         <div class="tiktok-area">
-            <!-- Grid Buttons - Positioned Around Screen -->
-            <button class="grid-btn-top" id="grid1">+</button>
-            <button class="grid-btn-middle" id="grid2">+</button>
-
             <!-- Platform Switcher Corners -->
             <div class="platform-corner corner-tl">IG</div>
             <div class="platform-corner corner-tr">SF</div>
@@ -677,6 +676,9 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             </div>
         </div>
 
+        <!-- Sound Factory Grid Component -->
+        <SoundFactoryGrid />
+
         <!-- Floating Owncast Stream -->
         <div class="owncast-stream" id="owncastStream">
             <div class="owncast-title">OWNCAST</div>
@@ -687,54 +689,11 @@ const { wsUrl = 'ws://localhost:8080' } = Astro.props;
             </div>
         </div>
 
-        <!-- HOMEBASE - Multiple Rows -->
-        <div class="homebase">
-            <!-- Control Row -->
-            <div class="control-row">
-                <div class="control-section">
-                    <button class="control-btn hey-btn" id="heyBtn">HEY</button>
-                    <button class="control-btn nah-btn" id="nahBtn">NAH</button>
-                    <button class="control-btn mute-btn" id="muteLiveBtn">🔇 Live</button>
-                    <button class="control-btn mute-btn" id="muteVideoBtn">🔇 Video</button>
-                    <button class="control-btn block-btn" id="blockBtn">🚫 Block</button>
-                </div>
-            </div>
+        <!-- Homebase Component -->
+        <Homebase wsUrl={wsUrl} />
 
-            <!-- Money Row -->
-            <div class="money-row">
-                <div class="money-section">
-                    <button class="money-btn" data-amount="1">$1</button>
-                    <button class="money-btn" data-amount="5">$5</button>
-                    <button class="money-btn" data-amount="10">$10</button>
-                    <button class="money-btn" data-amount="20">$20</button>
-                    <button class="money-btn" data-amount="50">$50</button>
-                    <button class="money-btn" data-amount="100">$100</button>
-                </div>
-            </div>
-
-            <!-- Reaction Row -->
-            <div class="reaction-row">
-                <div class="reaction-section">
-                    <button class="reaction-btn" data-emoji="🔥" data-effect="sparkle">🔥</button>
-                    <button class="reaction-btn" data-emoji="🎧" data-effect="bounce">🎧</button>
-                    <button class="reaction-btn" data-emoji="❤️" data-effect="float">❤️</button>
-                    <button class="reaction-btn sf-btn" data-emoji="SF" data-effect="spiral">SF</button>
-                    <button class="reaction-btn jp-btn" data-emoji="JP" data-effect="sparkle">JP</button>
-                    <button class="reaction-btn" data-emoji="👠" data-effect="bounce">👠</button>
-                    <button class="reaction-btn" data-emoji="🏳️‍🌈" data-effect="spiral">🏳️‍🌈</button>
-                    <button class="reaction-btn" data-emoji="💃" data-effect="float">💃</button>
-                </div>
-            </div>
-
-            <!-- Chat Row -->
-            <div class="chat-row">
-                <!-- Chat Input Section -->
-                <div class="chat-input-section">
-                    <input type="text" class="chat-input" placeholder="Type your message..." id="chatInput">
-                    <button class="send-btn" id="sendBtn">Send</button>
-                </div>
-            </div>
-        </div>
+        <!-- Chat Section Component -->
+        <ChatSection wsUrl={wsUrl} />
     </div>
 
     <!-- Floating Reactions Container -->

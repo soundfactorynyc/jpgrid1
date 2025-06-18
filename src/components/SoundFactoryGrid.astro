@@ -1,0 +1,738 @@
+---
+// src/components/SoundFactoryGrid.astro
+// Enhanced grid interface that integrates with the 192 Sound Factory components
+
+export interface Props {
+  onButtonClick?: (grid: string, button: number) => void;
+}
+
+const { onButtonClick } = Astro.props;
+---
+
+<div class="grid-interface">
+  <!-- Three Enhanced Buttons on Left -->
+  <button class="main-button button-top" data-grid="top" aria-label="DJ Control & Live Stream Components">
+    <span class="icon">🎛️</span>
+    <span class="button-label">Mix</span>
+  </button>
+  
+  <button class="main-button button-middle" data-grid="middle" aria-label="Reaction Power-Ups">
+    <span class="icon">🎆</span>
+    <span class="button-label">React</span>
+  </button>
+  
+  <button class="main-button button-bottom" data-grid="bottom" aria-label="Chat & Community Hub">
+    <span class="icon">💬</span>
+    <span class="button-label">Chat</span>
+  </button>
+
+  <!-- Grid Overlays -->
+  <div class="grid-overlay" id="grid-top">
+    <div class="grid-header">
+      <h2 class="grid-title">Live Stream Mix & Match</h2>
+      <button class="close-button" data-close="top" aria-label="Close grid">×</button>
+    </div>
+    
+    <!-- Category Filter -->
+    <div class="category-filter">
+      <button class="filter-btn active" data-category="all">All</button>
+      <button class="filter-btn" data-category="DJ Control">DJ Control</button>
+      <button class="filter-btn" data-category="Visual Control">Visuals</button>
+      <button class="filter-btn" data-category="Dance Battle">Dance</button>
+      <button class="filter-btn" data-category="Community">Analytics</button>
+    </div>
+    
+    <div class="grid-container" data-position="top">
+      <!-- Components 1-64 will be populated by JavaScript -->
+    </div>
+  </div>
+
+  <div class="grid-overlay" id="grid-middle">
+    <div class="grid-header">
+      <h2 class="grid-title">Reaction Power-Ups</h2>
+      <button class="close-button" data-close="middle" aria-label="Close grid">×</button>
+    </div>
+    
+    <!-- Category Filter -->
+    <div class="category-filter">
+      <button class="filter-btn active" data-category="all">All</button>
+      <button class="filter-btn" data-category="Music Reaction">Music</button>
+      <button class="filter-btn" data-category="Visual Reaction">Visual</button>
+      <button class="filter-btn" data-category="Game Reaction">Games</button>
+      <button class="filter-btn" data-category="Social Reaction">Social</button>
+    </div>
+    
+    <div class="grid-container" data-position="middle">
+      <!-- Components 65-128 will be populated by JavaScript -->
+    </div>
+  </div>
+
+  <div class="grid-overlay" id="grid-bottom">
+    <div class="grid-header">
+      <h2 class="grid-title">Chat & Community Hub</h2>
+      <button class="close-button" data-close="bottom" aria-label="Close grid">×</button>
+    </div>
+    
+    <!-- Category Filter -->
+    <div class="category-filter">
+      <button class="filter-btn active" data-category="all">All</button>
+      <button class="filter-btn" data-category="Chat Enhancement">Chat</button>
+      <button class="filter-btn" data-category="Visual Communication">Visual</button>
+      <button class="filter-btn" data-category="Community Connection">Connect</button>
+      <button class="filter-btn" data-category="Legacy System">Legacy</button>
+    </div>
+    
+    <div class="grid-container" data-position="bottom">
+      <!-- Components 129-192 will be populated by JavaScript -->
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Enhanced Grid Interface Styles */
+  .grid-interface {
+    position: relative;
+    z-index: 100;
+    contain: layout style;
+  }
+
+  /* Enhanced Main Buttons with Labels */
+  .main-button {
+    position: fixed;
+    left: 15px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+    color: #ffffff;
+    border: 2px solid #333333;
+    width: 70px;
+    height: 70px;
+    border-radius: 12px;
+    cursor: pointer;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.5),
+      inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .main-button .icon {
+    font-size: 28px;
+    transition: transform 0.3s ease;
+    display: inline-block;
+  }
+
+  .button-label {
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+  }
+
+  .main-button:hover {
+    transform: translateX(5px);
+    box-shadow: 
+      0 6px 20px rgba(0, 0, 0, 0.6),
+      inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  }
+
+  .main-button:active {
+    transform: translateX(2px) scale(0.95);
+    background: linear-gradient(135deg, #0a0a0a 0%, #000000 100%);
+  }
+
+  .main-button.active {
+    background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+    border-color: #0088ff;
+    box-shadow: 
+      0 6px 20px rgba(0, 102, 204, 0.4),
+      inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  }
+
+  .main-button.active .icon {
+    transform: rotate(180deg);
+  }
+
+  /* Button Positions - Spread Out */
+  .button-top { 
+    top: 20px; 
+    left: 15px;
+  }
+  .button-middle { 
+    top: 50%; 
+    left: 15px;
+    transform: translateY(-50%); 
+  }
+  .button-bottom { 
+    bottom: 20px; 
+    left: 15px;
+  }
+
+  /* Enhanced Grid Overlays */
+  .grid-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.98);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    contain: layout style paint;
+    pointer-events: none;
+  }
+
+  .grid-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  /* Grid Header */
+  .grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid #333;
+    background: linear-gradient(180deg, rgba(30, 30, 30, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+  }
+
+  .grid-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 10px rgba(0, 102, 204, 0.5);
+  }
+
+  /* Category Filter */
+  .category-filter {
+    display: flex;
+    gap: 10px;
+    padding: 15px 30px;
+    overflow-x: auto;
+    border-bottom: 1px solid #222;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .filter-btn {
+    padding: 8px 16px;
+    background: #111;
+    color: #888;
+    border: 1px solid #333;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+
+  .filter-btn:hover {
+    background: #222;
+    color: #aaa;
+  }
+
+  .filter-btn.active {
+    background: #0066cc;
+    color: #fff;
+    border-color: #0088ff;
+    box-shadow: 0 0 10px rgba(0, 102, 204, 0.5);
+  }
+
+  /* Enhanced Grid Container */
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    gap: 8px;
+    width: min(90vw, 800px);
+    height: min(70vh, 600px);
+    padding: 20px;
+    margin: 0 auto;
+    contain: layout style;
+    overflow-y: auto;
+  }
+
+  /* Enhanced Grid Buttons */
+  .grid-button {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    color: #ffffff;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px;
+    transition: all 0.2s ease;
+    will-change: transform;
+    touch-action: manipulation;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+    min-height: 80px;
+  }
+
+  .grid-button:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, transparent 0%, rgba(0, 102, 204, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .button-icon {
+    font-size: 24px;
+    margin-bottom: 2px;
+  }
+
+  .button-number {
+    font-size: 10px;
+    opacity: 0.5;
+    font-weight: bold;
+  }
+
+  .button-name {
+    font-size: 9px;
+    text-align: center;
+    line-height: 1.2;
+    opacity: 0.8;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .grid-button.filtered-out {
+    opacity: 0.2;
+    pointer-events: none;
+  }
+
+  .grid-button:hover {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+
+  .grid-button:hover:before {
+    opacity: 1;
+  }
+
+  .grid-button:active {
+    transform: scale(0.95);
+    background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+  }
+
+  /* Close button */
+  .close-button {
+    background: #111;
+    color: #ffffff;
+    border: 1px solid #333;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+  }
+
+  .close-button:hover {
+    background: #222;
+    transform: rotate(90deg);
+    border-color: #0066cc;
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .main-button {
+      width: 60px;
+      height: 60px;
+    }
+    
+    .main-button .icon {
+      font-size: 24px;
+    }
+    
+    .grid-container {
+      gap: 5px;
+      padding: 10px;
+    }
+    
+    .grid-button {
+      min-height: 60px;
+      font-size: 10px;
+    }
+    
+    .button-icon {
+      font-size: 20px;
+    }
+    
+    .button-name {
+      font-size: 8px;
+    }
+    
+    .category-filter {
+      padding: 10px 15px;
+    }
+    
+    .filter-btn {
+      padding: 6px 12px;
+      font-size: 10px;
+    }
+  }
+
+  /* Scrollbar styling */
+  .grid-container::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .grid-container::-webkit-scrollbar-track {
+    background: #111;
+    border-radius: 4px;
+  }
+
+  .grid-container::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+  }
+
+  .grid-container::-webkit-scrollbar-thumb:hover {
+    background: #444;
+  }
+</style>
+
+<script>
+  import { componentRegistry, categories } from './soundFactoryComponents.js';
+  
+  class SoundFactoryGridController {
+    constructor() {
+      this.activeGrid = null;
+      this.activeCategory = 'all';
+      this.elements = new Map();
+      this.touchStartY = 0;
+      this.init();
+    }
+
+    init() {
+      // Cache DOM elements
+      this.cacheElements();
+      
+      // Setup event delegation
+      this.setupEventDelegation();
+      
+      // Setup keyboard shortcuts
+      this.setupKeyboardShortcuts();
+      
+      // Prevent iOS bounce
+      this.preventIOSBounce();
+      
+      // Initialize component data
+      this.initializeComponents();
+    }
+
+    initializeComponents() {
+      // Load component data into buttons
+      ['top', 'middle', 'bottom'].forEach(gridPosition => {
+        const container = document.querySelector(`#grid-${gridPosition} .grid-container`);
+        if (!container) return;
+        
+        // Clear existing content
+        container.innerHTML = '';
+        
+        const components = componentRegistry[gridPosition];
+        const startId = gridPosition === 'top' ? 1 : gridPosition === 'middle' ? 65 : 129;
+        
+        // Create 64 buttons for each grid
+        for (let i = 0; i < 64; i++) {
+          const componentId = startId + i;
+          const component = components[componentId];
+          
+          const button = document.createElement('button');
+          button.className = 'grid-button';
+          button.dataset.index = componentId;
+          button.dataset.gridPosition = gridPosition;
+          button.setAttribute('aria-label', `Component ${componentId}`);
+          
+          if (component) {
+            button.dataset.componentName = component.name;
+            button.dataset.componentCategory = component.category;
+            button.title = component.name;
+            
+            button.innerHTML = `
+              <span class="button-icon">${component.icon || ''}</span>
+              <span class="button-number">${componentId}</span>
+              <span class="button-name">${component.name || ''}</span>
+            `;
+          } else {
+            button.innerHTML = `
+              <span class="button-icon">⚙️</span>
+              <span class="button-number">${componentId}</span>
+              <span class="button-name">Component ${componentId}</span>
+            `;
+          }
+          
+          container.appendChild(button);
+        }
+      });
+    }
+
+    cacheElements() {
+      // Cache all frequently accessed elements
+      document.querySelectorAll('.main-button').forEach(btn => {
+        const grid = btn.dataset.grid;
+        this.elements.set(`button-${grid}`, btn);
+        this.elements.set(`grid-${grid}`, document.getElementById(`grid-${grid}`));
+      });
+    }
+
+    setupEventDelegation() {
+      // Single event listener for all clicks
+      document.addEventListener('click', this.handleClick.bind(this), { passive: true });
+      
+      // Touch events for better mobile response
+      document.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
+      document.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: false });
+    }
+
+    handleClick(e) {
+      const target = e.target;
+      
+      // Main button click
+      if (target.closest('.main-button')) {
+        const button = target.closest('.main-button');
+        this.toggleGrid(button.dataset.grid);
+        return;
+      }
+      
+      // Close button click
+      if (target.closest('.close-button')) {
+        const button = target.closest('.close-button');
+        this.closeGrid(button.dataset.close);
+        return;
+      }
+      
+      // Category filter click
+      if (target.classList.contains('filter-btn')) {
+        this.handleCategoryFilter(target);
+        return;
+      }
+      
+      // Grid button click
+      if (target.closest('.grid-button')) {
+        const button = target.closest('.grid-button');
+        const position = button.dataset.gridPosition;
+        const index = button.dataset.index;
+        
+        // Visual feedback
+        requestAnimationFrame(() => {
+          button.style.transform = 'scale(0.9)';
+          
+          setTimeout(() => {
+            button.style.transform = '';
+          }, 150);
+        });
+        
+        // Log component activation
+        const component = componentRegistry[position][index];
+        if (component) {
+          console.log(`🎛️ Activated: ${component.name} (${component.category})`);
+        }
+        
+        // Emit event
+        this.emitGridButtonClick(position, index);
+        return;
+      }
+      
+      // Click on overlay to close
+      if (target.classList.contains('grid-overlay')) {
+        const gridName = target.id.replace('grid-', '');
+        this.closeGrid(gridName);
+      }
+    }
+
+    handleCategoryFilter(button) {
+      const category = button.dataset.category;
+      const gridOverlay = button.closest('.grid-overlay');
+      const gridPosition = gridOverlay.id.replace('grid-', '');
+      
+      // Update active filter
+      gridOverlay.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      button.classList.add('active');
+      
+      // Filter grid buttons
+      const container = gridOverlay.querySelector('.grid-container');
+      const buttons = container.querySelectorAll('.grid-button');
+      
+      buttons.forEach(btn => {
+        if (category === 'all') {
+          btn.classList.remove('filtered-out');
+        } else {
+          const btnCategory = btn.dataset.componentCategory;
+          if (btnCategory === category) {
+            btn.classList.remove('filtered-out');
+          } else {
+            btn.classList.add('filtered-out');
+          }
+        }
+      });
+    }
+
+    handleTouchStart(e) {
+      this.touchStartY = e.touches[0].clientY;
+    }
+
+    handleTouchEnd(e) {
+      // Prevent pull-to-refresh
+      if (this.activeGrid) {
+        e.preventDefault();
+      }
+    }
+
+    toggleGrid(gridName) {
+      const grid = this.elements.get(`grid-${gridName}`);
+      const button = this.elements.get(`button-${gridName}`);
+      
+      if (!grid || !button) return;
+      
+      // Check if this grid is already active
+      const isActive = grid.classList.contains('active');
+      
+      // Use requestAnimationFrame for smooth animations
+      requestAnimationFrame(() => {
+        // Close all grids first
+        this.closeAllGrids();
+        
+        // If it wasn't active, open it
+        if (!isActive) {
+          grid.classList.add('active');
+          button.classList.add('active');
+          this.activeGrid = gridName;
+          
+          // Prevent body scroll
+          document.body.style.overflow = 'hidden';
+          document.body.style.position = 'fixed';
+          document.body.style.width = '100%';
+        } else {
+          this.activeGrid = null;
+          // Restore body scroll
+          document.body.style.overflow = '';
+          document.body.style.position = '';
+          document.body.style.width = '';
+        }
+      });
+    }
+
+    closeGrid(gridName) {
+      const grid = this.elements.get(`grid-${gridName}`);
+      const button = this.elements.get(`button-${gridName}`);
+      
+      if (!grid || !button) return;
+      
+      requestAnimationFrame(() => {
+        grid.classList.remove('active');
+        button.classList.remove('active');
+        
+        if (this.activeGrid === gridName) {
+          this.activeGrid = null;
+          // Restore body scroll
+          document.body.style.overflow = '';
+          document.body.style.position = '';
+          document.body.style.width = '';
+        }
+      });
+    }
+
+    closeAllGrids() {
+      ['top', 'middle', 'bottom'].forEach(pos => {
+        const grid = this.elements.get(`grid-${pos}`);
+        const button = this.elements.get(`button-${pos}`);
+        if (grid && button) {
+          grid.classList.remove('active');
+          button.classList.remove('active');
+        }
+      });
+    }
+
+    setupKeyboardShortcuts() {
+      let lastKeyTime = 0;
+      const keyDelay = 200; // Debounce delay
+      
+      document.addEventListener('keydown', (e) => {
+        const now = Date.now();
+        if (now - lastKeyTime < keyDelay) return;
+        lastKeyTime = now;
+        
+        switch(e.key) {
+          case 'Escape':
+            if (this.activeGrid) {
+              this.closeGrid(this.activeGrid);
+            }
+            break;
+          case '1':
+            this.toggleGrid('top');
+            break;
+          case '2':
+            this.toggleGrid('middle');
+            break;
+          case '3':
+            this.toggleGrid('bottom');
+            break;
+        }
+      }, { passive: true });
+    }
+
+    preventIOSBounce() {
+      document.addEventListener('touchmove', (e) => {
+        if (this.activeGrid) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+    }
+
+    emitGridButtonClick(position, index) {
+      // Use custom event with better performance
+      const event = new CustomEvent('gridButtonClick', {
+        detail: { grid: position, button: index },
+        bubbles: true,
+        composed: true
+      });
+      window.dispatchEvent(event);
+    }
+  }
+
+  // Initialize only after DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new SoundFactoryGridController());
+  } else {
+    new SoundFactoryGridController();
+  }
+</script>

@@ -1,0 +1,555 @@
+---
+// Sound Factory Homebase Component
+export interface Props {
+  wsUrl?: string;
+}
+
+const { wsUrl = 'ws://localhost:8080' } = Astro.props;
+---
+
+<style>
+    /* HOMEBASE - Multiple Rows */
+    .homebase {
+        background: #000000;
+        border-top: 2px solid #333;
+        padding: 5px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    /* Control Buttons Row */
+    .control-row {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        padding: 5px;
+        border-bottom: 1px solid #333;
+    }
+
+    .control-section {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .control-btn {
+        background: rgba(0, 0, 0, 0.8);
+        border: 1px solid #333;
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 15px;
+        font-size: 0.7rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 50px;
+        text-align: center;
+    }
+
+    .control-btn:hover {
+        background: rgba(0, 255, 0, 0.2);
+        border-color: #00ff00;
+        transform: scale(1.05);
+    }
+
+    .hey-btn {
+        background: rgba(0, 255, 0, 0.2);
+        border-color: #00ff00;
+    }
+
+    .hey-btn:hover {
+        background: rgba(0, 255, 0, 0.4);
+    }
+
+    .nah-btn {
+        background: rgba(255, 0, 0, 0.2);
+        border-color: #ff0000;
+    }
+
+    .nah-btn:hover {
+        background: rgba(255, 0, 0, 0.4);
+    }
+
+    .mute-btn {
+        background: rgba(255, 165, 0, 0.2);
+        border-color: #ffa500;
+    }
+
+    .mute-btn:hover {
+        background: rgba(255, 165, 0, 0.4);
+    }
+
+    .mute-btn.muted {
+        background: rgba(255, 0, 0, 0.4);
+        border-color: #ff0000;
+    }
+
+    .block-btn {
+        background: rgba(255, 0, 0, 0.3);
+        border-color: #ff0000;
+    }
+
+    .block-btn:hover {
+        background: rgba(255, 0, 0, 0.5);
+    }
+
+    /* Money Row */
+    .money-row {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        padding: 5px;
+        border-bottom: 1px solid #333;
+    }
+
+    /* Money Buttons */
+    .money-section {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .money-btn {
+        background: linear-gradient(45deg, #10b981, #34d399);
+        color: #000;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-width: 40px;
+    }
+
+    .money-btn:nth-child(2) { background: linear-gradient(45deg, #3b82f6, #60a5fa); }
+    .money-btn:nth-child(3) { background: linear-gradient(45deg, #8b5cf6, #a78bfa); }
+    .money-btn:nth-child(4) { background: linear-gradient(45deg, #ec4899, #f472b6); }
+    .money-btn:nth-child(5) { background: linear-gradient(45deg, #f59e0b, #fbbf24); }
+    .money-btn:nth-child(6) { background: linear-gradient(45deg, #ef4444, #f87171); }
+
+    .money-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .money-btn:active {
+        transform: scale(0.9);
+    }
+
+    /* Reaction Buttons */
+    .reaction-btn {
+        width: 35px;
+        height: 35px;
+        border: none;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 50%;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .reaction-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+        transition: width 0.6s, height 0.6s;
+        border-radius: 50%;
+    }
+
+    .reaction-btn:hover::before {
+        width: 60px;
+        height: 60px;
+    }
+
+    .reaction-btn:hover {
+        transform: translateY(-2px) scale(1.1);
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+    }
+
+    .reaction-btn:active {
+        transform: scale(0.9);
+    }
+
+    /* Special SF/JP buttons */
+    .sf-btn, .jp-btn {
+        font-size: 0.7rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, rgba(255, 0, 128, 0.2), rgba(128, 0, 255, 0.2));
+        color: #fff;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        letter-spacing: 0.5px;
+    }
+
+    .jp-btn {
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+    }
+
+    .sf-btn:hover {
+        box-shadow: 0 4px 15px rgba(255, 0, 128, 0.4);
+    }
+
+    .jp-btn:hover {
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    /* Reaction Row */
+    .reaction-row {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        padding: 5px;
+        border-bottom: 1px solid #333;
+    }
+
+    /* Reaction Section */
+    .reaction-section {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* Chat Row */
+    .chat-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px;
+    }
+
+    /* Grid Buttons (Plus Signs) */
+    .grid-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid #333;
+        color: #fff;
+        padding: 8px 10px;
+        border-radius: 50%;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .grid-btn:hover {
+        border-color: #00ff00;
+        background: rgba(0, 255, 0, 0.1);
+        transform: scale(1.1);
+    }
+
+    /* Chat Input Section */
+    .chat-input-section {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        flex: 1;
+    }
+
+    .chat-input {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid #333;
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        outline: none;
+        min-width: 80px;
+    }
+
+    .chat-input::placeholder {
+        color: #666;
+    }
+
+    .chat-input:focus {
+        border-color: #00ff00;
+        box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    }
+
+    .send-btn {
+        background: #00ff00;
+        color: #000;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .send-btn:hover {
+        background: #00cc00;
+        transform: scale(1.05);
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 420px) {
+        .money-btn {
+            padding: 6px 8px;
+            font-size: 0.7rem;
+            min-width: 35px;
+        }
+        
+        .reaction-btn {
+            width: 30px;
+            height: 30px;
+            font-size: 0.9rem;
+        }
+        
+        .sf-btn, .jp-btn {
+            font-size: 0.6rem;
+        }
+        
+        .chat-input {
+            font-size: 0.7rem;
+            padding: 6px 10px;
+        }
+        
+        .send-btn {
+            padding: 6px 10px;
+            font-size: 0.7rem;
+        }
+        
+        .grid-btn {
+            padding: 5px 6px;
+            font-size: 0.6rem;
+            min-width: 25px;
+        }
+    }
+</style>
+
+<!-- HOMEBASE - Multiple Rows -->
+<div class="homebase">
+    <!-- Control Row -->
+    <div class="control-row">
+        <div class="control-section">
+            <button class="control-btn hey-btn" id="heyBtn">HEY</button>
+            <button class="control-btn nah-btn" id="nahBtn">NAH</button>
+            <button class="control-btn mute-btn" id="muteLiveBtn">🔇 Live</button>
+            <button class="control-btn mute-btn" id="muteVideoBtn">🔇 Video</button>
+            <button class="control-btn block-btn" id="blockBtn">🚫 Block</button>
+        </div>
+    </div>
+
+    <!-- Money Row -->
+    <div class="money-row">
+        <div class="money-section">
+            <button class="money-btn" data-amount="1">$1</button>
+            <button class="money-btn" data-amount="5">$5</button>
+            <button class="money-btn" data-amount="10">$10</button>
+            <button class="money-btn" data-amount="20">$20</button>
+            <button class="money-btn" data-amount="50">$50</button>
+            <button class="money-btn" data-amount="100">$100</button>
+        </div>
+    </div>
+
+    <!-- Reaction Row -->
+    <div class="reaction-row">
+        <div class="reaction-section">
+            <button class="reaction-btn" data-emoji="🔥" data-effect="sparkle">🔥</button>
+            <button class="reaction-btn" data-emoji="🎧" data-effect="bounce">🎧</button>
+            <button class="reaction-btn" data-emoji="❤️" data-effect="float">❤️</button>
+            <button class="reaction-btn sf-btn" data-emoji="SF" data-effect="spiral">SF</button>
+            <button class="reaction-btn jp-btn" data-emoji="JP" data-effect="sparkle">JP</button>
+            <button class="reaction-btn" data-emoji="👠" data-effect="bounce">👠</button>
+            <button class="reaction-btn" data-emoji="🏳️‍🌈" data-effect="spiral">🏳️‍🌈</button>
+            <button class="reaction-btn" data-emoji="💃" data-effect="float">💃</button>
+        </div>
+    </div>
+
+    <!-- Chat Row -->
+    <div class="chat-row">
+        <!-- Grid Button 3 -->
+        <button class="grid-btn" id="grid3">+</button>
+        
+        <!-- Chat Input Section -->
+        <div class="chat-input-section">
+            <input type="text" class="chat-input" placeholder="Type your message..." id="chatInput">
+            <button class="send-btn" id="sendBtn">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    class HomebaseController {
+        constructor() {
+            this.init();
+        }
+
+        init() {
+            this.setupReactionButtons();
+            this.setupMoneyButtons();
+            this.setupChatSystem();
+            this.setupGridButtons();
+        }
+
+        setupReactionButtons() {
+            const reactionButtons = document.querySelectorAll('.reaction-btn');
+            
+            reactionButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const emoji = button.dataset.emoji;
+                    const effect = button.dataset.effect;
+                    
+                    // Add glow to button
+                    button.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.8)';
+                    setTimeout(() => button.style.boxShadow = '', 500);
+                    
+                    // Create floating reaction
+                    this.createFloatingReaction(emoji, e.currentTarget, effect);
+                });
+            });
+        }
+
+        createFloatingReaction(emoji, button, effect) {
+            const reaction = document.createElement('div');
+            reaction.className = 'floating-reaction';
+            reaction.textContent = emoji;
+            
+            // Handle text reactions (SF, JP)
+            if (emoji === 'SF') {
+                reaction.style.fontWeight = '700';
+                reaction.style.fontSize = '1.5rem';
+                reaction.style.background = 'linear-gradient(45deg, #ff0080, #8000ff)';
+                reaction.style.webkitBackgroundClip = 'text';
+                reaction.style.webkitTextFillColor = 'transparent';
+                reaction.style.backgroundClip = 'text';
+            } else if (emoji === 'JP') {
+                reaction.style.fontWeight = '700';
+                reaction.style.fontSize = '1.5rem';
+                reaction.style.background = 'linear-gradient(45deg, #FFD700, #FFA500)';
+                reaction.style.webkitBackgroundClip = 'text';
+                reaction.style.webkitTextFillColor = 'transparent';
+                reaction.style.backgroundClip = 'text';
+            }
+            
+            // Get button position
+            const rect = button.getBoundingClientRect();
+            const startX = rect.left + rect.width / 2;
+            const startY = rect.top + rect.height / 2;
+            
+            // Position at button
+            reaction.style.left = startX + 'px';
+            reaction.style.bottom = (window.innerHeight - startY) + 'px';
+            
+            // Random drift
+            reaction.style.setProperty('--drift', (Math.random() - 0.5) * 60 + 'px');
+            reaction.style.animation = 'elegantFloat 3s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+            
+            document.getElementById('reactions-container').appendChild(reaction);
+            
+            // Clean up
+            setTimeout(() => reaction.remove(), 3500);
+        }
+
+        setupMoneyButtons() {
+            const moneyButtons = document.querySelectorAll('.money-btn');
+            
+            moneyButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const amount = parseInt(button.dataset.amount);
+                    
+                    // Button feedback
+                    button.style.transform = 'scale(0.9)';
+                    setTimeout(() => button.style.transform = '', 200);
+                    
+                    // Create money effect
+                    this.createMoneyEffect(amount, e.currentTarget);
+                });
+            });
+        }
+
+        createMoneyEffect(amount, button) {
+            const billCount = Math.min(5, amount / 10);
+            
+            for (let i = 0; i < billCount; i++) {
+                setTimeout(() => {
+                    const money = document.createElement('div');
+                    money.className = 'floating-reaction';
+                    money.textContent = '$' + Math.ceil(amount / billCount);
+                    money.style.fontSize = '1.5rem';
+                    money.style.fontWeight = '900';
+                    money.style.color = '#10b981';
+                    money.style.textShadow = '0 0 10px rgba(16, 185, 129, 0.8)';
+                    
+                    // Get button position
+                    const rect = button.getBoundingClientRect();
+                    money.style.left = (rect.left + rect.width / 2) + 'px';
+                    money.style.bottom = (window.innerHeight - rect.top - rect.height / 2) + 'px';
+                    
+                    // Random drift
+                    money.style.setProperty('--drift-x', (Math.random() - 0.5) * 100 + 'px');
+                    money.style.animation = 'moneyShoot 2s ease-out forwards';
+                    
+                    document.getElementById('money-container').appendChild(money);
+                    setTimeout(() => money.remove(), 2000);
+                }, i * 100);
+            }
+        }
+
+        setupChatSystem() {
+            const chatInput = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('sendBtn');
+            
+            const sendMessage = () => {
+                const message = chatInput.value.trim();
+                if (message) {
+                    console.log('Sending message:', message);
+                    chatInput.value = '';
+                    
+                    // Visual feedback
+                    sendBtn.style.background = '#00aa00';
+                    setTimeout(() => sendBtn.style.background = '#00ff00', 200);
+                }
+            };
+            
+            sendBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        }
+
+        setupGridButtons() {
+            const gridButtons = document.querySelectorAll('.grid-btn');
+            
+            gridButtons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    console.log(`Grid ${index + 1} clicked`);
+                    
+                    // Visual feedback
+                    button.style.background = 'rgba(0, 255, 0, 0.3)';
+                    setTimeout(() => button.style.background = 'rgba(255, 255, 255, 0.05)', 300);
+                });
+            });
+        }
+    }
+
+    // Initialize when component loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => new HomebaseController());
+    } else {
+        new HomebaseController();
+    }
+</script>
